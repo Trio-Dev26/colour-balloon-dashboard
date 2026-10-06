@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <!-- TEMPORARY mock module cover. Delete with src/mocks once real images come from the API. -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#6366f1"/>
+      <stop offset="1" stop-color="#22d3ee"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="48" fill="url(#bg)"/>
+  <circle cx="120" cy="120" r="56" fill="#fde68a"/>
+  <circle cx="400" cy="150" r="36" fill="#f9a8d4"/>
+  <circle cx="360" cy="380" r="64" fill="#a7f3d0"/>
+  <text x="256" y="290" text-anchor="middle" font-family="sans-serif" font-size="56" font-weight="700" fill="#ffffff">Myanmar</text>
+  <text x="256" y="350" text-anchor="middle" font-family="sans-serif" font-size="32" font-weight="600" fill="#ffffff">for Kids</text>
+</svg>

@@ -31,6 +31,16 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
+  --color-tertiary-foreground: var(--tertiary-foreground);
+  --color-placeholder: var(--placeholder);
+  --color-accent-border: var(--accent-border);
+  --color-success: var(--success);
+  --color-success-border: var(--success-border);
+  --color-success-foreground: var(--success-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
   --color-muted: var(--muted);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-secondary: var(--secondary);
@@ -50,39 +60,49 @@
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  /* Indigo theme: values are Tailwind's indigo scale (600 primary, 50 tint, 700 text on tint). */
-  --primary: oklch(0.511 0.262 276.966);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.962 0.018 272.314);
-  --accent-foreground: oklch(0.457 0.24 277.023);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.585 0.233 277.117);
+  /* Values below come from the Figma "Colour Balloons" tokens (slate neutrals + indigo brand). */
+  --background: #fcfcfa; /* color/surface/default */
+  --foreground: #1c1917; /* color/text/text-dark */
+  --card: #ffffff;
+  --card-foreground: #1c1917;
+  --popover: #ffffff;
+  --popover-foreground: #1c1917;
+  --primary: #4f46e5; /* color/action/primary/default (indigo-600) */
+  --primary-foreground: #ffffff;
+  --secondary: #f1f5f9; /* color/bg/subtle */
+  --secondary-foreground: #1c1917;
+  --muted: #f1f5f9; /* table header, active page */
+  --muted-foreground: #475569; /* color/text/secondary */
+  --tertiary-foreground: #64748b; /* color/text/tertiary */
+  --placeholder: #94a3b8; /* color/text/placeholder */
+  --accent: #eef2ff; /* color/component/tab/bg-active (indigo-50) */
+  --accent-foreground: #4f46e5; /* color/component/tab/text-active */
+  --accent-border: #c7d2fe; /* indigo-200, upload dropzone */
+  --destructive: #dc2626;
+  --success: #f0fdf4;
+  --success-border: #dcfce7;
+  --success-foreground: #166534;
+  --info: #eff6ff;
+  --info-foreground: #1e40af;
+  --warning: #fffbeb;
+  --warning-foreground: #b45309;
+  --border: #e2e8f0; /* color/border/default */
+  --input: #e2e8f0;
+  --ring: #6366f1;
   --chart-1: oklch(0.785 0.115 274.713);
   --chart-2: oklch(0.585 0.233 277.117);
   --chart-3: oklch(0.511 0.262 276.966);
   --chart-4: oklch(0.457 0.24 277.023);
   --chart-5: oklch(0.359 0.144 278.697);
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.511 0.262 276.966);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.962 0.018 272.314);
-  --sidebar-accent-foreground: oklch(0.457 0.24 277.023);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.585 0.233 277.117);
+  --sidebar: #f8fafc; /* color/bg/default */
+  --sidebar-foreground: #475569;
+  --sidebar-primary: #4f46e5;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #eef2ff;
+  --sidebar-accent-foreground: #4f46e5;
+  --sidebar-border: #e2e8f0;
+  --sidebar-ring: #6366f1;
 }
 
 .dark {
@@ -124,9 +144,29 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    /* Figma body text uses -0.3px letter spacing. */
+    @apply bg-background text-foreground tracking-[-0.3px];
   }
   html {
     @apply font-sans;
+  }
+}
+/* Myanmar text: Myanmar font first and no negative tracking (it clips stacked vowel signs). */
+@utility font-myanmar {
+  font-family: var(--font-myanmar), var(--font-inter), ui-sans-serif, sans-serif;
+  letter-spacing: 0;
+}
+
+/* Rich-text editor content (Tiptap). Preflight strips list styles, so restore them here. */
+@layer components {
+  .tiptap-content ul {
+    @apply list-disc pl-5;
+  }
+  .tiptap-content ol {
+    @apply list-decimal pl-5;
+  }
+  .tiptap-content p.is-editor-empty:first-child::before {
+    @apply pointer-events-none float-left h-0 text-placeholder;
+    content: attr(data-placeholder);
   }
 }

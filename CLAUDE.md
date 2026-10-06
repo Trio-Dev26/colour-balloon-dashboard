@@ -9,8 +9,32 @@ These rules come from the project owner and apply to every file Claude writes or
 - Exception: generated or vendored files (shadcn `src/components/ui/*`, Prisma migrations, generated API types). Don't hand-edit them to meet the limit; regenerating would undo it.
 
 ## 2. Components first
-- Break UI into focused components. A page file only composes components; it holds no large JSX blocks or business logic.
+- When designing UI, build it from separate, reusable components. Every distinct piece (header, toolbar, filter bar, table, form, form section, card, dialog, empty state) is its own component.
+- Before creating a component, check `components/common/` and `components/ui/` for one that already does the job; extend it with props instead of making a near-copy.
 - A component that grows several unrelated sections → extract each section into its own component.
+
+### `page.tsx` stays simple
+A page only declares the route and composes components. It contains:
+- `metadata` (title), reading route params / `searchParams` if needed, and a few components passed simple props.
+
+It never contains:
+- hooks (`useState`, `useQuery`, custom hooks), event handlers, `'use client'`;
+- API calls, data mapping, or business logic;
+- long JSX or styling-heavy markup (more than a wrapper and a handful of components).
+
+Aim for a page under ~30 lines. Example:
+```tsx
+export const metadata: Metadata = { title: 'Modules' };
+
+export default function ModulesPage() {
+   return (
+      <PageContainer>
+         <PageHeader title="Modules" description="Create, order and publish curriculum modules." action={<CreateModuleButton />} />
+         <ModuleTable />
+      </PageContainer>
+   );
+}
+```
 
 ## 3. Don't repeat yourself
 - Before writing anything, search the codebase for an existing component, hook, util, type or constant and reuse it.
@@ -18,7 +42,7 @@ These rules come from the project owner and apply to every file Claude writes or
   - shared UI → `src/components/`
   - shared hooks → `src/hooks/`
   - shared helpers → `src/lib/`
-  - shared types → `src/types/`
+  - shared types → `src/types/api/` (backend data) or `src/types/ui/` (shared component types)
 - Never copy-paste a block and tweak it; parameterise it with props or arguments.
 
 ## 4. No hardcoding
@@ -42,12 +66,15 @@ src/
     ui/                   shadcn (generated, don't hand-edit)
     layout/               sidebar, header
     common/               shared domain-free UI: DataTable, EmptyState, ConfirmDialog…
-    <domain>/             domain UI, e.g. modules/module-table.tsx, auth/login-form.tsx
+    <domain>/             domain UI, e.g. modules/ModuleTable.tsx, auth/LoginForm.tsx
   services/<domain>.service.ts   API calls: plain async functions returning typed data
-  hooks/use-<domain>.ts          query keys + useQuery/useMutation hooks
+  hooks/use<Domain>.ts           query keys + useQuery/useMutation hooks
   schemas/<domain>.schema.ts     zod form schemas (+ z.infer types)
-  types/<domain>.types.ts        API/data types; shared ones in types/api.types.ts
+  types/
+    api/<domain>.types.ts        data the backend sends/receives (entities, enums-as-unions, filters, Paginated)
+    ui/<name>.types.ts           types shared by several components (SelectOption, Tone, BreadcrumbEntry)
   stores/use<Name>Store.ts       zustand stores (client-only shared state)
+  mocks/<domain>.mock.ts         TEMPORARY mock data until an API exists; imported only by services/
   constants/                     named constants
   lib/  config/  providers/
 ```
@@ -62,10 +89,11 @@ Flow: **component → hook → service → `lib/axios`**.
 | `services/` | `lib/axios`, types | React, hooks |
 | `schemas/`, `types/`, `constants/` | each other only | anything with side effects |
 
-- Only `services/` imports `lib/axios`.
+- Only `services/` imports `lib/axios` (and `mocks/` while an endpoint is not ready). Swapping mock for API changes only the service file.
 - Every hook file exports a `<domain>Keys` object; every key starts with `<domain>Keys.all`, and every mutation invalidates `<domain>Keys.all`.
 - Server data lives only in React Query. Never copy it into `useState` or a store. Filters and pagination live in the URL (`useSearchParams`).
 - **Zustand** is only for client-only state shared across screens that isn't server data, form state, or URL state (e.g. a multi-step import wizard). Never put backend data in a store, and never call the API from a store. Single-component state stays in `useState`. One store per file, exported as a `use<Name>Store` hook.
+- Never mix the two type kinds: API shapes go in `types/api/` (later replaced by Swagger-generated types), UI-only types in `types/ui/`. A props interface used by one component stays in that component's file.
 - Split a layer file only when it nears 300 lines (e.g. `services/module.service.ts` → `services/module/…`).
 
 ### File naming

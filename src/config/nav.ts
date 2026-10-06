@@ -1,61 +1,50 @@
 import {
-   BookOpenIcon,
-   CircleHelpIcon,
-   ClipboardCheckIcon,
-   CreditCardIcon,
-   FileTextIcon,
-   LayersIcon,
+   BookIcon,
+   ClipboardListIcon,
+   FileQuestionMarkIcon,
+   FolderOpenIcon,
+   GraduationCapIcon,
    LayoutDashboardIcon,
-   TagIcon,
-   UploadIcon,
-   UsersIcon,
+   NotebookTextIcon,
+   TagsIcon,
    type LucideIcon,
 } from 'lucide-react';
+import { ROUTES } from '@/constants/routes';
 
-export interface NavItem {
+export interface NavLink {
    title: string;
    href: string;
    icon: LucideIcon;
 }
 
 export interface NavGroup {
-   label: string;
-   items: NavItem[];
+   title: string;
+   icon: LucideIcon;
+   children: NavLink[];
 }
 
-// Single source for the sidebar and the header title. Mirrors the PRD admin modules.
-export const NAV_GROUPS: NavGroup[] = [
+export type NavEntry = NavLink | NavGroup;
+
+export const isNavGroup = (entry: NavEntry): entry is NavGroup => 'children' in entry;
+
+// Sidebar menu, matching the Figma admin layout. Users, Payments and Import routes exist
+// but stay out of the menu until they are designed.
+export const NAV_ENTRIES: NavEntry[] = [
+   { title: 'Dashboard', href: ROUTES.dashboard, icon: LayoutDashboardIcon },
    {
-      label: 'Overview',
-      items: [{ title: 'Dashboard', href: '/', icon: LayoutDashboardIcon }],
-   },
-   {
-      label: 'Curriculum',
-      items: [
-         { title: 'Modules', href: '/modules', icon: BookOpenIcon },
-         { title: 'Units', href: '/units', icon: LayersIcon },
-         { title: 'Lessons', href: '/lessons', icon: FileTextIcon },
+      title: 'Curriculum management',
+      icon: GraduationCapIcon,
+      children: [
+         { title: 'Module', href: ROUTES.modules, icon: FolderOpenIcon },
+         { title: 'Unit', href: ROUTES.units, icon: BookIcon },
+         { title: 'Lesson', href: ROUTES.lessons, icon: NotebookTextIcon },
+         { title: 'Quiz', href: ROUTES.quizzes, icon: ClipboardListIcon },
+         { title: 'Questions', href: ROUTES.questions, icon: FileQuestionMarkIcon },
       ],
    },
-   {
-      label: 'Assessment',
-      items: [
-         { title: 'Question Bank', href: '/questions', icon: CircleHelpIcon },
-         { title: 'Quizzes', href: '/quizzes', icon: ClipboardCheckIcon },
-         { title: 'Bulk Import', href: '/import', icon: UploadIcon },
-      ],
-   },
-   {
-      label: 'Business',
-      items: [
-         { title: 'Users', href: '/users', icon: UsersIcon },
-         { title: 'Plans & Prices', href: '/plans', icon: TagIcon },
-         { title: 'Payments', href: '/payments', icon: CreditCardIcon },
-      ],
-   },
+   { title: 'Plans & pricing', href: ROUTES.plans, icon: TagsIcon },
 ];
 
-export function findNavItem(pathname: string): NavItem | undefined {
-   const items = NAV_GROUPS.flatMap((group) => group.items);
-   return items.find((item) => (item.href === '/' ? pathname === '/' : pathname.startsWith(item.href)));
+export function isActivePath(pathname: string, href: string): boolean {
+   return href === ROUTES.dashboard ? pathname === href : pathname.startsWith(href);
 }

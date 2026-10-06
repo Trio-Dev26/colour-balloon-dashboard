@@ -1,18 +1,20 @@
 import { ConstructionIcon } from 'lucide-react';
+import { EmptyState } from '@/components/common/EmptyState';
+import { PageBody } from './PageBody';
+import { PageHeader } from './PageHeader';
 
 // Temporary body for routes whose screens are not built yet. Delete once every page is real.
 export function PagePlaceholder({ title, description }: { title: string; description: string }) {
    return (
-      <div className="flex flex-1 flex-col gap-6">
-         <div>
-            <h2 className="text-2xl font-semibold tracking-tight">{title}</h2>
-            <p className="text-sm text-muted-foreground">{description}</p>
-         </div>
-         <div className="flex flex-1 flex-col items-center justify-center gap-2 rounded-xl border border-dashed p-12 text-center">
-            <ConstructionIcon className="size-8 text-muted-foreground" />
-            <p className="text-sm font-medium">Screen not built yet</p>
-            <p className="text-sm text-muted-foreground">This page will be implemented from the Figma design.</p>
-         </div>
-      </div>
+      <>
+         <PageHeader title={title} description={description} />
+         <PageBody>
+            <EmptyState
+               icon={<ConstructionIcon className="size-10 text-tertiary-foreground" />}
+               title="Screen not built yet"
+               description="This page will be implemented from the Figma design."
+            />
+         </PageBody>
+      </>
    );
 }
