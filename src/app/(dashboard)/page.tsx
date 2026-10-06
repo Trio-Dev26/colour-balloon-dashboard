@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { PagePlaceholder } from '@/components/layout/page-placeholder';
+import { PagePlaceholder } from '@/components/layout/PagePlaceholder';
 
 export const metadata: Metadata = { title: 'Dashboard' };
 

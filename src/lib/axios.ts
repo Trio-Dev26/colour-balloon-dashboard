@@ -1,51 +1,15 @@
-import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
+import axios from 'axios';
+import { API_BASE_URL, API_TIMEOUT_MS } from '@/constants/api';
 
-interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
-   _retry?: boolean;
-}
-
-// Same-origin: next.config.ts rewrites /api/* to the NestJS backend.
+// Shared HTTP client. Only services/ import it.
+// No default Content-Type: axios sets JSON for plain objects itself and leaves FormData (file uploads) alone.
 const axiosApi = axios.create({
-   baseURL: '/api',
-   headers: {
-      'Content-Type': 'application/json',
-   },
-   timeout: 60000,
-   withCredentials: true,
+   baseURL: API_BASE_URL,
+   timeout: API_TIMEOUT_MS,
+   withCredentials: true, // send the auth cookies the backend will set
 });
 
-const AUTH_ROUTES = ['/auth/login', '/auth/refresh', '/auth/forgot-password'];
-
-// One refresh shared by every request that got a 401 at the same time,
-// so a rotated refresh token is never used twice.
-let refreshPromise: Promise<unknown> | null = null;
-
-axiosApi.interceptors.response.use(
-   (response) => response,
-   async (error: AxiosError) => {
-      const originalRequest = error.config as CustomAxiosRequestConfig | undefined;
-      const isAuthRoute = AUTH_ROUTES.some((route) => originalRequest?.url?.startsWith(route));
-
-      if (error.response?.status !== 401 || !originalRequest || originalRequest._retry || isAuthRoute) {
-         return Promise.reject(error);
-      }
-
-      originalRequest._retry = true;
-      try {
-         refreshPromise ??= axiosApi.post('/auth/refresh').finally(() => {
-            refreshPromise = null;
-         });
-         await refreshPromise;
-         return axiosApi(originalRequest);
-      } catch (refreshError) {
-         if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
-            // Full reload on purpose: we are outside React here, and it clears the React Query cache.
-            // eslint-disable-next-line @next/next/no-location-assign-relative-destination
-            window.location.href = '/login';
-         }
-         return Promise.reject(refreshError);
-      }
-   }
-);
+// TODO(auth): when the backend access/refresh token endpoints are ready, add a response
+// interceptor here that refreshes the token on 401 and redirects to /login if that fails.
 
 export default axiosApi;

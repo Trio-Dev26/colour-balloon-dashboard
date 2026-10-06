@@ -47,6 +47,7 @@ src/
   hooks/use-<domain>.ts          query keys + useQuery/useMutation hooks
   schemas/<domain>.schema.ts     zod form schemas (+ z.infer types)
   types/<domain>.types.ts        API/data types; shared ones in types/api.types.ts
+  stores/use<Name>Store.ts       zustand stores (client-only shared state)
   constants/                     named constants
   lib/  config/  providers/
 ```
@@ -55,15 +56,28 @@ Flow: **component → hook → service → `lib/axios`**.
 
 | Layer | May import | Must not import |
 |---|---|---|
-| `components/` | hooks, schemas, types, constants, other components | services, `lib/axios` |
-| `hooks/` | services, types | `lib/axios` |
+| `components/` | hooks, stores, schemas, types, constants, other components | services, `lib/axios` |
+| `hooks/` | services, stores, types | `lib/axios` |
+| `stores/` | types, constants | services, hooks, `lib/axios` |
 | `services/` | `lib/axios`, types | React, hooks |
 | `schemas/`, `types/`, `constants/` | each other only | anything with side effects |
 
 - Only `services/` imports `lib/axios`.
 - Every hook file exports a `<domain>Keys` object; every key starts with `<domain>Keys.all`, and every mutation invalidates `<domain>Keys.all`.
 - Server data lives only in React Query. Never copy it into `useState` or a store. Filters and pagination live in the URL (`useSearchParams`).
+- **Zustand** is only for client-only state shared across screens that isn't server data, form state, or URL state (e.g. a multi-step import wizard). Never put backend data in a store, and never call the API from a store. Single-component state stays in `useState`. One store per file, exported as a `use<Name>Store` hook.
 - Split a layer file only when it nears 300 lines (e.g. `services/module.service.ts` → `services/module/…`).
+
+### File naming
+| What | Case | Example |
+|---|---|---|
+| Component files (`components/**`, `providers/`) | PascalCase, same as the component name | `ModuleTable.tsx`, `LoginForm.tsx`, `ReactQueryProvider.tsx` |
+| Hooks | camelCase, `use` prefix | `useModules.ts` |
+| Stores | camelCase, `use…Store` | `useImportWizardStore.ts` |
+| Services, schemas, types | `<domain>.<layer>.ts` | `module.service.ts`, `module.schema.ts`, `module.types.ts` |
+| Other TS files (`lib/`, `config/`, `constants/`) | camelCase | `axios.ts`, `nav.ts` |
+
+Exceptions, never rename: Next.js special files (`page.tsx`, `layout.tsx`, `error.tsx`, `not-found.tsx`, `proxy.ts`), route folders (lowercase URL segments like `modules/`, `(dashboard)/`), and shadcn-generated files `components/ui/*` and `hooks/use-mobile.ts` (kebab-case; shadcn imports them by these names).
 
 ## 7. 100% TypeScript
 - Every file is `.ts` / `.tsx`. No `.js`/`.jsx` source files.
