@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { loginSchema, type LoginValues } from '../schema';
+import { loginSchema, type LoginValues } from '@/schemas/auth.schema';
 
 export function LoginForm() {
    const router = useRouter();
