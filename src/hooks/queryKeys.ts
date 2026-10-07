@@ -1,0 +1,27 @@
+import type { ModuleFilters } from '@/types/api/module.types';
+import type { UnitFilters } from '@/types/api/unit.types';
+
+// All React Query keys live here so hooks can invalidate each other without circular imports.
+// Every key starts with its domain's `all`, so invalidating `all` refreshes every query of that domain.
+
+export const moduleKeys = {
+   all: ['modules'] as const,
+   list: (filters: ModuleFilters) => [...moduleKeys.all, 'list', filters] as const,
+   options: () => [...moduleKeys.all, 'options'] as const,
+   detail: (id: string) => [...moduleKeys.all, 'detail', id] as const,
+};
+
+export const unitKeys = {
+   all: ['units'] as const,
+   list: (filters: UnitFilters) => [...unitKeys.all, 'list', filters] as const,
+   byModule: (moduleId: string) => [...unitKeys.all, 'module', moduleId] as const,
+   detail: (id: string) => [...unitKeys.all, 'detail', id] as const,
+};
+
+export const lessonKeys = {
+   all: ['lessons'] as const,
+   byUnit: (unitId: string) => [...lessonKeys.all, 'unit', unitId] as const,
+};
+
+/** Modules, units and lessons show each other's counts, so a change in one refreshes all three. */
+export const CURRICULUM_KEYS = [moduleKeys.all, unitKeys.all, lessonKeys.all];

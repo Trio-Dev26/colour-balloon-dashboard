@@ -75,6 +75,7 @@ src/
     ui/<name>.types.ts           types shared by several components (SelectOption, Tone, BreadcrumbEntry)
   stores/use<Name>Store.ts       zustand stores (client-only shared state)
   mocks/<domain>.mock.ts         TEMPORARY mock data until an API exists; imported only by services/
+                                 (db.mock.ts = shared in-memory store so changes show on every screen)
   constants/                     named constants
   lib/  config/  providers/
 ```
@@ -90,7 +91,7 @@ Flow: **component → hook → service → `lib/axios`**.
 | `schemas/`, `types/`, `constants/` | each other only | anything with side effects |
 
 - Only `services/` imports `lib/axios` (and `mocks/` while an endpoint is not ready). Swapping mock for API changes only the service file.
-- Every hook file exports a `<domain>Keys` object; every key starts with `<domain>Keys.all`, and every mutation invalidates `<domain>Keys.all`.
+- All query keys live in `hooks/queryKeys.ts` (`moduleKeys`, `unitKeys`, `lessonKeys`…); every key starts with its domain's `all`. Curriculum mutations (modules, units, lessons) invalidate all three domains via `useInvalidateCurriculum()`, because they show each other's counts.
 - Server data lives only in React Query. Never copy it into `useState` or a store. Filters and pagination live in the URL (`useSearchParams`).
 - **Zustand** is only for client-only state shared across screens that isn't server data, form state, or URL state (e.g. a multi-step import wizard). Never put backend data in a store, and never call the API from a store. Single-component state stays in `useState`. One store per file, exported as a `use<Name>Store` hook.
 - Never mix the two type kinds: API shapes go in `types/api/` (later replaced by Swagger-generated types), UI-only types in `types/ui/`. A props interface used by one component stays in that component's file.

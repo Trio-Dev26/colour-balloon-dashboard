@@ -32,20 +32,17 @@ export interface ModuleDetail extends ModuleListItem {
    learningOutcomeMy: string;
 }
 
-export interface UnitSummary {
-   id: string;
-   order: number;
-   code: string;
-   titleEn: string;
-   titleMy: string;
-   lessonCount: number;
-   updatedAt: string;
-}
-
 export interface ModuleFilters {
    search?: string;
    level?: string;
    category?: string;
    status?: string;
    page: number;
+}
+
+/** Lightweight module reference for pickers (GET /modules/options). */
+export interface ModuleOption {
+   id: string;
+   code: string;
+   titleEn: string;
 }

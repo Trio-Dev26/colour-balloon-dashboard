@@ -1,20 +1,9 @@
-import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import {
-   deleteModule,
-   getModule,
-   getModuleUnits,
-   getModules,
-   reorderModuleUnits,
-   updateModuleStatus,
-} from '@/services/module.service';
+import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
+import { deleteModule, getModule, getModuleOptions, getModules, updateModuleStatus } from '@/services/module.service';
 import type { ModuleFilters, ModuleStatus } from '@/types/api/module.types';
-
-export const moduleKeys = {
-   all: ['modules'] as const,
-   list: (filters: ModuleFilters) => [...moduleKeys.all, 'list', filters] as const,
-   detail: (id: string) => [...moduleKeys.all, 'detail', id] as const,
-   units: (id: string) => [...moduleKeys.all, 'detail', id, 'units'] as const,
-};
+import type { SelectOption } from '@/types/ui/common.types';
+import { moduleKeys } from './queryKeys';
+import { useInvalidateCurriculum } from './useInvalidateCurriculum';
 
 export function useModules(filters: ModuleFilters) {
    return useQuery({
@@ -24,34 +13,30 @@ export function useModules(filters: ModuleFilters) {
    });
 }
 
+/** Every module as { id, code, titleEn }, for module pickers and filters. */
+export function useModuleOptions() {
+   return useQuery({ queryKey: moduleKeys.options(), queryFn: getModuleOptions });
+}
+
 export function useModule(id: string) {
    return useQuery({ queryKey: moduleKeys.detail(id), queryFn: () => getModule(id) });
 }
 
-export function useModuleUnits(id: string) {
-   return useQuery({ queryKey: moduleKeys.units(id), queryFn: () => getModuleUnits(id) });
-}
-
 export function useUpdateModuleStatus() {
-   const queryClient = useQueryClient();
+   const invalidate = useInvalidateCurriculum();
    return useMutation({
       mutationFn: ({ id, status }: { id: string; status: ModuleStatus }) => updateModuleStatus(id, status),
-      onSuccess: () => queryClient.invalidateQueries({ queryKey: moduleKeys.all }),
+      onSuccess: invalidate,
    });
 }
 
 export function useDeleteModule() {
-   const queryClient = useQueryClient();
-   return useMutation({
-      mutationFn: (id: string) => deleteModule(id),
-      onSuccess: () => queryClient.invalidateQueries({ queryKey: moduleKeys.all }),
-   });
+   const invalidate = useInvalidateCurriculum();
+   return useMutation({ mutationFn: (id: string) => deleteModule(id), onSuccess: invalidate });
 }
 
-export function useReorderModuleUnits(moduleId: string) {
-   const queryClient = useQueryClient();
-   return useMutation({
-      mutationFn: (unitIds: string[]) => reorderModuleUnits(moduleId, unitIds),
-      onSuccess: () => queryClient.invalidateQueries({ queryKey: moduleKeys.all }),
-   });
+/** Module picker options: "M1 · Foundations of Myanmar Language". */
+export function useModuleSelectOptions(): SelectOption[] {
+   const { data = [] } = useModuleOptions();
+   return data.map((module) => ({ value: module.id, label: `${module.code} · ${module.titleEn}` }));
 }

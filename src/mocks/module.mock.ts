@@ -5,6 +5,7 @@ import type { SelectOption } from '@/types/ui/common.types';
 import type { ModuleListItem, ModuleStatus, Taxonomy } from '@/types/api/module.types';
 
 const MOCK_MODULE_COUNT = 40;
+const MAX_MOCK_UNITS = 9;
 const STATUSES: ModuleStatus[] = ['PUBLISHED', 'PUBLISHED', 'DRAFT', 'UNPUBLISHED'];
 const BASE_DATE = Date.UTC(2027, 7, 12, 5, 52); // 12 Aug 2027
 const HOUR_MS = 60 * 60 * 1000;
@@ -37,7 +38,7 @@ export const MOCK_MODULES: ModuleListItem[] = Array.from({ length: MOCK_MODULE_C
       code: `M${index + 1}`,
       titleEn: part > 1 ? `${titleEn} ${part}` : titleEn,
       titleMy: part > 1 ? `${titleMy} (${part})` : titleMy,
-      unitCount: (index % 8) + 1,
+      unitCount: index % MAX_MOCK_UNITS, // 0..8; modules 1, 10, 19, … have no units (empty state)
       level: toTaxonomy(MODULE_LEVEL_OPTIONS[index % MODULE_LEVEL_OPTIONS.length]),
       category: toTaxonomy(MODULE_CATEGORY_OPTIONS[index % MODULE_CATEGORY_OPTIONS.length]),
       status: STATUSES[index % STATUSES.length],

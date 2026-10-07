@@ -12,6 +12,8 @@ interface SelectFieldProps<T extends FieldValues> {
    placeholder: string;
    options: readonly SelectOption[];
    className?: string;
+   /** Read-only: shows the value but can't be changed (the value is still submitted). */
+   disabled?: boolean;
 }
 
 export function SelectField<T extends FieldValues>({
@@ -20,6 +22,7 @@ export function SelectField<T extends FieldValues>({
    placeholder,
    options,
    className,
+   disabled,
 }: SelectFieldProps<T>) {
    const { control, formState } = useFormContext<T>();
    const error = getFieldError(formState.errors, name);
@@ -32,6 +35,7 @@ export function SelectField<T extends FieldValues>({
             render={({ field }) => (
                <Select
                   items={options}
+                  disabled={disabled}
                   value={field.value || null}
                   onValueChange={(value) => field.onChange(value ?? '')}
                >

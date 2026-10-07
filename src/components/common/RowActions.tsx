@@ -8,7 +8,8 @@ import { ConfirmDialog } from './ConfirmDialog';
 interface RowActionsProps {
    /** Used in labels and the delete confirmation, e.g. "module". */
    entityName: string;
-   viewHref: string;
+   /** Omit to hide the view (eye) button. */
+   viewHref?: string;
    editHref: string;
    onDelete: () => void;
 }
@@ -38,15 +39,17 @@ export function RowActions({ entityName, viewHref, editHref, onDelete }: RowActi
             onConfirm={onDelete}
             destructive
          />
-         <Button
-            variant="ghost"
-            size="icon"
-            aria-label={`View ${entityName}`}
-            nativeButton={false}
-            render={<Link href={viewHref} />}
-         >
-            <EyeIcon />
-         </Button>
+         {viewHref && (
+            <Button
+               variant="ghost"
+               size="icon"
+               aria-label={`View ${entityName}`}
+               nativeButton={false}
+               render={<Link href={viewHref} />}
+            >
+               <EyeIcon />
+            </Button>
+         )}
       </div>
    );
 }
