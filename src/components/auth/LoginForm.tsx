@@ -1,27 +1,18 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { FormProvider, useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { FormProvider } from 'react-hook-form';
 import { TextField } from '@/components/common/form/TextField';
 import { Button } from '@/components/ui/button';
 import { FieldGroup } from '@/components/ui/field';
-import { ROUTES } from '@/constants/routes';
-import { loginSchema, type LoginValues } from '@/schemas/auth.schema';
+import { useLoginForm } from '@/hooks/useLoginForm';
+import type { LoginValues } from '@/schemas/auth.schema';
 
 export function LoginForm() {
-   const router = useRouter();
-   const form = useForm<LoginValues>({
-      resolver: zodResolver(loginSchema),
-      defaultValues: { email: '', password: '' },
-   });
-
-   // TODO(auth): replace with a useMutation that calls POST /api/auth/login once the backend endpoint exists.
-   const onSubmit = () => router.push(ROUTES.dashboard);
+   const { form, onSubmit, isPending } = useLoginForm();
 
    return (
       <FormProvider {...form}>
-         <form onSubmit={form.handleSubmit(onSubmit)} noValidate>
+         <form onSubmit={onSubmit} noValidate>
             <FieldGroup>
                <TextField<LoginValues> name="email" label="Email" type="email" autoComplete="email" />
                <TextField<LoginValues>
@@ -30,7 +21,7 @@ export function LoginForm() {
                   type="password"
                   autoComplete="current-password"
                />
-               <Button type="submit" size="lg" disabled={form.formState.isSubmitting} className="w-full">
+               <Button type="submit" size="lg" disabled={isPending} className="w-full">
                   Log in
                </Button>
             </FieldGroup>

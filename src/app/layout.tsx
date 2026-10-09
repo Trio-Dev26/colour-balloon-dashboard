@@ -25,7 +25,8 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<'/'>) {
    return (
       <html lang="en" className={cn('h-full antialiased font-sans', inter.variable, notoSansMyanmar.variable)}>
-         <body className="min-h-full flex flex-col">
+         {/* Extensions like Grammarly add attributes to <body> before hydration. */}
+         <body className="min-h-full flex flex-col" suppressHydrationWarning>
             <ReactQueryProvider>
                <TooltipProvider>{children}</TooltipProvider>
                <Toaster richColors position="top-right" />

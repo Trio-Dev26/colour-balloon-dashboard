@@ -1,5 +1,9 @@
+export const LOGIN_NEXT_PARAM = 'next';
+
 export const ROUTES = {
    login: '/login',
+   /** Login that returns to `next` (a path on this site) afterwards. */
+   loginReturningTo: (next: string) => `/login?${LOGIN_NEXT_PARAM}=${encodeURIComponent(next)}`,
    dashboard: '/',
    modules: '/modules',
    newModule: '/modules/new',

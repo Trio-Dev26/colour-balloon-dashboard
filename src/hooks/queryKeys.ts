@@ -23,5 +23,10 @@ export const lessonKeys = {
    byUnit: (unitId: string) => [...lessonKeys.all, 'unit', unitId] as const,
 };
 
+export const authKeys = {
+   all: ['auth'] as const,
+   me: () => [...authKeys.all, 'me'] as const,
+};
+
 /** Modules, units and lessons show each other's counts, so a change in one refreshes all three. */
 export const CURRICULUM_KEYS = [moduleKeys.all, unitKeys.all, lessonKeys.all];
