@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { cn } from '@/lib/utils';
+import { TruncatedText } from './TruncatedText';
 
 export interface DataTableColumn<TRow> {
    id: string;
@@ -61,11 +62,19 @@ export function DataTable<TRow>({ columns, rows, getRowId, emptyMessage, isLoadi
             ) : (
                rows.map((row, index) => (
                   <TableRow key={getRowId(row)}>
-                     {columns.map((column) => (
-                        <TableCell key={column.id} className={cn('h-15 px-3 text-sm', column.className)}>
-                           {column.cell(row, index)}
-                        </TableCell>
-                     ))}
+                     {columns.map((column) => {
+                        const content = column.cell(row, index);
+                        return (
+                           <TableCell key={column.id} className={cn('h-15 px-3 text-sm', column.className)}>
+                              {/* Plain text cells get "…" plus a tooltip when they don't fit the column. */}
+                              {typeof content === 'string' || typeof content === 'number' ? (
+                                 <TruncatedText text={String(content)} />
+                              ) : (
+                                 content
+                              )}
+                           </TableCell>
+                        );
+                     })}
                   </TableRow>
                ))
             )}

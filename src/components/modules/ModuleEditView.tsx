@@ -14,5 +14,5 @@ export function ModuleEditView({ moduleId }: { moduleId: string }) {
    if (isPending) return <ContentSkeleton />;
    if (!moduleDetail) return <NotFoundState entityName="module" backHref={ROUTES.modules} />;
 
-   return <ModuleForm title="Edit Module" defaultValues={moduleToFormValues(moduleDetail)} />;
+   return <ModuleForm title="Edit Module" moduleId={moduleId} defaultValues={moduleToFormValues(moduleDetail)} />;
 }

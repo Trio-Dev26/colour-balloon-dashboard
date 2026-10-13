@@ -1,56 +1,76 @@
-// Module API calls. The only layer that talks to the backend (or, for now, the mock data).
-//
-// TODO(api): when the NestJS endpoints exist, replace each function body with the axios call in
-// its comment, then delete src/mocks/. Hooks and components stay unchanged.
-import { mockDb, mockDelay, mockMatches, mockPaginate } from '@/mocks/db.mock';
-import { buildMockModuleDetail } from '@/mocks/moduleDetail.mock';
-import type { ModuleDetail, ModuleFilters, ModuleListItem, ModuleOption, ModuleStatus } from '@/types/api/module.types';
+// Module API calls (FR-CUR-001, FR-CUR-002). The only layer that talks to the backend.
+import { HttpStatusCode, isAxiosError } from 'axios';
+import axiosApi from '@/lib/axios';
+import { docToHtml, htmlToDoc } from '@/lib/richText';
+import { MODULE_PATHS } from '@/constants/api';
+import { DEFAULT_PAGE_SIZE } from '@/constants/common';
+import { mockDb, mockDelay } from '@/mocks/db.mock';
+import type {
+   ModuleDetail,
+   ModuleFilters,
+   ModuleListItem,
+   ModuleOption,
+   ModulePage,
+   ModulePayload,
+   ModuleResponse,
+   ModuleStatus,
+} from '@/types/api/module.types';
 import type { Paginated } from '@/types/api/pagination.types';
 
-// The unit count always reflects the current units, as the API would compute it.
-const withUnitCount = (module: ModuleListItem): ModuleListItem => ({
+const toDetail = (module: ModuleResponse): ModuleDetail => ({
    ...module,
-   unitCount: mockDb.units.filter((unit) => unit.moduleId === module.id).length,
+   descriptionEn: docToHtml(module.descriptionEn),
+   descriptionMy: docToHtml(module.descriptionMy),
+   learningOutcomeEn: docToHtml(module.learningOutcomeEn),
+   learningOutcomeMy: docToHtml(module.learningOutcomeMy),
 });
 
-function matchesFilters(module: ModuleListItem, { search, level, category, status }: ModuleFilters): boolean {
-   return (
-      mockMatches(search, [module.titleEn, module.titleMy, module.code]) &&
-      (!level || module.level.id === level) &&
-      (!category || module.category.id === category) &&
-      (!status || module.status === status)
-   );
-}
+const toBody = (payload: ModulePayload) => ({
+   ...payload,
+   descriptionEn: htmlToDoc(payload.descriptionEn),
+   descriptionMy: htmlToDoc(payload.descriptionMy),
+   learningOutcomeEn: htmlToDoc(payload.learningOutcomeEn),
+   learningOutcomeMy: htmlToDoc(payload.learningOutcomeMy),
+});
 
-/** (await axiosApi.get<Paginated<ModuleListItem>>('/modules', { params: { ...filters, limit } })).data */
 export async function getModules(filters: ModuleFilters): Promise<Paginated<ModuleListItem>> {
-   await mockDelay();
-   const matching = mockDb.modules.filter((module) => matchesFilters(module, filters)).map(withUnitCount);
-   return mockPaginate(matching, filters.page);
+   const { data } = await axiosApi.get<ModulePage>(MODULE_PATHS.list, {
+      params: { ...filters, limit: DEFAULT_PAGE_SIZE },
+   });
+   return { data: data.items, meta: { page: data.page, limit: data.limit, total: data.total } };
 }
 
-/** (await axiosApi.get<ModuleOption[]>('/modules/options')).data — every module, for pickers. */
+// TODO(api): mock until units are on the API too; mock units only point at mock modules, so the
+// unit screens' module picker must list those. Switch to MODULE_PATHS.list with the units API.
 export async function getModuleOptions(): Promise<ModuleOption[]> {
    await mockDelay();
    return mockDb.modules.map(({ id, code, titleEn }) => ({ id, code, titleEn }));
 }
 
-/** (await axiosApi.get<ModuleDetail>(`/modules/${id}`)).data — null when the API returns 404. */
+/** null when the module doesn't exist (404) or the id isn't a valid UUID (400). */
 export async function getModule(id: string): Promise<ModuleDetail | null> {
-   await mockDelay();
-   const index = mockDb.modules.findIndex((module) => module.id === id);
-   return index === -1 ? null : buildMockModuleDetail(withUnitCount(mockDb.modules[index]), index);
+   try {
+      return toDetail((await axiosApi.get<ModuleResponse>(MODULE_PATHS.detail(id))).data);
+   } catch (error) {
+      const status = isAxiosError(error) ? error.response?.status : undefined;
+      if (status === HttpStatusCode.NotFound || status === HttpStatusCode.BadRequest) return null;
+      throw error;
+   }
 }
 
-/** await axiosApi.patch(`/modules/${id}/status`, { status }) */
-export async function updateModuleStatus(id: string, status: ModuleStatus): Promise<void> {
-   await mockDelay();
-   mockDb.modules = mockDb.modules.map((module) => (module.id === id ? { ...module, status } : module));
+export async function createModule(payload: ModulePayload): Promise<ModuleDetail> {
+   return toDetail((await axiosApi.post<ModuleResponse>(MODULE_PATHS.list, toBody(payload))).data);
 }
 
-/** await axiosApi.delete(`/modules/${id}`) */
+export async function updateModule(id: string, payload: ModulePayload): Promise<ModuleDetail> {
+   return toDetail((await axiosApi.patch<ModuleResponse>(MODULE_PATHS.detail(id), toBody(payload))).data);
+}
+
+export async function updateModuleStatus(id: string, status: ModuleStatus): Promise<ModuleDetail> {
+   return toDetail((await axiosApi.patch<ModuleResponse>(MODULE_PATHS.status(id), { status })).data);
+}
+
+/** 409 while the module still has content (PRD Q15). */
 export async function deleteModule(id: string): Promise<void> {
-   await mockDelay();
-   mockDb.modules = mockDb.modules.filter((module) => module.id !== id);
-   mockDb.units = mockDb.units.filter((unit) => unit.moduleId !== id);
+   await axiosApi.delete(MODULE_PATHS.detail(id));
 }

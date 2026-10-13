@@ -7,32 +7,16 @@ export const MODULE_STATUS: Record<ModuleStatus, { label: string; tone: Tone }> 
    UNPUBLISHED: { label: 'Unpublished', tone: 'warning' },
 };
 
-/** URL query keys the module list filters by (besides page). */
-export const MODULE_FILTER_KEYS = ['search', 'level', 'category', 'status'] as const;
+/** URL query keys the module list filters by (besides page); same names as the API query params. */
+export const MODULE_FILTER_KEYS = ['search', 'levelId', 'categoryId', 'status'] as const;
+
+/** Same rule as the API: the suffix of LEVEL-CATEGORY-<suffix>. */
+export const MODULE_CODE_PATTERN = /^[A-Z0-9_]{1,10}$/;
 
 export const MODULE_STATUS_OPTIONS: SelectOption[] = Object.entries(MODULE_STATUS).map(([value, { label }]) => ({
    value,
    label,
 }));
-
-// TODO(api): levels and categories are fixed system values (PRD D11) but the final list is still
-// open (PRD Q17). Replace these with the seeded values from the API once the backend provides them.
-export const MODULE_LEVEL_OPTIONS: SelectOption[] = [
-   { value: 'FOUNDATION', label: 'Foundation' },
-   { value: 'BEGINNER', label: 'Beginner' },
-   { value: 'ELEMENTARY', label: 'Elementary' },
-   { value: 'INTERMEDIATE', label: 'Intermediate' },
-   { value: 'PROFESSIONAL', label: 'Professional' },
-];
-
-export const MODULE_CATEGORY_OPTIONS: SelectOption[] = [
-   { value: 'MAIN_LESSON', label: 'Main Lesson' },
-   { value: 'READING', label: 'Reading' },
-   { value: 'WRITING', label: 'Writing' },
-   { value: 'SPEAKING', label: 'Speaking' },
-   { value: 'GRAMMAR', label: 'Grammar' },
-   { value: 'POETRY', label: 'Poetry' },
-];
 
 const MEGABYTE = 1024 * 1024;
 

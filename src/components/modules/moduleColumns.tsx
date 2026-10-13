@@ -12,6 +12,7 @@ export interface ModuleRowHandlers {
 }
 
 // Column order follows the Figma module table; widths are trimmed slightly so the total fits the 1152px content area.
+// TODO(api): add back the Units (unitCount) column once the API returns it (FR-CUR-001).
 export function getModuleColumns({
    onDelete,
    onTogglePublished,
@@ -23,8 +24,7 @@ export function getModuleColumns({
          className: 'w-[300px]',
          cell: (module) => <BilingualText en={module.titleEn} my={module.titleMy} />,
       },
-      { id: 'units', header: 'Units', className: 'w-[80px]', cell: (module) => module.unitCount },
-      { id: 'code', header: 'Module code', className: 'w-[110px]', cell: (module) => module.code },
+      { id: 'code', header: 'Module code', className: 'w-[180px]', cell: (module) => module.code },
       { id: 'category', header: 'Category', className: 'w-[120px]', cell: (module) => module.category.titleEn },
       { id: 'level', header: 'Level', className: 'w-[120px]', cell: (module) => module.level.titleEn },
       {

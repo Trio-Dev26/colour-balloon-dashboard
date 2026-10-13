@@ -1,9 +1,13 @@
 'use client';
 
-import { FormProvider } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { FormProvider, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { useUnitForm } from '@/hooks/useUnitForm';
+import { useCreateUnit } from '@/hooks/useUnits';
+import { toastInvalidLanguages } from '@/lib/form';
+import { EMPTY_UNIT_FORM, unitFormSchema, type UnitFormValues } from '@/schemas/unit.schema';
 import { UnitFields } from './UnitFields';
 
 interface CreateUnitDialogProps {
@@ -26,7 +30,22 @@ export function CreateUnitDialog({ open, onOpenChange, moduleId }: CreateUnitDia
 }
 
 function CreateUnitDialogForm({ moduleId, onClose }: { moduleId?: string; onClose: () => void }) {
-   const { form, onSubmit, isSaving } = useUnitForm({ defaultValues: { moduleId }, onSaved: onClose });
+   const form = useForm<UnitFormValues>({
+      resolver: zodResolver(unitFormSchema),
+      defaultValues: { ...EMPTY_UNIT_FORM, moduleId },
+   });
+   const createUnit = useCreateUnit();
+
+   const onSubmit = form.handleSubmit(async (values) => {
+      try {
+         await createUnit.mutateAsync(values);
+         toast.success('Unit created');
+         onClose();
+      } catch {
+         // Keep the dialog open with the user's input so they can retry.
+         toast.error('Couldn’t save the unit. Please try again.');
+      }
+   }, toastInvalidLanguages);
 
    return (
       <FormProvider {...form}>
@@ -41,7 +60,7 @@ function CreateUnitDialogForm({ moduleId, onClose }: { moduleId?: string; onClos
                <Button type="button" variant="secondary" size="lg" className="font-semibold" onClick={onClose}>
                   Cancel
                </Button>
-               <Button type="submit" size="lg" className="px-3 font-semibold" disabled={isSaving}>
+               <Button type="submit" size="lg" className="px-3 font-semibold" disabled={createUnit.isPending}>
                   Save unit
                </Button>
             </DialogFooter>

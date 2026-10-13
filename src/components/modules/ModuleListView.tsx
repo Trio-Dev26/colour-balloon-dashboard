@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { MODULE_FILTER_KEYS } from '@/constants/module';
 import { useDeleteModule, useModules, useUpdateModuleStatus } from '@/hooks/useModules';
 import { useUrlFilters } from '@/hooks/useUrlFilters';
+import { apiErrorMessage } from '@/lib/form';
 import type { ModuleFilters as ModuleFilterValues } from '@/types/api/module.types';
 import { CreateModuleButton } from './CreateModuleButton';
 import { ModuleEmptyState } from './ModuleEmptyState';
@@ -33,10 +34,18 @@ export function ModuleListView() {
             onTogglePublished: (module, published) =>
                updateStatus(
                   { id: module.id, status: published ? 'PUBLISHED' : 'UNPUBLISHED' },
-                  { onSuccess: () => toast.success(`${module.titleEn} ${published ? 'published' : 'unpublished'}`) }
+                  {
+                     onSuccess: () => toast.success(`${module.titleEn} ${published ? 'published' : 'unpublished'}`),
+                     onError: (error) =>
+                        toast.error(apiErrorMessage(error, `Couldn’t change the status of ${module.titleEn}.`)),
+                  }
                ),
             onDelete: (module) =>
-               deleteModule(module.id, { onSuccess: () => toast.success(`${module.titleEn} deleted`) }),
+               deleteModule(module.id, {
+                  onSuccess: () => toast.success(`${module.titleEn} deleted`),
+                  // e.g. 409 "Module still has content and cannot be deleted"
+                  onError: (error) => toast.error(apiErrorMessage(error, `Couldn’t delete ${module.titleEn}.`)),
+               }),
          }),
       [updateStatus, deleteModule]
    );

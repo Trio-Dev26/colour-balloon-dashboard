@@ -27,7 +27,9 @@ export function useUrlFilters() {
       [searchParams, router, pathname]
    );
 
-   const page = Number(get(PAGE_KEY) ?? DEFAULT_PAGE);
+   // A hand-edited ?page=abc or ?page=0 falls back to page 1 instead of failing the API's validation.
+   const requestedPage = Number(get(PAGE_KEY));
+   const page = Number.isInteger(requestedPage) && requestedPage >= 1 ? requestedPage : DEFAULT_PAGE;
    const setPage = useCallback((next: number) => set(PAGE_KEY, next), [set]);
 
    return { get, set, page, setPage };

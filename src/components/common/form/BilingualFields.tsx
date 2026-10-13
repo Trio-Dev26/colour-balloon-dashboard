@@ -1,9 +1,11 @@
 'use client';
 
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { LanguageTabs } from '@/components/common/LanguageTabs';
 import { LANGUAGE_FIELD_SUFFIX, LANGUAGE_NAME, LANGUAGES } from '@/constants/common';
+import { getInvalidLanguages } from '@/lib/form';
+import type { LanguageCode } from '@/types/ui/common.types';
 
 interface BilingualFieldsProps {
    /**
@@ -13,19 +15,25 @@ interface BilingualFieldsProps {
    children: (suffix: 'En' | 'My', languageName: string) => ReactNode;
 }
 
-// English / မြန်မာ tabs over the same fields; a tab gets a red dot when one of its fields is invalid.
+// English / မြန်မာ tabs over the same fields; a tab gets a red dot when one of its fields is invalid,
+// and saving with errors only in the hidden tab switches to it so the field messages are visible.
 export function BilingualFields({ children }: BilingualFieldsProps) {
    const { formState } = useFormContext();
-   const invalidLanguages = LANGUAGES.map((language) => language.value).filter((language) =>
-      Object.keys(formState.errors).some((key) => key.endsWith(LANGUAGE_FIELD_SUFFIX[language]))
-   );
+   const [language, setLanguage] = useState<LanguageCode>(LANGUAGES[0].value);
+   const [handledSubmit, setHandledSubmit] = useState(formState.submitCount);
+
+   const invalidLanguages = getInvalidLanguages(formState.errors);
+
+   // Runs once per submit, during render (React's "adjust state when a prop changes" pattern).
+   if (formState.submitCount !== handledSubmit) {
+      setHandledSubmit(formState.submitCount);
+      if (invalidLanguages.length > 0 && !invalidLanguages.includes(language)) setLanguage(invalidLanguages[0]);
+   }
 
    return (
-      <LanguageTabs invalidLanguages={invalidLanguages}>
-         {(language) => (
-            <div className="flex flex-col gap-6">
-               {children(LANGUAGE_FIELD_SUFFIX[language], LANGUAGE_NAME[language])}
-            </div>
+      <LanguageTabs invalidLanguages={invalidLanguages} value={language} onValueChange={setLanguage}>
+         {(code) => (
+            <div className="flex flex-col gap-6">{children(LANGUAGE_FIELD_SUFFIX[code], LANGUAGE_NAME[code])}</div>
          )}
       </LanguageTabs>
    );

@@ -2,10 +2,8 @@
 
 import { useEffect } from 'react';
 import { EditorContent, useEditor } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import TextAlign from '@tiptap/extension-text-align';
-import { TextStyleKit } from '@tiptap/extension-text-style';
 import { Placeholder } from '@tiptap/extensions';
+import { RICH_TEXT_EXTENSIONS } from '@/lib/richText';
 import { cn } from '@/lib/utils';
 import { RichTextToolbar } from './RichTextToolbar';
 
@@ -22,12 +20,7 @@ export function RichTextEditor({ value, onChange, placeholder, invalid, id }: Ri
    const editor = useEditor({
       immediatelyRender: false, // Next.js SSR: render the editor on the client only
       shouldRerenderOnTransaction: true, // keep toolbar active states in sync
-      extensions: [
-         StarterKit.configure({ link: false }),
-         TextAlign.configure({ types: ['heading', 'paragraph'] }),
-         TextStyleKit,
-         Placeholder.configure({ placeholder }),
-      ],
+      extensions: [...RICH_TEXT_EXTENSIONS, Placeholder.configure({ placeholder })],
       content: value,
       editorProps: {
          attributes: {

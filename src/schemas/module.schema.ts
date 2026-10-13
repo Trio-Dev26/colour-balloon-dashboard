@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { MODULE_IMAGE } from '@/constants/module';
+import { MODULE_CODE_PATTERN, MODULE_IMAGE } from '@/constants/module';
 import { htmlToText } from '@/lib/form';
 import type { ModuleDetail } from '@/types/api/module.types';
 
@@ -18,10 +18,13 @@ const imageSchema = z
 
 // FR-CUR-002: level, category, code, image, and per language: title, description (optional),
 // learning goal and learning outcome.
+// TODO(api): send `image` once the API supports it.
 export const moduleFormSchema = z.object({
    levelId: required('Choose a module level'),
    categoryId: required('Choose a category'),
-   code: required('Module code is required'),
+   code: required('Module code is required')
+      .toUpperCase()
+      .regex(MODULE_CODE_PATTERN, 'Use 1–10 letters, numbers or underscores (e.g. M01)'),
    image: imageSchema,
    titleEn: required('English title is required'),
    titleMy: required('Myanmar title is required'),
@@ -55,8 +58,9 @@ export function moduleToFormValues(module: ModuleDetail): ModuleFormValues {
    return {
       levelId: module.level.id,
       categoryId: module.category.id,
-      code: module.code,
-      image: module.imageUrl,
+      // The form edits only the suffix: "M01" of BEGINNER-READING-M01.
+      code: module.code.slice(module.code.lastIndexOf('-') + 1),
+      image: null,
       titleEn: module.titleEn,
       titleMy: module.titleMy,
       descriptionEn: module.descriptionEn,

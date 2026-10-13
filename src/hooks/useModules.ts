@@ -1,6 +1,14 @@
 import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
-import { deleteModule, getModule, getModuleOptions, getModules, updateModuleStatus } from '@/services/module.service';
-import type { ModuleFilters, ModuleStatus } from '@/types/api/module.types';
+import {
+   createModule,
+   deleteModule,
+   getModule,
+   getModuleOptions,
+   getModules,
+   updateModule,
+   updateModuleStatus,
+} from '@/services/module.service';
+import type { ModuleFilters, ModulePayload, ModuleStatus } from '@/types/api/module.types';
 import type { SelectOption } from '@/types/ui/common.types';
 import { moduleKeys } from './queryKeys';
 import { useInvalidateCurriculum } from './useInvalidateCurriculum';
@@ -20,6 +28,16 @@ export function useModuleOptions() {
 
 export function useModule(id: string) {
    return useQuery({ queryKey: moduleKeys.detail(id), queryFn: () => getModule(id) });
+}
+
+export function useCreateModule() {
+   const invalidate = useInvalidateCurriculum();
+   return useMutation({ mutationFn: (payload: ModulePayload) => createModule(payload), onSuccess: invalidate });
+}
+
+export function useUpdateModule(id: string) {
+   const invalidate = useInvalidateCurriculum();
+   return useMutation({ mutationFn: (payload: ModulePayload) => updateModule(id, payload), onSuccess: invalidate });
 }
 
 export function useUpdateModuleStatus() {

@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { EllipsisIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getPageItems } from '@/lib/pagination';
@@ -10,6 +11,11 @@ interface TablePaginationProps {
 }
 
 export function TablePagination({ page, pageCount, onPageChange }: TablePaginationProps) {
+   // Past the last page (e.g. after deleting its last row, or a stale link): jump to the last page.
+   useEffect(() => {
+      if (pageCount > 0 && page > pageCount) onPageChange(pageCount);
+   }, [page, pageCount, onPageChange]);
+
    if (pageCount <= 1) return null;
 
    return (
