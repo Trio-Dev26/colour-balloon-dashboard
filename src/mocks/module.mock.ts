@@ -33,6 +33,7 @@ export const MOCK_MODULES: MockModuleRecord[] = Array.from({ length: MOCK_MODULE
       id: `module-${index + 1}`,
       code: `M${index + 1}`,
       status: 'DRAFT',
+      unitCount: 0, // only the mock lessons use these modules now
       titleEn: part > 1 ? `${titleEn} ${part}` : titleEn,
       titleMy: part > 1 ? `${titleMy} (${part})` : titleMy,
       level: LEVELS[index % LEVELS.length],

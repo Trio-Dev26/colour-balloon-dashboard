@@ -43,7 +43,7 @@ export function ModuleListView() {
             onDelete: (module) =>
                deleteModule(module.id, {
                   onSuccess: () => toast.success(`${module.titleEn} deleted`),
-                  // e.g. 409 "Module still has content and cannot be deleted"
+                  // e.g. 409 when the module was published meanwhile (D18)
                   onError: (error) => toast.error(apiErrorMessage(error, `Couldn’t delete ${module.titleEn}.`)),
                }),
          }),

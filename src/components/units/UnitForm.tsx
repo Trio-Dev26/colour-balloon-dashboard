@@ -42,6 +42,7 @@ export function UnitForm({ title, unitId, defaultValues = EMPTY_UNIT_FORM }: Uni
       <FormProvider {...form}>
          <form onSubmit={onSubmit} noValidate className="flex flex-col gap-6">
             <h2 className="text-2xl leading-7.5 font-bold tracking-[-0.5px]">{title}</h2>
+            {/* Picking another module on edit moves the unit to the end of that module. */}
             <UnitFields moduleFieldClassName="max-w-110" />
             <FormActions
                cancelHref={backHref}

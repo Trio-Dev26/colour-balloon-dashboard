@@ -1,96 +1,82 @@
-// Unit API calls (FR-CUR-004, FR-CUR-006). Mock-backed until the NestJS unit endpoints exist.
-//
-// TODO(api): replace each function body with the axios call in its comment, then delete src/mocks/.
-import { mockDb, mockDelay, mockId, mockMatches, mockPaginate } from '@/mocks/db.mock';
-import type { MockUnitRecord } from '@/mocks/unit.mock';
-import type { Paginated } from '@/types/api/pagination.types';
-import type { UnitDetail, UnitFilters, UnitListItem, UnitPayload } from '@/types/api/unit.types';
+// Unit API calls (FR-CUR-004, FR-CUR-006). The only layer that talks to the backend.
+import axiosApi, { isMissingRecord } from '@/lib/axios';
+import { toPaginated } from '@/lib/pagination';
+import { docToHtml, htmlToDoc } from '@/lib/richText';
+import { MAX_PAGE_SIZE, UNIT_PATHS } from '@/constants/api';
+import { DEFAULT_PAGE_SIZE } from '@/constants/common';
+import type { ApiPage, Paginated } from '@/types/api/pagination.types';
+import type { UnitDetail, UnitFilters, UnitListItem, UnitPayload, UnitResponse } from '@/types/api/unit.types';
+import { getModule } from './module.service';
 
-function toListItem(unit: MockUnitRecord): UnitListItem {
-   return {
-      id: unit.id,
-      moduleId: unit.moduleId,
-      moduleCode: mockDb.modules.find((module) => module.id === unit.moduleId)?.code ?? '',
-      code: unit.code,
-      order: unit.order,
-      titleEn: unit.titleEn,
-      titleMy: unit.titleMy,
-      lessonCount: mockDb.lessons.filter((lesson) => lesson.unitId === unit.id).length,
-      updatedAt: unit.updatedAt,
-   };
-}
+const toListItem = (unit: UnitResponse): UnitListItem => ({
+   id: unit.id,
+   moduleId: unit.moduleId,
+   moduleCode: unit.module.code,
+   code: unit.code,
+   order: unit.sequence,
+   titleEn: unit.titleEn,
+   titleMy: unit.titleMy,
+   lessonCount: 0, // TODO(api): lessons aren't on the API yet; use the unit's lesson count once they are.
+   updatedAt: unit.updatedAt,
+});
 
-const byNewest = (a: MockUnitRecord, b: MockUnitRecord) => b.updatedAt.localeCompare(a.updatedAt);
+const toBody = (payload: UnitPayload) => ({
+   ...payload,
+   descriptionEn: htmlToDoc(payload.descriptionEn),
+   descriptionMy: htmlToDoc(payload.descriptionMy),
+});
 
-/** (await axiosApi.get<Paginated<UnitListItem>>('/units', { params: { ...filters, limit } })).data */
+const fetchPage = async (params: UnitFilters & { limit: number }) =>
+   (await axiosApi.get<ApiPage<UnitResponse>>(UNIT_PATHS.list, { params })).data;
+
 export async function getUnits(filters: UnitFilters): Promise<Paginated<UnitListItem>> {
-   await mockDelay();
-   const matching = mockDb.units
-      .filter((unit) => !filters.moduleId || unit.moduleId === filters.moduleId)
-      .filter((unit) => mockMatches(filters.search, [unit.titleEn, unit.titleMy, unit.code]))
-      .sort(byNewest)
-      .map(toListItem);
-   return mockPaginate(matching, filters.page);
+   const page = await fetchPage({ ...filters, limit: DEFAULT_PAGE_SIZE });
+   return toPaginated({ ...page, items: page.items.map(toListItem) });
 }
 
-/** (await axiosApi.get<UnitListItem[]>(`/modules/${moduleId}/units`)).data — in unlock order. */
+/** A module's units in unlock order. */
 export async function getModuleUnits(moduleId: string): Promise<UnitListItem[]> {
-   await mockDelay();
-   return mockDb.units
-      .filter((unit) => unit.moduleId === moduleId)
-      .sort((a, b) => a.order - b.order)
-      .map(toListItem);
+   // ponytail: one page of MAX_PAGE_SIZE; page through if a module ever passes 100 units.
+   const page = await fetchPage({ moduleId, page: 1, limit: MAX_PAGE_SIZE });
+   return page.items.map(toListItem);
 }
 
-/** (await axiosApi.get<UnitDetail>(`/units/${id}`)).data — null when the API returns 404. */
+/** null when the unit doesn't exist (404) or the id isn't a valid UUID (400). */
 export async function getUnit(id: string): Promise<UnitDetail | null> {
-   await mockDelay();
-   const unit = mockDb.units.find((item) => item.id === id);
-   const parent = unit && mockDb.modules.find((module) => module.id === unit.moduleId);
-   if (!unit || !parent) return null;
+   let unit: UnitResponse;
+   try {
+      unit = (await axiosApi.get<UnitResponse>(UNIT_PATHS.detail(id))).data;
+   } catch (error) {
+      if (isMissingRecord(error)) return null;
+      throw error;
+   }
+   // The unit response has no level or category; the meta bar shows them, so read them from the module.
+   const parent = await getModule(unit.moduleId);
+   if (!parent) return null;
    const { code, titleEn, level, category } = parent;
    return {
       ...toListItem(unit),
-      descriptionEn: unit.descriptionEn,
-      descriptionMy: unit.descriptionMy,
+      descriptionEn: docToHtml(unit.descriptionEn),
+      descriptionMy: docToHtml(unit.descriptionMy),
       module: { id: parent.id, code, titleEn, level, category },
    };
 }
 
-/** (await axiosApi.post<UnitListItem>('/units', payload)).data — the backend generates the code (A-05). */
+/** The backend generates the code and puts the unit at the end of its module. */
 export async function createUnit(payload: UnitPayload): Promise<UnitListItem> {
-   await mockDelay();
-   const siblings = mockDb.units.filter((unit) => unit.moduleId === payload.moduleId);
-   const record: MockUnitRecord = {
-      ...payload,
-      id: mockId('unit'),
-      code: `U${siblings.length + 1}`,
-      order: siblings.length + 1, // new units go to the end of the unlock order (A-15)
-      updatedAt: new Date().toISOString(),
-   };
-   mockDb.units = [...mockDb.units, record];
-   return toListItem(record);
+   return toListItem((await axiosApi.post<UnitResponse>(UNIT_PATHS.list, toBody(payload))).data);
 }
 
-/** await axiosApi.patch(`/units/${id}`, payload) */
+/** A different moduleId moves the unit to the end of that module; its code stays the same. */
 export async function updateUnit(id: string, payload: UnitPayload): Promise<void> {
-   await mockDelay();
-   mockDb.units = mockDb.units.map((unit) =>
-      unit.id === id ? { ...unit, ...payload, updatedAt: new Date().toISOString() } : unit
-   );
+   await axiosApi.patch(UNIT_PATHS.detail(id), toBody(payload));
 }
 
-/** await axiosApi.delete(`/units/${id}`) */
 export async function deleteUnit(id: string): Promise<void> {
-   await mockDelay();
-   mockDb.units = mockDb.units.filter((unit) => unit.id !== id);
-   mockDb.lessons = mockDb.lessons.filter((lesson) => lesson.unitId !== id);
+   await axiosApi.delete(UNIT_PATHS.detail(id));
 }
 
-/** await axiosApi.put(`/modules/${moduleId}/units/order`, { unitIds }) — the order is the unlock order. */
+/** unitIds must list every unit of the module once; the order is the unlock order. */
 export async function reorderModuleUnits(moduleId: string, unitIds: string[]): Promise<void> {
-   await mockDelay();
-   mockDb.units = mockDb.units.map((unit) =>
-      unit.moduleId === moduleId ? { ...unit, order: unitIds.indexOf(unit.id) + 1 } : unit
-   );
+   await axiosApi.patch(UNIT_PATHS.reorder, { moduleId, unitIds });
 }

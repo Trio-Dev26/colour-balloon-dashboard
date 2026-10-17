@@ -41,4 +41,10 @@ axiosApi.interceptors.response.use(undefined, async (error: unknown) => {
    return axiosApi(config);
 });
 
+/** The record doesn't exist (404) or the id isn't a valid UUID (400). */
+export const isMissingRecord = (error: unknown) => {
+   const status = isAxiosError(error) ? error.response?.status : undefined;
+   return status === HttpStatusCode.NotFound || status === HttpStatusCode.BadRequest;
+};
+
 export default axiosApi;

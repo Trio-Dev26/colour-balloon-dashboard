@@ -4,7 +4,9 @@ import type { Taxonomy } from '@/types/api/module.types';
 import type { SelectOption } from '@/types/ui/common.types';
 import { catalogKeys } from './queryKeys';
 
-const toOptions = (items: Taxonomy[]): SelectOption[] => items.map((item) => ({ value: item.id, label: item.titleEn }));
+// Bilingual label: "Beginner (အစပြုသူ)".
+const toOptions = (items: Taxonomy[]): SelectOption[] =>
+   items.map((item) => ({ value: item.id, label: `${item.titleEn} (${item.titleMy})` }));
 
 // Fixed system values (PRD D11): fetched once per session.
 export function useLevelOptions(): SelectOption[] {

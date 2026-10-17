@@ -7,11 +7,22 @@ export const MODULE_STATUS: Record<ModuleStatus, { label: string; tone: Tone }> 
    UNPUBLISHED: { label: 'Unpublished', tone: 'warning' },
 };
 
+// Decision Log D17 (publishing) and D18 (deleting); the API enforces the same rules.
+export const MODULE_RULE_HINTS = {
+   publishNeedsUnit: 'Add at least one unit before publishing this module.',
+   deletePublished: 'This module has been published and can’t be deleted. Unpublish it instead.',
+} as const;
+
+/** Delete popup for a Draft module: everything in it is hidden too (D18). Deleted records are hidden, not erased (FR-CUR-012). */
+export const moduleDeleteDescription = (unitCount: number) => {
+   const what = unitCount
+      ? `The module and its ${unitCount} ${unitCount === 1 ? 'unit' : 'units'}, with all their lessons,`
+      : 'The module';
+   return `${what} will be hidden from admins and learners. This can’t be undone from the dashboard.`;
+};
+
 /** URL query keys the module list filters by (besides page); same names as the API query params. */
 export const MODULE_FILTER_KEYS = ['search', 'levelId', 'categoryId', 'status'] as const;
-
-/** Same rule as the API: the suffix of LEVEL-CATEGORY-<suffix>. */
-export const MODULE_CODE_PATTERN = /^[A-Z0-9_]{1,10}$/;
 
 export const MODULE_STATUS_OPTIONS: SelectOption[] = Object.entries(MODULE_STATUS).map(([value, { label }]) => ({
    value,

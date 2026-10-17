@@ -1,6 +1,8 @@
 import { BilingualText } from '@/components/common/BilingualText';
 import type { DataTableColumn } from '@/components/common/DataTable';
 import { RowActions } from '@/components/common/RowActions';
+import { EMPTY_VALUE } from '@/constants/common';
+import { MODULE_RULE_HINTS, moduleDeleteDescription } from '@/constants/module';
 import { ROUTES } from '@/constants/routes';
 import { formatDateTime } from '@/lib/format';
 import type { ModuleListItem } from '@/types/api/module.types';
@@ -11,8 +13,15 @@ export interface ModuleRowHandlers {
    onTogglePublished: (module: ModuleListItem, published: boolean) => void;
 }
 
+// D17: publishing needs at least one unit (TODO(D17): and a lesson, once lessons are on the API).
+const publishBlockedReason = (module: ModuleListItem) =>
+   module.status !== 'PUBLISHED' && module.unitCount === 0 ? MODULE_RULE_HINTS.publishNeedsUnit : undefined;
+
+// D18: only a module that was never published can be deleted.
+const deleteBlockedReason = (module: ModuleListItem) =>
+   module.status === 'DRAFT' ? undefined : MODULE_RULE_HINTS.deletePublished;
+
 // Column order follows the Figma module table; widths are trimmed slightly so the total fits the 1152px content area.
-// TODO(api): add back the Units (unitCount) column once the API returns it (FR-CUR-001).
 export function getModuleColumns({
    onDelete,
    onTogglePublished,
@@ -24,7 +33,8 @@ export function getModuleColumns({
          className: 'w-[300px]',
          cell: (module) => <BilingualText en={module.titleEn} my={module.titleMy} />,
       },
-      { id: 'code', header: 'Module code', className: 'w-[180px]', cell: (module) => module.code },
+      { id: 'code', header: 'Module code', className: 'w-[110px]', cell: (module) => module.code },
+      { id: 'units', header: 'Units', className: 'w-[70px]', cell: (module) => module.unitCount || EMPTY_VALUE },
       { id: 'category', header: 'Category', className: 'w-[120px]', cell: (module) => module.category.titleEn },
       { id: 'level', header: 'Level', className: 'w-[120px]', cell: (module) => module.level.titleEn },
       {
@@ -32,7 +42,11 @@ export function getModuleColumns({
          header: 'Status',
          className: 'w-[138px]',
          cell: (module) => (
-            <ModuleStatusCell status={module.status} onToggle={(published) => onTogglePublished(module, published)} />
+            <ModuleStatusCell
+               status={module.status}
+               onToggle={(published) => onTogglePublished(module, published)}
+               disabledReason={publishBlockedReason(module)}
+            />
          ),
       },
       {
@@ -51,6 +65,8 @@ export function getModuleColumns({
                viewHref={ROUTES.moduleDetail(module.id)}
                editHref={ROUTES.editModule(module.id)}
                onDelete={() => onDelete(module)}
+               deleteDescription={moduleDeleteDescription(module.unitCount)}
+               deleteDisabledReason={deleteBlockedReason(module)}
             />
          ),
       },

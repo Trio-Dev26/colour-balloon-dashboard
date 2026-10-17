@@ -1,4 +1,11 @@
+import type { ApiPage, Paginated } from '@/types/api/pagination.types';
+
 export type PageItem = number | 'ellipsis';
+
+export const toPaginated = <T>({ items, page, limit, total }: ApiPage<T>): Paginated<T> => ({
+   data: items,
+   meta: { page, limit, total },
+});
 
 const LEADING_PAGES = 4;
 

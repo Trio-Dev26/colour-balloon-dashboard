@@ -117,3 +117,10 @@ Exceptions, never rename: Next.js special files (`page.tsx`, `layout.tsx`, `erro
 ## 8. Before finishing any change
 - `npx tsc --noEmit` and `npm run lint` pass.
 - Re-check rule 1: no file over 300 lines.
+
+## Dashboard: run and current state
+- Run: `npm run dev` (port 3002). Checks: `npm run typecheck`, `npm run lint`.
+- `.env`: `API_URL=http://localhost:3001`. The browser only calls `/api` on this origin; `next.config.ts` rewrites it to the backend.
+- Auth: the backend sets httpOnly cookies. `src/proxy.ts` redirects to `/login` when the session cookie is missing, and `lib/axios.ts` refreshes once on a 401.
+- Routes are in `src/app/(dashboard)/`: modules, units, lessons, quizzes, questions, import, plans, payments, users.
+- Some services still use mocks. Run `grep -l "@/mocks" src/services/*` to see which. Each mocked function's comment holds the axios call that replaces it.

@@ -16,6 +16,15 @@ export const MODULE_PATHS = {
    status: (id: string) => `/admin/modules/${id}/status`,
 } as const;
 
+export const UNIT_PATHS = {
+   list: '/admin/units',
+   detail: (id: string) => `/admin/units/${id}`,
+   reorder: '/admin/units/reorder',
+} as const;
+
+/** Largest `limit` the backend accepts; used to load whole lists (module picker, a module's units). */
+export const MAX_PAGE_SIZE = 100;
+
 export const CATALOG_PATHS = {
    levels: '/levels',
    categories: '/categories',
