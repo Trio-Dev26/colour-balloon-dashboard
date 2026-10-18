@@ -13,7 +13,7 @@ export interface UnitResponse {
    descriptionEn: JSONContent;
    descriptionMy: JSONContent;
    moduleId: string;
-   module: ModuleOption & { titleMy: string };
+   module: Omit<ModuleOption, 'status'> & { titleMy: string };
    createdAt: string;
    updatedAt: string;
 }

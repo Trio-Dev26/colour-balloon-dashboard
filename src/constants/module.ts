@@ -7,10 +7,13 @@ export const MODULE_STATUS: Record<ModuleStatus, { label: string; tone: Tone }> 
    UNPUBLISHED: { label: 'Unpublished', tone: 'warning' },
 };
 
-// Decision Log D17 (publishing) and D18 (deleting); the API enforces the same rules.
+// Decision Log D17 (publishing), D18 (deleting) and D28 (moving, reordering); the API enforces the same rules.
 export const MODULE_RULE_HINTS = {
    publishNeedsUnit: 'Add at least one unit before publishing this module.',
    deletePublished: 'This module has been published and can’t be deleted. Unpublish it instead.',
+   // D28: units move between, and are reordered in, Draft modules only.
+   unitMoveLocked: 'This unit’s module has been published, so the unit can’t move to another module.',
+   reorderLocked: 'This module has been published, so its unit order is locked. New units are added at the end.',
 } as const;
 
 /** Delete popup for a Draft module: everything in it is hidden too (D18). Deleted records are hidden, not erased (FR-CUR-012). */

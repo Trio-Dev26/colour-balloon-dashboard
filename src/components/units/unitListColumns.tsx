@@ -1,6 +1,7 @@
 import { BilingualText } from '@/components/common/BilingualText';
 import type { DataTableColumn } from '@/components/common/DataTable';
 import { RowActions } from '@/components/common/RowActions';
+import { TableLink } from '@/components/common/TableLink';
 import { EMPTY_VALUE } from '@/constants/common';
 import { ROUTES } from '@/constants/routes';
 import { formatDateTime } from '@/lib/format';
@@ -22,7 +23,12 @@ export function getUnitListColumns(onDelete: (unit: UnitListItem) => void): Data
          className: 'w-[116px]',
          cell: (unit) => unit.lessonCount || EMPTY_VALUE,
       },
-      { id: 'module', header: 'Module code', className: 'w-[92px]', cell: (unit) => unit.moduleCode },
+      {
+         id: 'module',
+         header: 'Module code',
+         className: 'w-[92px]',
+         cell: (unit) => <TableLink href={ROUTES.moduleDetail(unit.moduleId)}>{unit.moduleCode}</TableLink>,
+      },
       {
          id: 'updatedAt',
          header: 'Last updated',

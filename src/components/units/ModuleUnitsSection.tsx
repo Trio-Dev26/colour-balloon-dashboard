@@ -8,14 +8,22 @@ import { InfoAlert } from '@/components/common/InfoAlert';
 import { OrderBadge } from '@/components/common/OrderBadge';
 import { OrderedChildrenSection } from '@/components/common/ordered/OrderedChildrenSection';
 import { ToneBadge } from '@/components/common/ToneBadge';
+import { MODULE_RULE_HINTS } from '@/constants/module';
 import { useDeleteUnit, useReorderModuleUnits } from '@/hooks/useUnits';
+import type { ModuleStatus } from '@/types/api/module.types';
 import type { UnitListItem } from '@/types/api/unit.types';
 import { CreateUnitDialog } from './CreateUnitDialog';
 import { getModuleUnitColumns } from './moduleUnitColumns';
 import { UnitEmptyState } from './UnitEmptyState';
 
+interface ModuleUnitsSectionProps {
+   moduleId: string;
+   moduleStatus: ModuleStatus;
+   units: UnitListItem[];
+}
+
 // Units section of the module detail page: table, "Arrange units" and the Create Unit dialog.
-export function ModuleUnitsSection({ moduleId, units }: { moduleId: string; units: UnitListItem[] }) {
+export function ModuleUnitsSection({ moduleId, moduleStatus, units }: ModuleUnitsSectionProps) {
    const [isCreateOpen, setIsCreateOpen] = useState(false);
    const reorder = useReorderModuleUnits(moduleId);
    const { mutate: deleteUnit } = useDeleteUnit();
@@ -45,6 +53,8 @@ export function ModuleUnitsSection({ moduleId, units }: { moduleId: string; unit
             emptyState={<UnitEmptyState title="No units yet!" action={createButton} />}
             arrange={{
                buttonLabel: 'Arrange units',
+               // D28: a published module's unit order is locked.
+               disabledReason: moduleStatus === 'DRAFT' ? undefined : MODULE_RULE_HINTS.reorderLocked,
                hint: 'Drag units by the handle to change the order learners unlock them in. Unit 1 is always open first.',
                isSaving: reorder.isPending,
                getHandleLabel: (unit, index) => `Move unit ${index + 1}: ${unit.titleEn}`,

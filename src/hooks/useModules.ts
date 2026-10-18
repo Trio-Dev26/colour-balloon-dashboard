@@ -8,7 +8,7 @@ import {
    updateModule,
    updateModuleStatus,
 } from '@/services/module.service';
-import type { ModuleFilters, ModulePayload, ModuleStatus } from '@/types/api/module.types';
+import type { ModuleFilters, ModuleOption, ModulePayload, ModuleStatus } from '@/types/api/module.types';
 import type { SelectOption } from '@/types/ui/common.types';
 import { moduleKeys } from './queryKeys';
 import { useInvalidateCurriculum } from './useInvalidateCurriculum';
@@ -53,8 +53,8 @@ export function useDeleteModule() {
    return useMutation({ mutationFn: (id: string) => deleteModule(id), onSuccess: invalidate });
 }
 
-/** Module picker options: "M1 · Foundations of Myanmar Language". */
-export function useModuleSelectOptions(): SelectOption[] {
+/** Module picker options: "M1 · Foundations of Myanmar Language"; `include` narrows the list. */
+export function useModuleSelectOptions(include: (module: ModuleOption) => boolean = () => true): SelectOption[] {
    const { data = [] } = useModuleOptions();
-   return data.map((module) => ({ value: module.id, label: `${module.code} · ${module.titleEn}` }));
+   return data.filter(include).map((module) => ({ value: module.id, label: `${module.code} · ${module.titleEn}` }));
 }

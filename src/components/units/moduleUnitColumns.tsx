@@ -2,6 +2,7 @@ import { BilingualText } from '@/components/common/BilingualText';
 import type { DataTableColumn } from '@/components/common/DataTable';
 import { OrderBadge } from '@/components/common/OrderBadge';
 import { RowActions } from '@/components/common/RowActions';
+import { TableLink } from '@/components/common/TableLink';
 import { ToneBadge } from '@/components/common/ToneBadge';
 import { EMPTY_VALUE } from '@/constants/common';
 import { ROUTES } from '@/constants/routes';
@@ -28,7 +29,12 @@ export function getModuleUnitColumns(onDelete: (unit: UnitListItem) => void): Da
             </div>
          ),
       },
-      { id: 'code', header: 'Unit code', className: 'w-[120px]', cell: (unit) => unit.code },
+      {
+         id: 'code',
+         header: 'Unit code',
+         className: 'w-[120px]',
+         cell: (unit) => <TableLink href={ROUTES.unitDetail(unit.id)}>{unit.code}</TableLink>,
+      },
       {
          id: 'lessons',
          header: 'No of lessons',

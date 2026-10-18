@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 import { FormActions } from '@/components/common/form/FormActions';
 import { ROUTES } from '@/constants/routes';
 import { useCreateUnit, useUpdateUnit } from '@/hooks/useUnits';
-import { toastInvalidLanguages } from '@/lib/form';
+import { apiErrorMessage, toastInvalidLanguages } from '@/lib/form';
 import { EMPTY_UNIT_FORM, unitFormSchema, type UnitFormValues } from '@/schemas/unit.schema';
 import { UnitFields } from './UnitFields';
 
@@ -32,9 +32,9 @@ export function UnitForm({ title, unitId, defaultValues = EMPTY_UNIT_FORM }: Uni
          else await createUnit.mutateAsync(values);
          toast.success(unitId ? 'Unit updated' : 'Unit created');
          router.push(backHref);
-      } catch {
-         // Keep the form open with the user's input so they can retry.
-         toast.error('Couldn’t save the unit. Please try again.');
+      } catch (error) {
+         // Keep the form open with the user's input so they can retry (e.g. 409 when a move breaks D28).
+         toast.error(apiErrorMessage(error, 'Couldn’t save the unit. Please try again.'));
       }
    }, toastInvalidLanguages);
 
@@ -42,8 +42,8 @@ export function UnitForm({ title, unitId, defaultValues = EMPTY_UNIT_FORM }: Uni
       <FormProvider {...form}>
          <form onSubmit={onSubmit} noValidate className="flex flex-col gap-6">
             <h2 className="text-2xl leading-7.5 font-bold tracking-[-0.5px]">{title}</h2>
-            {/* Picking another module on edit moves the unit to the end of that module. */}
-            <UnitFields moduleFieldClassName="max-w-110" />
+            {/* Picking another module on edit moves the unit to the end of that module (Draft modules only, D28). */}
+            <UnitFields moduleFieldClassName="max-w-110" isEditing={Boolean(unitId)} />
             <FormActions
                cancelHref={backHref}
                submitLabel="Save unit"

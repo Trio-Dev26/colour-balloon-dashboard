@@ -43,7 +43,7 @@ export async function getModuleOptions(): Promise<ModuleOption[]> {
    const { data } = await axiosApi.get<ApiPage<ModuleResponse>>(MODULE_PATHS.list, {
       params: { page: 1, limit: MAX_PAGE_SIZE },
    });
-   return data.items.map(({ id, code, titleEn }) => ({ id, code, titleEn }));
+   return data.items.map(({ id, code, titleEn, status }) => ({ id, code, titleEn, status }));
 }
 
 /** null when the module doesn't exist (404) or the id isn't a valid UUID (400). */

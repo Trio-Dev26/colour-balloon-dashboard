@@ -64,4 +64,5 @@ export interface ModuleOption {
    id: string;
    code: string;
    titleEn: string;
+   status: ModuleStatus;
 }

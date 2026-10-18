@@ -22,7 +22,7 @@ export function ModuleDetailView({ moduleId }: { moduleId: string }) {
          <ModuleMetaBar module={moduleDetail} />
          <ModuleSummary module={moduleDetail} />
          <ModuleIntroduction module={moduleDetail} />
-         <ModuleUnitsSection moduleId={moduleId} units={units} />
+         <ModuleUnitsSection moduleId={moduleId} moduleStatus={moduleDetail.status} units={units} />
       </>
    );
 }

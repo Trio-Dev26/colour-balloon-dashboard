@@ -4,6 +4,7 @@ import { useState, type ReactNode } from 'react';
 import { ArrowUpDownIcon } from 'lucide-react';
 import { DataTable, type DataTableColumn } from '@/components/common/DataTable';
 import { Button } from '@/components/ui/button';
+import { HintTooltip } from '@/components/common/HintTooltip';
 import { ArrangeList, type ArrangeListProps } from './ArrangeList';
 
 const MIN_ITEMS_TO_ARRANGE = 2;
@@ -21,6 +22,8 @@ interface OrderedChildrenSectionProps<T> {
    emptyState: ReactNode;
    arrange: Pick<ArrangeListProps<T>, 'renderItem' | 'getHandleLabel' | 'hint' | 'isSaving'> & {
       buttonLabel: string;
+      /** When set, the arrange button is disabled and this explains why on hover. */
+      disabledReason?: string;
       /** Persist the new order; the section leaves arrange mode once it resolves. */
       onSave: (ids: string[]) => Promise<unknown>;
    };
@@ -78,15 +81,17 @@ export function OrderedChildrenSection<T>({
                      <>
                         <DataTable columns={columns} rows={items} getRowId={getId} emptyMessage="" />
                         <div className="flex justify-end border-t p-3">
-                           <Button
-                              variant="outline"
-                              size="lg"
-                              disabled={items.length < MIN_ITEMS_TO_ARRANGE}
-                              onClick={() => setIsArranging(true)}
-                           >
-                              <ArrowUpDownIcon />
-                              {arrange.buttonLabel}
-                           </Button>
+                           <HintTooltip hint={arrange.disabledReason}>
+                              <Button
+                                 variant="outline"
+                                 size="lg"
+                                 disabled={items.length < MIN_ITEMS_TO_ARRANGE || Boolean(arrange.disabledReason)}
+                                 onClick={() => setIsArranging(true)}
+                              >
+                                 <ArrowUpDownIcon />
+                                 {arrange.buttonLabel}
+                              </Button>
+                           </HintTooltip>
                         </div>
                      </>
                   )}
