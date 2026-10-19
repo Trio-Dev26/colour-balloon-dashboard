@@ -14,6 +14,7 @@ export const MODULE_PATHS = {
    list: '/admin/modules',
    detail: (id: string) => `/admin/modules/${id}`,
    status: (id: string) => `/admin/modules/${id}/status`,
+   thumbnail: (id: string) => `/admin/modules/${id}/thumbnail`,
 } as const;
 
 export const UNIT_PATHS = {

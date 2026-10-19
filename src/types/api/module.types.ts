@@ -1,8 +1,6 @@
 // Shapes of the NestJS module API (/admin/modules), plus the HTML form the screens work with.
 import type { JSONContent } from '@tiptap/core';
 
-// TODO(api): image (BR-16) is in the PRD but not in the API yet.
-// Add it back here, then re-enable the hidden UI marked TODO(api).
 export type ModuleStatus = 'DRAFT' | 'PUBLISHED' | 'UNPUBLISHED';
 
 /** Fixed system values (PRD D11): levels and categories (GET /levels, GET /categories). */
@@ -23,6 +21,8 @@ export interface ModuleListItem {
    titleMy: string;
    level: Taxonomy;
    category: Taxonomy;
+   /** Signed URL of the thumbnail (valid 1 hour), or null when the module has none. */
+   thumbnailUrl: string | null;
    updatedAt: string;
 }
 

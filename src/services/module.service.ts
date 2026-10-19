@@ -4,6 +4,7 @@ import { toPaginated } from '@/lib/pagination';
 import { docToHtml, htmlToDoc } from '@/lib/richText';
 import { MAX_PAGE_SIZE, MODULE_PATHS } from '@/constants/api';
 import { DEFAULT_PAGE_SIZE } from '@/constants/common';
+import { MODULE_IMAGE } from '@/constants/module';
 import type {
    ModuleDetail,
    ModuleFilters,
@@ -68,7 +69,18 @@ export async function updateModuleStatus(id: string, status: ModuleStatus): Prom
    return toDetail((await axiosApi.patch<ModuleResponse>(MODULE_PATHS.status(id), { status })).data);
 }
 
-/** 409 while the module still has content (PRD Q15). */
+/** 409 once the module has been published (D18). */
 export async function deleteModule(id: string): Promise<void> {
    await axiosApi.delete(MODULE_PATHS.detail(id));
+}
+
+/** JPG or PNG up to 20 MB (FR-CUR-002); replaces any existing thumbnail. */
+export async function uploadModuleThumbnail(id: string, file: File): Promise<ModuleDetail> {
+   const body = new FormData();
+   body.append(MODULE_IMAGE.uploadField, file);
+   return toDetail((await axiosApi.put<ModuleResponse>(MODULE_PATHS.thumbnail(id), body)).data);
+}
+
+export async function removeModuleThumbnail(id: string): Promise<ModuleDetail> {
+   return toDetail((await axiosApi.delete<ModuleResponse>(MODULE_PATHS.thumbnail(id))).data);
 }

@@ -39,7 +39,8 @@ export function ImageUploadField({
       <>
          <ImagePreviewCard
             src={src}
-            name={isFile ? value.name : (value.split('/').pop() ?? value)}
+            // A saved image is a signed URL: show only the file name, without the query string.
+            name={isFile ? value.name : (value.split('?')[0].split('/').pop() ?? value)}
             sizeLabel={isFile ? formatFileSize(value.size) : undefined}
             hint={previewHint}
             onReplace={() => replaceInputRef.current?.click()}

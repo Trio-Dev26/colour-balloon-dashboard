@@ -3,6 +3,7 @@ import type { DataTableColumn } from '@/components/common/DataTable';
 import { RowActions } from '@/components/common/RowActions';
 import { TableLink } from '@/components/common/TableLink';
 import { EMPTY_VALUE } from '@/constants/common';
+import { unitDeleteBlockedReason } from '@/constants/module';
 import { ROUTES } from '@/constants/routes';
 import { formatDateTime } from '@/lib/format';
 import type { UnitListItem } from '@/types/api/unit.types';
@@ -45,6 +46,7 @@ export function getUnitListColumns(onDelete: (unit: UnitListItem) => void): Data
                viewHref={ROUTES.unitDetail(unit.id)}
                editHref={ROUTES.editUnit(unit.id)}
                onDelete={() => onDelete(unit)}
+               deleteDisabledReason={unitDeleteBlockedReason(unit.moduleStatus)}
             />
          ),
       },

@@ -12,6 +12,7 @@ const toListItem = (unit: UnitResponse): UnitListItem => ({
    id: unit.id,
    moduleId: unit.moduleId,
    moduleCode: unit.module.code,
+   moduleStatus: unit.module.status,
    code: unit.code,
    order: unit.sequence,
    titleEn: unit.titleEn,

@@ -1,6 +1,6 @@
 // Shapes of the NestJS unit API (/admin/units), plus the HTML form the screens work with.
 import type { JSONContent } from '@tiptap/core';
-import type { ModuleOption, Taxonomy } from './module.types';
+import type { ModuleOption, ModuleStatus, Taxonomy } from './module.types';
 
 /** A unit as the API sends it: descriptions are TipTap JSON documents. */
 export interface UnitResponse {
@@ -13,7 +13,7 @@ export interface UnitResponse {
    descriptionEn: JSONContent;
    descriptionMy: JSONContent;
    moduleId: string;
-   module: Omit<ModuleOption, 'status'> & { titleMy: string };
+   module: ModuleOption & { titleMy: string };
    createdAt: string;
    updatedAt: string;
 }
@@ -23,6 +23,8 @@ export interface UnitListItem {
    id: string;
    moduleId: string;
    moduleCode: string;
+   /** Decides what the unit allows: delete, move, reorder (D18, D28). */
+   moduleStatus: ModuleStatus;
    /** System-generated (U001), never changes (Decision Log D13). */
    code: string;
    /** Unlock position within the module, starting at 1 (FR-CUR-006). */

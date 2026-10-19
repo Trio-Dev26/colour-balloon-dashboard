@@ -5,8 +5,10 @@ import {
    getModule,
    getModuleOptions,
    getModules,
+   removeModuleThumbnail,
    updateModule,
    updateModuleStatus,
+   uploadModuleThumbnail,
 } from '@/services/module.service';
 import type { ModuleFilters, ModuleOption, ModulePayload, ModuleStatus } from '@/types/api/module.types';
 import type { SelectOption } from '@/types/ui/common.types';
@@ -44,6 +46,16 @@ export function useUpdateModuleStatus() {
    const invalidate = useInvalidateCurriculum();
    return useMutation({
       mutationFn: ({ id, status }: { id: string; status: ModuleStatus }) => updateModuleStatus(id, status),
+      onSuccess: invalidate,
+   });
+}
+
+/** A File uploads or replaces the thumbnail; null removes it. */
+export function useSetModuleThumbnail() {
+   const invalidate = useInvalidateCurriculum();
+   return useMutation({
+      mutationFn: ({ id, file }: { id: string; file: File | null }) =>
+         file ? uploadModuleThumbnail(id, file) : removeModuleThumbnail(id),
       onSuccess: invalidate,
    });
 }

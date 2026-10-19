@@ -2,6 +2,7 @@
 
 import { useMemo } from 'react';
 import { toast } from 'sonner';
+import { apiErrorMessage } from '@/lib/form';
 import { CreateButton } from '@/components/common/CreateButton';
 import { DataTable } from '@/components/common/DataTable';
 import { ListFooter } from '@/components/common/ListFooter';
@@ -32,7 +33,11 @@ export function UnitListView() {
    const columns = useMemo(
       () =>
          getUnitListColumns((unit) =>
-            deleteUnit(unit.id, { onSuccess: () => toast.success(`${unit.titleEn} deleted`) })
+            deleteUnit(unit.id, {
+               onSuccess: () => toast.success(`${unit.titleEn} deleted`),
+               // e.g. 409 when the module was published meanwhile (D18)
+               onError: (error) => toast.error(apiErrorMessage(error, `Couldn’t delete ${unit.titleEn}.`)),
+            })
          ),
       [deleteUnit]
    );
