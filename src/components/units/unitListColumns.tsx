@@ -44,7 +44,7 @@ export function getUnitListColumns(onDelete: (unit: UnitListItem) => void): Data
             <RowActions
                entityName="unit"
                viewHref={ROUTES.unitDetail(unit.id)}
-               editHref={ROUTES.editUnit(unit.id)}
+               edit={ROUTES.editUnit(unit.id)}
                onDelete={() => onDelete(unit)}
                deleteDisabledReason={unitDeleteBlockedReason(unit.moduleStatus)}
             />

@@ -19,7 +19,8 @@ export function FilterSelect({ placeholder, options, value, onValueChange, class
    return (
       <Select
          items={options}
-         value={value ?? null}
+         // Until the options load, show the placeholder rather than the raw id from the URL.
+         value={options.some((option) => option.value === value) ? value : null}
          onValueChange={(next) => onValueChange(!next || next === ALL_VALUE ? undefined : String(next))}
       >
          <SelectTrigger className={cn('h-9 w-40 data-placeholder:text-muted-foreground', className)}>

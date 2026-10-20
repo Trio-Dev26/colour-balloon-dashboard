@@ -10,8 +10,13 @@ import { ROUTES } from '@/constants/routes';
 import { formatDateTime } from '@/lib/format';
 import type { UnitListItem } from '@/types/api/unit.types';
 
-// Columns of the Units table on the module detail page.
-export function getModuleUnitColumns(onDelete: (unit: UnitListItem) => void): DataTableColumn<UnitListItem>[] {
+interface ModuleUnitRowHandlers {
+   onEdit: (unit: UnitListItem) => void;
+   onDelete: (unit: UnitListItem) => void;
+}
+
+// Columns of the Units table on the module detail page. Edit opens the Edit Unit dialog.
+export function getModuleUnitColumns({ onEdit, onDelete }: ModuleUnitRowHandlers): DataTableColumn<UnitListItem>[] {
    return [
       {
          id: 'order',
@@ -56,7 +61,7 @@ export function getModuleUnitColumns(onDelete: (unit: UnitListItem) => void): Da
             <RowActions
                entityName="unit"
                viewHref={ROUTES.unitDetail(unit.id)}
-               editHref={ROUTES.editUnit(unit.id)}
+               edit={() => onEdit(unit)}
                onDelete={() => onDelete(unit)}
                deleteDisabledReason={unitDeleteBlockedReason(unit.moduleStatus)}
             />

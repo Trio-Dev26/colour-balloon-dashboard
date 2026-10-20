@@ -2,14 +2,21 @@ import { BilingualText } from '@/components/common/BilingualText';
 import type { DataTableColumn } from '@/components/common/DataTable';
 import { OrderBadge } from '@/components/common/OrderBadge';
 import { RowActions } from '@/components/common/RowActions';
+import { EMPTY_VALUE } from '@/constants/common';
+import { lessonDeleteBlockedReason } from '@/constants/module';
 import { ROUTES } from '@/constants/routes';
 import { formatDateTime } from '@/lib/format';
 import type { LessonListItem } from '@/types/api/lesson.types';
 
-const filesLabel = (count: number) => `${count} ${count === 1 ? 'file' : 'files'} uploaded`;
+// TODO(api): the file columns show "N files uploaded" once the backend has lesson files.
 
-// Columns of the Lessons table on the unit detail page (Figma "Unit Details").
-export function getLessonColumns(onDelete: (lesson: LessonListItem) => void): DataTableColumn<LessonListItem>[] {
+interface UnitLessonRowHandlers {
+   onEdit: (lesson: LessonListItem) => void;
+   onDelete: (lesson: LessonListItem) => void;
+}
+
+// Columns of the Lessons table on the unit detail page (Figma "Unit Details"). Edit opens the Edit Lesson dialog.
+export function getLessonColumns({ onEdit, onDelete }: UnitLessonRowHandlers): DataTableColumn<LessonListItem>[] {
    return [
       {
          id: 'order',
@@ -27,13 +34,13 @@ export function getLessonColumns(onDelete: (lesson: LessonListItem) => void): Da
          id: 'student',
          header: 'Student materials',
          className: 'w-[130px]',
-         cell: (lesson) => filesLabel(lesson.studentFileCount),
+         cell: () => EMPTY_VALUE,
       },
       {
          id: 'teacher',
          header: 'Teacher guide',
          className: 'w-[130px]',
-         cell: (lesson) => filesLabel(lesson.teacherFileCount),
+         cell: () => EMPTY_VALUE,
       },
       {
          id: 'updatedAt',
@@ -44,10 +51,15 @@ export function getLessonColumns(onDelete: (lesson: LessonListItem) => void): Da
       {
          id: 'actions',
          header: 'Actions',
-         className: 'w-[100px]',
-         // TODO: point at the lesson edit route once the Lesson screens are built.
+         className: 'w-[136px]',
          cell: (lesson) => (
-            <RowActions entityName="lesson" editHref={ROUTES.lessons} onDelete={() => onDelete(lesson)} />
+            <RowActions
+               entityName="lesson"
+               viewHref={ROUTES.lessonDetail(lesson.id)}
+               edit={() => onEdit(lesson)}
+               onDelete={() => onDelete(lesson)}
+               deleteDisabledReason={lessonDeleteBlockedReason(lesson.moduleStatus)}
+            />
          ),
       },
    ];

@@ -18,9 +18,14 @@ export function UnitDetailView({ unitId }: { unitId: string }) {
 
    return (
       <>
-         <UnitMetaBar unit={unit} />
+         <UnitMetaBar
+            level={unit.module.level}
+            category={unit.module.category}
+            moduleCode={unit.module.code}
+            unitCode={unit.code}
+         />
          <EntitySummary titleEn={unit.titleEn} titleMy={unit.titleMy} description={unit.descriptionEn} />
-         <UnitLessonsSection unitId={unitId} lessons={lessons} />
+         <UnitLessonsSection unit={unit} lessons={lessons} />
       </>
    );
 }

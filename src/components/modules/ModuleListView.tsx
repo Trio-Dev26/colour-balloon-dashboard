@@ -77,13 +77,15 @@ export function ModuleListView() {
    return (
       <>
          <ModuleFilters action={<CreateModuleButton />} />
-         <DataTable
-            columns={columns}
-            rows={data?.data ?? []}
-            getRowId={(module) => module.id}
-            emptyMessage="No modules match these filters."
-            isLoading={isPending}
-         />
+         <div className="overflow-hidden rounded-lg border">
+            <DataTable
+               columns={columns}
+               rows={data?.data ?? []}
+               getRowId={(module) => module.id}
+               emptyMessage="No modules match these filters."
+               isLoading={isPending}
+            />
+         </div>
          <ListFooter
             summary={data ? `Total ${total} modules are created.` : ''}
             pagination={<TablePagination page={page} pageCount={pageCount} onPageChange={setPage} />}

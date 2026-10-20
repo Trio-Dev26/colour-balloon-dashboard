@@ -2,6 +2,7 @@
 
 import { useState, type ReactNode } from 'react';
 import { SortableList } from '@/components/common/sortable/SortableList';
+import { LoadingButton } from '@/components/common/LoadingButton';
 import { Button } from '@/components/ui/button';
 
 export interface ArrangeListProps<T> {
@@ -46,9 +47,9 @@ export function ArrangeList<T>({
             <Button variant="secondary" size="lg" onClick={onCancel} disabled={isSaving}>
                Cancel
             </Button>
-            <Button size="lg" onClick={() => onSave(orderedIds)} disabled={!hasChanges || isSaving}>
+            <LoadingButton size="lg" onClick={() => onSave(orderedIds)} disabled={!hasChanges} loading={isSaving}>
                Save order
-            </Button>
+            </LoadingButton>
          </div>
       </>
    );

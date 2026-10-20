@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { LoadingButton } from '@/components/common/LoadingButton';
 import { Button } from '@/components/ui/button';
 
 interface FormActionsProps {
@@ -20,9 +21,9 @@ export function FormActions({ cancelHref, submitLabel, isSubmitting }: FormActio
          >
             Cancel
          </Button>
-         <Button type="submit" size="lg" className="px-3 font-semibold" disabled={isSubmitting}>
+         <LoadingButton type="submit" size="lg" className="px-3 font-semibold" loading={isSubmitting}>
             {submitLabel}
-         </Button>
+         </LoadingButton>
       </div>
    );
 }

@@ -36,7 +36,8 @@ export function SelectField<T extends FieldValues>({
                <Select
                   items={options}
                   disabled={disabled}
-                  value={field.value || null}
+                  // Until the options load, show the placeholder rather than the raw id.
+                  value={options.some((option) => option.value === field.value) ? field.value : null}
                   onValueChange={(value) => field.onChange(value ?? '')}
                >
                   <SelectTrigger id={name} aria-invalid={!!error} className="h-9 w-full pl-3" onBlur={field.onBlur}>

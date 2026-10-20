@@ -17,6 +17,8 @@ export interface ModuleListItem {
    code: string;
    status: ModuleStatus;
    unitCount: number;
+   /** Lessons across all the module's units. */
+   lessonCount: number;
    titleEn: string;
    titleMy: string;
    level: Taxonomy;
