@@ -13,9 +13,12 @@ export interface ModuleRowHandlers {
    onTogglePublished: (module: ModuleListItem, published: boolean) => void;
 }
 
-// D17: publishing needs at least one unit (TODO(D17): and a lesson, once lessons are on the API).
-const publishBlockedReason = (module: ModuleListItem) =>
-   module.status !== 'PUBLISHED' && module.unitCount === 0 ? MODULE_RULE_HINTS.publishNeedsUnit : undefined;
+// D17: publishing needs at least one unit with at least one lesson.
+const publishBlockedReason = (module: ModuleListItem) => {
+   if (module.status === 'PUBLISHED') return undefined;
+   if (module.unitCount === 0) return MODULE_RULE_HINTS.publishNeedsUnit;
+   return module.lessonCount === 0 ? MODULE_RULE_HINTS.publishNeedsLesson : undefined;
+};
 
 // D18: only a module that was never published can be deleted.
 const deleteBlockedReason = (module: ModuleListItem) =>
@@ -63,9 +66,9 @@ export function getModuleColumns({
             <RowActions
                entityName="module"
                viewHref={ROUTES.moduleDetail(module.id)}
-               editHref={ROUTES.editModule(module.id)}
+               edit={ROUTES.editModule(module.id)}
                onDelete={() => onDelete(module)}
-               deleteDescription={moduleDeleteDescription(module.unitCount)}
+               deleteDescription={moduleDeleteDescription(module.unitCount, module.lessonCount)}
                deleteDisabledReason={deleteBlockedReason(module)}
             />
          ),

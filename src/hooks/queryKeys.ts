@@ -1,3 +1,4 @@
+import type { LessonFilters } from '@/types/api/lesson.types';
 import type { ModuleFilters } from '@/types/api/module.types';
 import type { UnitFilters } from '@/types/api/unit.types';
 
@@ -15,11 +16,15 @@ export const unitKeys = {
    all: ['units'] as const,
    list: (filters: UnitFilters) => [...unitKeys.all, 'list', filters] as const,
    byModule: (moduleId: string) => [...unitKeys.all, 'module', moduleId] as const,
+   /** Picker options; no moduleId = every unit. */
+   options: (moduleId?: string) => [...unitKeys.all, 'options', moduleId ?? 'all'] as const,
    detail: (id: string) => [...unitKeys.all, 'detail', id] as const,
 };
 
 export const lessonKeys = {
    all: ['lessons'] as const,
+   list: (filters: LessonFilters) => [...lessonKeys.all, 'list', filters] as const,
+   detail: (id: string) => [...lessonKeys.all, 'detail', id] as const,
    byUnit: (unitId: string) => [...lessonKeys.all, 'unit', unitId] as const,
 };
 

@@ -17,7 +17,7 @@ const toListItem = (unit: UnitResponse): UnitListItem => ({
    order: unit.sequence,
    titleEn: unit.titleEn,
    titleMy: unit.titleMy,
-   lessonCount: 0, // TODO(api): lessons aren't on the API yet; use the unit's lesson count once they are.
+   lessonCount: unit.lessonCount,
    updatedAt: unit.updatedAt,
 });
 
@@ -35,12 +35,15 @@ export async function getUnits(filters: UnitFilters): Promise<Paginated<UnitList
    return toPaginated({ ...page, items: page.items.map(toListItem) });
 }
 
-/** A module's units in unlock order. */
-export async function getModuleUnits(moduleId: string): Promise<UnitListItem[]> {
-   // ponytail: one page of MAX_PAGE_SIZE; page through if a module ever passes 100 units.
+/** Units for pickers: a module's units in unlock order, or every unit when no module is given. */
+export async function getUnitOptions(moduleId?: string): Promise<UnitListItem[]> {
+   // ponytail: one page of MAX_PAGE_SIZE; page through if there are ever more than 100 units.
    const page = await fetchPage({ moduleId, page: 1, limit: MAX_PAGE_SIZE });
    return page.items.map(toListItem);
 }
+
+/** A module's units in unlock order. */
+export const getModuleUnits = (moduleId: string): Promise<UnitListItem[]> => getUnitOptions(moduleId);
 
 /** null when the unit doesn't exist (404) or the id isn't a valid UUID (400). */
 export async function getUnit(id: string): Promise<UnitDetail | null> {

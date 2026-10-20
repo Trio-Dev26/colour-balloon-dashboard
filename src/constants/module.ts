@@ -10,17 +10,23 @@ export const MODULE_STATUS: Record<ModuleStatus, { label: string; tone: Tone }> 
 // Decision Log D17 (publishing), D18 (deleting) and D28 (moving, reordering); the API enforces the same rules.
 export const MODULE_RULE_HINTS = {
    publishNeedsUnit: 'Add at least one unit before publishing this module.',
+   publishNeedsLesson: 'Add at least one lesson to a unit before publishing this module.',
    deletePublished: 'This module has been published and can’t be deleted. Unpublish it instead.',
    // D28: units move between, and are reordered in, Draft modules only.
    unitMoveLocked: 'This unit’s module has been published, so the unit can’t move to another module.',
    reorderLocked: 'This module has been published, so its unit order is locked. New units are added at the end.',
    unitDeletePublished: 'This unit’s module has been published, so the unit can’t be deleted.',
+   lessonMoveLocked: 'This lesson’s module has been published, so the lesson can’t move to another unit.',
+   lessonReorderLocked:
+      'This lesson’s module has been published, so the lesson order is locked. New lessons are added at the end.',
+   lessonDeletePublished: 'This lesson’s module has been published, so the lesson can’t be deleted.',
 } as const;
 
 /** Delete popup for a Draft module: everything in it is hidden too (D18). Deleted records are hidden, not erased (FR-CUR-012). */
-export const moduleDeleteDescription = (unitCount: number) => {
+export const moduleDeleteDescription = (unitCount: number, lessonCount: number) => {
+   const count = (n: number, noun: string) => `${n} ${n === 1 ? noun : `${noun}s`}`;
    const what = unitCount
-      ? `The module and its ${unitCount} ${unitCount === 1 ? 'unit' : 'units'}, with all their lessons,`
+      ? `The module and its ${count(unitCount, 'unit')} and ${count(lessonCount, 'lesson')}`
       : 'The module';
    return `${what} will be hidden from admins and learners. This can’t be undone from the dashboard.`;
 };
@@ -49,3 +55,7 @@ export const MODULE_IMAGE = {
 /** D18: a unit in a published module can't be deleted. TODO(D18): allow it once progress shows no student started it. */
 export const unitDeleteBlockedReason = (moduleStatus: ModuleStatus) =>
    moduleStatus === 'DRAFT' ? undefined : MODULE_RULE_HINTS.unitDeletePublished;
+
+/** D18, same rule as units. TODO(D18): allow it once progress shows no student started the lesson. */
+export const lessonDeleteBlockedReason = (moduleStatus: ModuleStatus) =>
+   moduleStatus === 'DRAFT' ? undefined : MODULE_RULE_HINTS.lessonDeletePublished;

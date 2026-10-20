@@ -23,6 +23,12 @@ export const UNIT_PATHS = {
    reorder: '/admin/units/reorder',
 } as const;
 
+export const LESSON_PATHS = {
+   list: '/admin/lessons',
+   detail: (id: string) => `/admin/lessons/${id}`,
+   reorder: '/admin/lessons/reorder',
+} as const;
+
 /** Largest `limit` the backend accepts; used to load whole lists (module picker, a module's units). */
 export const MAX_PAGE_SIZE = 100;
 

@@ -15,22 +15,27 @@ export function useUrlFilters() {
 
    const get = useCallback((key: string) => searchParams.get(key) ?? undefined, [searchParams]);
 
-   const set = useCallback(
-      (key: string, value: string | number | undefined) => {
+   /** Changes several keys in one navigation, e.g. a new module also clears the unit filter. */
+   const setMany = useCallback(
+      (values: Record<string, string | number | undefined>) => {
          const params = new URLSearchParams(searchParams);
-         if (value === undefined || value === '') params.delete(key);
-         else params.set(key, String(value));
-         if (key !== PAGE_KEY) params.delete(PAGE_KEY);
+         for (const [key, value] of Object.entries(values)) {
+            if (value === undefined || value === '') params.delete(key);
+            else params.set(key, String(value));
+         }
+         if (!(PAGE_KEY in values)) params.delete(PAGE_KEY);
          const query = params.toString();
          router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
       },
       [searchParams, router, pathname]
    );
 
+   const set = useCallback((key: string, value: string | number | undefined) => setMany({ [key]: value }), [setMany]);
+
    // A hand-edited ?page=abc or ?page=0 falls back to page 1 instead of failing the API's validation.
    const requestedPage = Number(get(PAGE_KEY));
    const page = Number.isInteger(requestedPage) && requestedPage >= 1 ? requestedPage : DEFAULT_PAGE;
    const setPage = useCallback((next: number) => set(PAGE_KEY, next), [set]);
 
-   return { get, set, page, setPage };
+   return { get, set, setMany, page, setPage };
 }

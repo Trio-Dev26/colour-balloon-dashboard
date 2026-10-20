@@ -13,7 +13,7 @@ import { MODULE_RULE_HINTS } from '@/constants/module';
 import { useDeleteUnit, useReorderModuleUnits } from '@/hooks/useUnits';
 import type { ModuleStatus } from '@/types/api/module.types';
 import type { UnitListItem } from '@/types/api/unit.types';
-import { CreateUnitDialog } from './CreateUnitDialog';
+import { UnitFormDialog } from './UnitFormDialog';
 import { getModuleUnitColumns } from './moduleUnitColumns';
 import { UnitEmptyState } from './UnitEmptyState';
 
@@ -23,23 +23,26 @@ interface ModuleUnitsSectionProps {
    units: UnitListItem[];
 }
 
-// Units section of the module detail page: table, "Arrange units" and the Create Unit dialog.
+// Units section of the module detail page: table, "Arrange units" and the Create / Edit Unit dialog.
 export function ModuleUnitsSection({ moduleId, moduleStatus, units }: ModuleUnitsSectionProps) {
-   const [isCreateOpen, setIsCreateOpen] = useState(false);
+   // null = closed, {} = create, { unitId } = edit.
+   const [dialog, setDialog] = useState<{ unitId?: string } | null>(null);
    const reorder = useReorderModuleUnits(moduleId);
    const { mutate: deleteUnit } = useDeleteUnit();
    const columns = useMemo(
       () =>
-         getModuleUnitColumns((unit) =>
-            deleteUnit(unit.id, {
-               onSuccess: () => toast.success(`${unit.titleEn} deleted`),
-               // e.g. 409 when the module was published meanwhile (D18)
-               onError: (error) => toast.error(apiErrorMessage(error, `Couldn’t delete ${unit.titleEn}.`)),
-            })
-         ),
+         getModuleUnitColumns({
+            onEdit: (unit) => setDialog({ unitId: unit.id }),
+            onDelete: (unit) =>
+               deleteUnit(unit.id, {
+                  onSuccess: () => toast.success(`${unit.titleEn} deleted`),
+                  // e.g. 409 when the module was published meanwhile (D18)
+                  onError: (error) => toast.error(apiErrorMessage(error, `Couldn’t delete ${unit.titleEn}.`)),
+               }),
+         }),
       [deleteUnit]
    );
-   const createButton = <CreateButton label="Create unit" onClick={() => setIsCreateOpen(true)} />;
+   const createButton = <CreateButton label="Create unit" onClick={() => setDialog({})} />;
 
    return (
       <>
@@ -74,7 +77,12 @@ export function ModuleUnitsSection({ moduleId, moduleStatus, units }: ModuleUnit
                onSave: (ids) => reorder.mutateAsync(ids).then(() => toast.success('Unit order saved')),
             }}
          />
-         <CreateUnitDialog open={isCreateOpen} onOpenChange={setIsCreateOpen} moduleId={moduleId} />
+         <UnitFormDialog
+            open={dialog !== null}
+            onOpenChange={(open) => !open && setDialog(null)}
+            moduleId={moduleId}
+            unitId={dialog?.unitId}
+         />
       </>
    );
 }

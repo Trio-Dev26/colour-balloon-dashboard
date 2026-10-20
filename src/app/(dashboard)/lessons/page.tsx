@@ -1,8 +1,21 @@
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
-import { PagePlaceholder } from '@/components/layout/PagePlaceholder';
+import { LessonListView } from '@/components/lessons/LessonListView';
+import { PageBody } from '@/components/layout/PageBody';
+import { PageHeader } from '@/components/layout/PageHeader';
 
 export const metadata: Metadata = { title: 'Lessons' };
 
 export default function LessonsPage() {
-   return <PagePlaceholder title="Lessons" description="Manage lessons and their student and teacher files." />;
+   return (
+      <>
+         <PageHeader title="Lesson" description="Create new lessons and assign to a unit." />
+         <PageBody>
+            {/* Suspense: the list reads its filters from the URL (useSearchParams). */}
+            <Suspense>
+               <LessonListView />
+            </Suspense>
+         </PageBody>
+      </>
+   );
 }

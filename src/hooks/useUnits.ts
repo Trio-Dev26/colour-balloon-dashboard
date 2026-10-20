@@ -4,11 +4,13 @@ import {
    deleteUnit,
    getModuleUnits,
    getUnit,
+   getUnitOptions,
    getUnits,
    reorderModuleUnits,
    updateUnit,
 } from '@/services/unit.service';
 import type { UnitFilters, UnitPayload } from '@/types/api/unit.types';
+import type { SelectOption } from '@/types/ui/common.types';
 import { unitKeys } from './queryKeys';
 import { useInvalidateCurriculum } from './useInvalidateCurriculum';
 
@@ -23,6 +25,20 @@ export function useUnits(filters: UnitFilters) {
 /** A module's units in unlock order (module detail page). */
 export function useModuleUnits(moduleId: string) {
    return useQuery({ queryKey: unitKeys.byModule(moduleId), queryFn: () => getModuleUnits(moduleId) });
+}
+
+/** Units for a picker: the module's units, or every unit when no module is chosen. */
+export function useUnitOptions(moduleId?: string) {
+   return useQuery({
+      queryKey: unitKeys.options(moduleId || undefined),
+      queryFn: () => getUnitOptions(moduleId || undefined),
+   });
+}
+
+/** Unit picker options, same scope as useUnitOptions. */
+export function useUnitSelectOptions(moduleId?: string): SelectOption[] {
+   const { data = [] } = useUnitOptions(moduleId);
+   return data.map((unit) => ({ value: unit.id, label: `${unit.code} · ${unit.titleEn}` }));
 }
 
 export function useUnit(id: string) {

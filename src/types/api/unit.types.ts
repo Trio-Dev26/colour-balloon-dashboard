@@ -14,6 +14,8 @@ export interface UnitResponse {
    descriptionMy: JSONContent;
    moduleId: string;
    module: ModuleOption & { titleMy: string };
+   /** Live (not deleted) lessons in the unit. */
+   lessonCount: number;
    createdAt: string;
    updatedAt: string;
 }
