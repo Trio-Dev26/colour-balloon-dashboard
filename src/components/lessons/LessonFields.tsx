@@ -21,7 +21,7 @@ const isDraft = (module: ModuleOption) => module.status === 'DRAFT';
 interface LessonFieldsProps {
    /** Editing a saved lesson: moving it is limited to Draft modules (D28). */
    isEditing?: boolean;
-   /** Locks both pickers (Create Lesson dialog opened from a unit's page). */
+   /** Locks both pickers (Create / Edit Lesson dialog on a unit's page). */
    isUnitLocked?: boolean;
 }
 

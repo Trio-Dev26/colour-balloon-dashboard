@@ -16,8 +16,8 @@ interface UnitDialogFormProps {
    onClose: () => void;
 }
 
-// Create / Edit Unit form inside a dialog (Figma "Create Unit"). Create locks the module to the page's module;
-// edit offers a move to another Draft module, like the full Edit Unit page (D28).
+// Create / Edit Unit form inside a dialog on the module detail page (Figma "Create Unit"). The module is
+// locked to the page's module; moving a unit to another module is done on the full Edit Unit page (D28).
 export function UnitDialogForm({ unitId, defaultValues, onClose }: UnitDialogFormProps) {
    const form = useForm<UnitFormValues>({ resolver: zodResolver(unitFormSchema), defaultValues });
    const createUnit = useCreateUnit();
@@ -44,7 +44,7 @@ export function UnitDialogForm({ unitId, defaultValues, onClose }: UnitDialogFor
             onSubmit={onSubmit}
             onCancel={onClose}
          >
-            {unitId ? <UnitFields isEditing /> : <UnitFields isModuleLocked={Boolean(defaultValues.moduleId)} />}
+            <UnitFields isModuleLocked />
          </DialogForm>
       </FormProvider>
    );
