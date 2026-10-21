@@ -9,19 +9,25 @@ interface FileDropzoneProps {
    accept: string;
    /** Shown under the instructions, e.g. "Supported formats: JPG, PNG (Max 20 MB)". */
    hint: string;
-   onFileSelect: (file: File) => void;
+   /** Gets one file, or every picked file when `multiple` is set. */
+   onFilesSelect: (files: File[]) => void;
+   multiple?: boolean;
    invalid?: boolean;
 }
 
-export function FileDropzone({ accept, hint, onFileSelect, invalid }: FileDropzoneProps) {
+export function FileDropzone({ accept, hint, onFilesSelect, multiple, invalid }: FileDropzoneProps) {
    const inputRef = useRef<HTMLInputElement>(null);
    const [isDragging, setIsDragging] = useState(false);
+
+   const select = (list: FileList | null) => {
+      const files = Array.from(list ?? []).slice(0, multiple ? undefined : 1);
+      if (files.length > 0) onFilesSelect(files);
+   };
 
    const handleDrop = (event: DragEvent<HTMLDivElement>) => {
       event.preventDefault();
       setIsDragging(false);
-      const file = event.dataTransfer.files[0];
-      if (file) onFileSelect(file);
+      select(event.dataTransfer.files);
    };
 
    return (
@@ -43,7 +49,7 @@ export function FileDropzone({ accept, hint, onFileSelect, invalid }: FileDropzo
          )}
       >
          <CloudUploadIcon className="size-6 text-primary" />
-         <p className="font-medium text-muted-foreground">Drag and drop file here</p>
+         <p className="font-medium text-muted-foreground">Drag and drop {multiple ? 'files' : 'file'} here</p>
          <p className="text-muted-foreground">or click to browse</p>
          <p className="text-placeholder">{hint}</p>
          <span className="rounded-md bg-accent px-2.5 py-1 font-medium text-accent-foreground">Browse files</span>
@@ -51,10 +57,10 @@ export function FileDropzone({ accept, hint, onFileSelect, invalid }: FileDropzo
             ref={inputRef}
             type="file"
             accept={accept}
+            multiple={multiple}
             className="hidden"
             onChange={(event) => {
-               const file = event.target.files?.[0];
-               if (file) onFileSelect(file);
+               select(event.target.files);
                event.target.value = '';
             }}
          />

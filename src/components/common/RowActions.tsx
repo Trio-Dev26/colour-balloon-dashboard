@@ -11,6 +11,8 @@ interface RowActionsProps {
    entityName: string;
    /** Omit to hide the view (eye) button. */
    viewHref?: string;
+   /** Open the view link in a new tab (e.g. a file preview). */
+   viewInNewTab?: boolean;
    /** Where Edit goes: a page link, or a callback that opens an edit dialog. */
    edit: string | (() => void);
    onDelete: () => void;
@@ -24,6 +26,7 @@ interface RowActionsProps {
 export function RowActions({
    entityName,
    viewHref,
+   viewInNewTab,
    edit,
    onDelete,
    deleteDescription = `The ${entityName} will be hidden from admins and learners. This can’t be undone from the dashboard.`,
@@ -70,7 +73,13 @@ export function RowActions({
                size="icon"
                aria-label={`View ${entityName}`}
                nativeButton={false}
-               render={<Link href={viewHref} />}
+               render={
+                  viewInNewTab ? (
+                     <a href={viewHref} target="_blank" rel="noopener noreferrer" />
+                  ) : (
+                     <Link href={viewHref} />
+                  )
+               }
             >
                <EyeIcon />
             </Button>

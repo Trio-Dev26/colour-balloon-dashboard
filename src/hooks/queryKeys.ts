@@ -28,6 +28,11 @@ export const lessonKeys = {
    byUnit: (unitId: string) => [...lessonKeys.all, 'unit', unitId] as const,
 };
 
+export const lessonFileKeys = {
+   all: ['lessonFiles'] as const,
+   byLesson: (lessonId: string) => [...lessonFileKeys.all, 'lesson', lessonId] as const,
+};
+
 export const catalogKeys = {
    all: ['catalog'] as const,
    levels: () => [...catalogKeys.all, 'levels'] as const,

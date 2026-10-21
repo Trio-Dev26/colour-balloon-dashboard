@@ -29,6 +29,16 @@ export const LESSON_PATHS = {
    reorder: '/admin/lessons/reorder',
 } as const;
 
+export const LESSON_FILE_PATHS = {
+   list: (lessonId: string) => `/admin/lessons/${lessonId}/files`,
+   uploadUrl: (lessonId: string) => `/admin/lessons/${lessonId}/files/upload-url`,
+   reorder: (lessonId: string) => `/admin/lessons/${lessonId}/files/reorder`,
+   detail: (lessonId: string, fileId: string) => `/admin/lessons/${lessonId}/files/${fileId}`,
+} as const;
+
+/** No timeout for the direct-to-storage PUT: a 200 MB upload outlives API_TIMEOUT_MS. */
+export const UPLOAD_TIMEOUT_MS = 0;
+
 /** Largest `limit` the backend accepts; used to load whole lists (module picker, a module's units). */
 export const MAX_PAGE_SIZE = 100;
 

@@ -29,8 +29,15 @@ export interface LessonResponse {
          category: Taxonomy;
       };
    };
+   fileCounts: LessonFileCounts;
    createdAt: string;
    updatedAt: string;
+}
+
+/** Files per audience: groups starting with STUDENT / TEACHER (FR-FILE-001). */
+export interface LessonFileCounts {
+   student: number;
+   teacher: number;
 }
 
 /** Row in the lesson list and in a unit's Lessons table. */
@@ -48,6 +55,7 @@ export interface LessonListItem {
    order: number;
    titleEn: string;
    titleMy: string;
+   fileCounts: LessonFileCounts;
    updatedAt: string;
 }
 

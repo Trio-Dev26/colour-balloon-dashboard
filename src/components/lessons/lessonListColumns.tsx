@@ -2,14 +2,13 @@ import { BilingualText } from '@/components/common/BilingualText';
 import type { DataTableColumn } from '@/components/common/DataTable';
 import { RowActions } from '@/components/common/RowActions';
 import { TableLink } from '@/components/common/TableLink';
-import { EMPTY_VALUE } from '@/constants/common';
+import { fileCountLabel } from '@/constants/lessonFile';
 import { lessonDeleteBlockedReason } from '@/constants/module';
 import { ROUTES } from '@/constants/routes';
 import { formatDateTime } from '@/lib/format';
 import type { LessonListItem } from '@/types/api/lesson.types';
 
 // Columns of the lesson list page (Figma "Lessons" table).
-// TODO(api): the file columns show "N files" once the backend has lesson files.
 export function getLessonListColumns(onDelete: (lesson: LessonListItem) => void): DataTableColumn<LessonListItem>[] {
    return [
       {
@@ -18,8 +17,18 @@ export function getLessonListColumns(onDelete: (lesson: LessonListItem) => void)
          className: 'w-[383px]',
          cell: (lesson) => <BilingualText en={lesson.titleEn} my={lesson.titleMy} />,
       },
-      { id: 'student', header: 'Student materials', className: 'w-[148px]', cell: () => EMPTY_VALUE },
-      { id: 'teacher', header: 'Teacher guide', className: 'w-[117px]', cell: () => EMPTY_VALUE },
+      {
+         id: 'student',
+         header: 'Student materials',
+         className: 'w-[148px]',
+         cell: (lesson) => fileCountLabel(lesson.fileCounts.student),
+      },
+      {
+         id: 'teacher',
+         header: 'Teacher guide',
+         className: 'w-[117px]',
+         cell: (lesson) => fileCountLabel(lesson.fileCounts.teacher),
+      },
       {
          id: 'unit',
          header: 'Unit code',

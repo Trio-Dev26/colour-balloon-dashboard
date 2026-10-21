@@ -31,7 +31,14 @@ export function ImageUploadField({
    const src = useObjectUrl(value);
 
    if (!value || !src) {
-      return <FileDropzone accept={accept} hint={dropzoneHint} onFileSelect={onChange} invalid={invalid} />;
+      return (
+         <FileDropzone
+            accept={accept}
+            hint={dropzoneHint}
+            onFilesSelect={([file]) => onChange(file)}
+            invalid={invalid}
+         />
+      );
    }
 
    const isFile = value instanceof File;

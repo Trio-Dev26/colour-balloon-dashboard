@@ -6,9 +6,9 @@ import { NotFoundState } from '@/components/common/NotFoundState';
 import { UnitMetaBar } from '@/components/units/UnitMetaBar';
 import { ROUTES } from '@/constants/routes';
 import { useLesson } from '@/hooks/useLessons';
+import { LessonFilesSection } from './LessonFilesSection';
 
-// Figma "Lesson Details": meta pills, then the lesson's titles and description.
-// TODO(api): the "Lesson Files" section (student materials / teacher guide uploads) once the backend has lesson files.
+// Figma "Lesson Details": meta pills, the lesson's titles and description, then its files.
 export function LessonDetailView({ lessonId }: { lessonId: string }) {
    const { data: lesson, isPending } = useLesson(lessonId);
 
@@ -24,6 +24,7 @@ export function LessonDetailView({ lessonId }: { lessonId: string }) {
             unitCode={lesson.unitCode}
          />
          <EntitySummary titleEn={lesson.titleEn} titleMy={lesson.titleMy} description={lesson.descriptionEn} />
+         <LessonFilesSection lessonId={lesson.id} />
       </>
    );
 }

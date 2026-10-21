@@ -2,13 +2,14 @@ import { BilingualText } from '@/components/common/BilingualText';
 import type { DataTableColumn } from '@/components/common/DataTable';
 import { OrderBadge } from '@/components/common/OrderBadge';
 import { RowActions } from '@/components/common/RowActions';
-import { EMPTY_VALUE } from '@/constants/common';
+import { fileCountLabel } from '@/constants/lessonFile';
 import { lessonDeleteBlockedReason } from '@/constants/module';
 import { ROUTES } from '@/constants/routes';
 import { formatDateTime } from '@/lib/format';
 import type { LessonListItem } from '@/types/api/lesson.types';
 
-// TODO(api): the file columns show "N files uploaded" once the backend has lesson files.
+// Figma "Unit Details" file columns: "3 files uploaded".
+const UPLOADED = ' uploaded';
 
 interface UnitLessonRowHandlers {
    onEdit: (lesson: LessonListItem) => void;
@@ -34,13 +35,13 @@ export function getLessonColumns({ onEdit, onDelete }: UnitLessonRowHandlers): D
          id: 'student',
          header: 'Student materials',
          className: 'w-[130px]',
-         cell: () => EMPTY_VALUE,
+         cell: (lesson) => fileCountLabel(lesson.fileCounts.student, UPLOADED),
       },
       {
          id: 'teacher',
          header: 'Teacher guide',
          className: 'w-[130px]',
-         cell: () => EMPTY_VALUE,
+         cell: (lesson) => fileCountLabel(lesson.fileCounts.teacher, UPLOADED),
       },
       {
          id: 'updatedAt',

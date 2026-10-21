@@ -1,4 +1,4 @@
-import { isAxiosError } from 'axios';
+import { HttpStatusCode, isAxiosError } from 'axios';
 import type { FieldError, FieldErrors, FieldValues } from 'react-hook-form';
 import { toast } from 'sonner';
 import { LANGUAGE_FIELD_SUFFIX, LANGUAGES } from '@/constants/common';
@@ -25,6 +25,10 @@ export function apiErrorMessage(error: unknown, fallback: string): string {
    if (Array.isArray(message)) return message.join(', ');
    return typeof message === 'string' ? message : fallback;
 }
+
+/** The backend rejected the input itself (400): sending the same again would fail again. */
+export const isRejectedInput = (error: unknown) =>
+   isAxiosError(error) && error.response?.status === HttpStatusCode.BadRequest;
 
 /** Error for a top-level field name. */
 export function getFieldError<T extends FieldValues>(errors: FieldErrors<T>, name: string): FieldError | undefined {

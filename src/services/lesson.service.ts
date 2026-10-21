@@ -24,6 +24,7 @@ const toListItem = (lesson: LessonResponse): LessonListItem => ({
    order: lesson.sequence,
    titleEn: lesson.titleEn,
    titleMy: lesson.titleMy,
+   fileCounts: lesson.fileCounts,
    updatedAt: lesson.updatedAt,
 });
 
