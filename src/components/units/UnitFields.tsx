@@ -13,7 +13,7 @@ import type { ModuleOption } from '@/types/api/module.types';
 
 interface UnitFieldsProps {
    moduleFieldClassName?: string;
-   /** Locks the module picker (Create Unit dialog opened from a module's page). */
+   /** Locks the module picker (Create / Edit Unit dialog on a module's page). */
    isModuleLocked?: boolean;
    /** Editing a saved unit: picking another module moves it, so only Draft modules are offered (D28). */
    isEditing?: boolean;

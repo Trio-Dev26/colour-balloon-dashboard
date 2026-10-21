@@ -16,8 +16,8 @@ interface LessonDialogFormProps {
    onClose: () => void;
 }
 
-// Create / Edit Lesson form inside a dialog (Figma "Create Lesson"). Create locks the module and unit to the
-// page's unit; edit offers a move to a unit of any Draft module, like the full Edit Lesson page (D28).
+// Create / Edit Lesson form inside a dialog on the unit detail page (Figma "Create Lesson"). Module and unit
+// are locked to the page's unit; moving a lesson to another unit is done on the full Edit Lesson page (D28).
 export function LessonDialogForm({ lessonId, defaultValues, onClose }: LessonDialogFormProps) {
    const form = useForm<LessonFormValues>({ resolver: zodResolver(lessonFormSchema), defaultValues });
    const createLesson = useCreateLesson();
@@ -45,7 +45,7 @@ export function LessonDialogForm({ lessonId, defaultValues, onClose }: LessonDia
             onSubmit={onSubmit}
             onCancel={onClose}
          >
-            {lessonId ? <LessonFields isEditing /> : <LessonFields isUnitLocked />}
+            <LessonFields isUnitLocked />
          </DialogForm>
       </FormProvider>
    );
