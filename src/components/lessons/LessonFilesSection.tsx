@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { FolderOpenIcon } from 'lucide-react';
+import { IconTile } from '@/components/common/IconTile';
 import { UnderlineTabs } from '@/components/common/UnderlineTabs';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -21,7 +23,7 @@ export function LessonFilesSection({ lessonId }: { lessonId: string }) {
       label: (
          <>
             {audience.label}
-            <span className="rounded-full bg-muted px-1.5 text-xs">
+            <span className="min-w-5 rounded-full bg-muted px-1.5 text-xs font-medium text-muted-foreground in-data-active:bg-primary in-data-active:text-primary-foreground">
                {files.filter((file) => file.group.startsWith(audience.value)).length}
             </span>
          </>
@@ -41,24 +43,27 @@ export function LessonFilesSection({ lessonId }: { lessonId: string }) {
       ));
 
    return (
-      <section className="flex flex-col gap-3">
-         <div className="flex flex-col gap-1">
-            <h3 className="text-base leading-5 font-medium tracking-[-1px]">Lesson Files</h3>
-            <p className="text-xs text-muted-foreground">
-               Students only see student files; teachers only see teacher files.
-            </p>
+      <section className="flex flex-col gap-4 border-t pt-6">
+         <div className="flex items-center gap-3">
+            <IconTile icon={FolderOpenIcon} />
+            <div className="flex flex-col gap-0.5">
+               <h3 className="text-base leading-5 font-semibold tracking-tight">Lesson Files</h3>
+               <p className="text-xs text-muted-foreground">
+                  Students only see student files; teachers only see teacher files.
+               </p>
+            </div>
          </div>
          {isError ? (
-            <div className="flex flex-col items-center gap-3 rounded-lg border p-6 text-sm text-muted-foreground">
+            <div className="flex flex-col items-center gap-3 rounded-xl border p-6 text-sm text-muted-foreground">
                Couldn&apos;t load the lesson files.
                <Button variant="outline" onClick={() => refetch()}>
                   Try again
                </Button>
             </div>
          ) : isPending ? (
-            <Skeleton className="h-40 w-full" />
+            <Skeleton className="h-40 w-full rounded-xl" />
          ) : (
-            <UnderlineTabs tabs={tabs} className="gap-5" panelClassName="flex flex-col gap-6">
+            <UnderlineTabs tabs={tabs} className="gap-5" panelClassName="flex flex-col gap-4">
                {renderAudience}
             </UnderlineTabs>
          )}
