@@ -61,7 +61,7 @@ export function LessonFileList({ lessonId, group, files, onEditCaption }: Lesson
       <>
          <ul className="divide-y">
             {files.map((file) => (
-               <li key={file.id} className="flex items-center gap-3 px-3 py-2.5">
+               <li key={file.id} className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-sidebar">
                   <LessonFileSummary file={file} order={file.sequence} />
                   <RowActions
                      entityName="file"
@@ -75,8 +75,8 @@ export function LessonFileList({ lessonId, group, files, onEditCaption }: Lesson
             ))}
          </ul>
          {files.length >= MIN_FILES_TO_ARRANGE && (
-            <div className="flex justify-end border-t p-3">
-               <Button variant="outline" size="lg" onClick={() => setIsArranging(true)}>
+            <div className="flex justify-end border-t bg-sidebar px-4 py-2">
+               <Button variant="ghost" size="sm" onClick={() => setIsArranging(true)}>
                   <ArrowUpDownIcon />
                   Arrange files
                </Button>

@@ -3,6 +3,7 @@
 import { useRef, useState, type DragEvent } from 'react';
 import { CloudUploadIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { IconTile } from './IconTile';
 
 interface FileDropzoneProps {
    /** Value for the file input's accept attribute, e.g. "image/jpeg,image/png". */
@@ -13,9 +14,11 @@ interface FileDropzoneProps {
    onFilesSelect: (files: File[]) => void;
    multiple?: boolean;
    invalid?: boolean;
+   /** One slim row instead of the tall box, e.g. under a list that already has files. */
+   compact?: boolean;
 }
 
-export function FileDropzone({ accept, hint, onFilesSelect, multiple, invalid }: FileDropzoneProps) {
+export function FileDropzone({ accept, hint, onFilesSelect, multiple, invalid, compact }: FileDropzoneProps) {
    const inputRef = useRef<HTMLInputElement>(null);
    const [isDragging, setIsDragging] = useState(false);
 
@@ -43,16 +46,29 @@ export function FileDropzone({ accept, hint, onFilesSelect, multiple, invalid }:
          onDragLeave={() => setIsDragging(false)}
          onDrop={handleDrop}
          className={cn(
-            'flex h-38 cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-accent-border bg-sidebar p-3 text-xs outline-none focus-visible:ring-3 focus-visible:ring-ring/50',
+            'group flex cursor-pointer rounded-lg border border-dashed border-accent-border bg-sidebar text-xs transition-colors outline-none hover:border-primary/60 hover:bg-accent/50 focus-visible:ring-3 focus-visible:ring-ring/50',
+            compact
+               ? 'items-center gap-3 px-4 py-3'
+               : 'h-38 flex-col items-center justify-center gap-2 p-3 text-center',
             isDragging && 'border-primary bg-accent',
             invalid && 'border-destructive'
          )}
       >
-         <CloudUploadIcon className="size-6 text-primary" />
-         <p className="font-medium text-muted-foreground">Drag and drop {multiple ? 'files' : 'file'} here</p>
-         <p className="text-muted-foreground">or click to browse</p>
-         <p className="text-placeholder">{hint}</p>
-         <span className="rounded-md bg-accent px-2.5 py-1 font-medium text-accent-foreground">Browse files</span>
+         <IconTile
+            icon={CloudUploadIcon}
+            size={compact ? 'sm' : 'md'}
+            className="transition-transform group-hover:-translate-y-0.5"
+         />
+         <div className={cn('flex min-w-0 flex-col', compact ? 'flex-1 gap-0.5' : 'items-center gap-1')}>
+            <p className="font-medium text-foreground">
+               Drag and drop {multiple ? 'files' : 'file'} here
+               <span className="font-normal text-muted-foreground"> or click to browse</span>
+            </p>
+            <p className="text-placeholder">{hint}</p>
+         </div>
+         <span className="shrink-0 rounded-md bg-accent px-2.5 py-1 font-medium text-accent-foreground transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+            Browse files
+         </span>
          <input
             ref={inputRef}
             type="file"
