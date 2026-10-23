@@ -15,6 +15,7 @@ export interface LessonFile {
    /** Detected from the file's bytes by the backend. */
    contentType: string;
    sizeBytes: number;
+   /** Always set on new files; null only on files uploaded before captions were required. */
    captionEn: string | null;
    captionMy: string | null;
    /** Signed preview link, valid for 1 hour; never stored, refetch instead. */
@@ -30,8 +31,8 @@ export interface UploadUrlResponse {
    expiresIn: number;
 }
 
-/** null clears a caption. */
+/** Both required when uploading and editing; learners and teachers see them next to the file. */
 export interface LessonFileCaptions {
-   captionEn: string | null;
-   captionMy: string | null;
+   captionEn: string;
+   captionMy: string;
 }

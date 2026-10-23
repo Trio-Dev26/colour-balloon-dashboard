@@ -44,5 +44,10 @@ export const authKeys = {
    me: () => [...authKeys.all, 'me'] as const,
 };
 
-/** Modules, units and lessons show each other's counts, so a change in one refreshes all three. */
-export const CURRICULUM_KEYS = [moduleKeys.all, unitKeys.all, lessonKeys.all];
+export const dashboardKeys = {
+   all: ['dashboard'] as const,
+   curriculum: () => [...dashboardKeys.all, 'curriculum'] as const,
+};
+
+/** Modules, units, lessons and the dashboard show each other's counts, so a change in one refreshes them all. */
+export const CURRICULUM_KEYS = [moduleKeys.all, unitKeys.all, lessonKeys.all, dashboardKeys.all];

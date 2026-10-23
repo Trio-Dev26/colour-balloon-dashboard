@@ -47,6 +47,14 @@ export async function getModuleOptions(): Promise<ModuleOption[]> {
    return data.items.map(({ id, code, titleEn, status }) => ({ id, code, titleEn, status }));
 }
 
+/** Up to MAX_PAGE_SIZE modules and the overall total (dashboard). */
+export async function getModuleSample(): Promise<{ items: ModuleListItem[]; total: number }> {
+   const { data } = await axiosApi.get<ApiPage<ModuleResponse>>(MODULE_PATHS.list, {
+      params: { page: 1, limit: MAX_PAGE_SIZE },
+   });
+   return { items: data.items, total: data.total };
+}
+
 /** null when the module doesn't exist (404) or the id isn't a valid UUID (400). */
 export async function getModule(id: string): Promise<ModuleDetail | null> {
    try {

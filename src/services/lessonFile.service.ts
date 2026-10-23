@@ -18,6 +18,7 @@ export async function uploadLessonFile(
    lessonId: string,
    group: LessonFileGroup,
    file: File,
+   captions: LessonFileCaptions,
    onProgress: (fraction: number) => void
 ): Promise<LessonFile> {
    const { uploadUrl, key } = (
@@ -38,7 +39,14 @@ export async function uploadLessonFile(
       },
    });
 
-   return (await axiosApi.post<LessonFile>(LESSON_FILE_PATHS.list(lessonId), { key, group, fileName: file.name })).data;
+   return (
+      await axiosApi.post<LessonFile>(LESSON_FILE_PATHS.list(lessonId), {
+         key,
+         group,
+         fileName: file.name,
+         ...captions,
+      })
+   ).data;
 }
 
 export async function updateLessonFileCaptions(
