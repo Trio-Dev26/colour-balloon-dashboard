@@ -1,5 +1,5 @@
 import { HttpStatusCode, isAxiosError } from 'axios';
-import type { FieldError, FieldErrors, FieldValues } from 'react-hook-form';
+import { get, type FieldError, type FieldErrors, type FieldValues } from 'react-hook-form';
 import { toast } from 'sonner';
 import { LANGUAGE_FIELD_SUFFIX, LANGUAGES } from '@/constants/common';
 import type { LanguageCode } from '@/types/ui/common.types';
@@ -32,7 +32,8 @@ export const isRejectedInput = (error: unknown) =>
 
 /** Error for a top-level field name. */
 export function getFieldError<T extends FieldValues>(errors: FieldErrors<T>, name: string): FieldError | undefined {
-   return errors[name] as FieldError | undefined;
+   // get() follows dotted paths, e.g. "files.0.captionEn" in a field array.
+   return get(errors, name) as FieldError | undefined;
 }
 
 /** Plain text of an HTML string, used to check that rich-text fields aren't just empty tags. */

@@ -1,21 +1,9 @@
-import { FileHeadphoneIcon, FileImageIcon, FilePlayIcon, FileTextIcon, type LucideIcon } from 'lucide-react';
-import { IconTile } from '@/components/common/IconTile';
+import { TriangleAlertIcon } from 'lucide-react';
 import { OrderBadge } from '@/components/common/OrderBadge';
+import { ToneBadge } from '@/components/common/ToneBadge';
 import { formatFileSize } from '@/lib/format';
 import type { LessonFile } from '@/types/api/lessonFile.types';
-import type { Tone } from '@/types/ui/common.types';
-
-// By the detected content type; PDFs (and anything else) get the document icon.
-const TYPE_ICONS: [prefix: string, icon: LucideIcon, tone: Tone][] = [
-   ['video/', FilePlayIcon, 'info'],
-   ['audio/', FileHeadphoneIcon, 'warning'],
-   ['image/', FileImageIcon, 'success'],
-];
-
-const iconFor = (contentType: string): [LucideIcon, Tone] => {
-   const match = TYPE_ICONS.find(([prefix]) => contentType.startsWith(prefix));
-   return match ? [match[1], match[2]] : [FileTextIcon, 'primary'];
-};
+import { LessonFileTypeTile } from './LessonFileTypeTile';
 
 /** "worksheet.final.pdf" → "PDF" */
 const extensionOf = (fileName: string) => fileName.split('.').pop()?.toUpperCase() ?? '';
@@ -26,28 +14,37 @@ interface LessonFileSummaryProps {
    order: number;
 }
 
-// Order, type icon, file name, type, size and captions of one lesson file (list rows and arrange mode).
+// Order, type icon, name, type, size and captions of one lesson file (list rows and arrange mode).
+// Files from before captions were required are flagged until both captions are added.
 export function LessonFileSummary({ file, order }: LessonFileSummaryProps) {
-   const [icon, tone] = iconFor(file.contentType);
+   const hasCaptions = Boolean(file.captionEn && file.captionMy);
 
    return (
       <div className="flex min-w-0 flex-1 items-center gap-3">
          <OrderBadge order={order} />
-         <IconTile icon={icon} tone={tone} />
+         <LessonFileTypeTile contentType={file.contentType} />
          <div className="flex min-w-0 flex-col gap-1">
-            <p className="truncate text-sm font-medium">{file.fileName}</p>
-            <p className="flex min-w-0 items-center gap-1.5 text-xs text-tertiary-foreground">
-               <span className="rounded bg-muted px-1.5 py-px font-medium text-muted-foreground">
+            <p className="flex min-w-0 items-center gap-2 text-sm font-medium">
+               <span className="truncate">{file.fileName}</span>
+               <span className="shrink-0 rounded bg-muted px-1.5 py-px text-xs font-medium text-muted-foreground">
                   {extensionOf(file.fileName)}
                </span>
-               <span className="shrink-0">{formatFileSize(file.sizeBytes)}</span>
-               {(file.captionEn || file.captionMy) && (
-                  <span className="truncate">
-                     · {file.captionEn}
-                     {file.captionMy && <span className="font-myanmar"> {file.captionMy}</span>}
-                  </span>
-               )}
+               <span className="shrink-0 text-xs font-normal text-tertiary-foreground">
+                  {formatFileSize(file.sizeBytes)}
+               </span>
             </p>
+            {hasCaptions ? (
+               <p className="truncate text-xs text-muted-foreground">
+                  {file.captionEn}
+                  <span className="mx-1.5 text-placeholder">·</span>
+                  <span className="font-myanmar">{file.captionMy}</span>
+               </p>
+            ) : (
+               <ToneBadge tone="warning" className="gap-1 self-start">
+                  <TriangleAlertIcon className="size-3" aria-hidden />
+                  Caption missing: add English and Myanmar captions
+               </ToneBadge>
+            )}
          </div>
       </div>
    );

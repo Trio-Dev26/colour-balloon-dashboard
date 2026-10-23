@@ -22,5 +22,24 @@ export function formatDateTime(iso: string): string {
    return `${dateFormatter.format(date)} ${time}`.toUpperCase();
 }
 
+const relativeFormatter = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
+const RELATIVE_STEPS: [unit: Intl.RelativeTimeFormatUnit, seconds: number][] = [
+   ['year', 31_536_000],
+   ['month', 2_592_000],
+   ['week', 604_800],
+   ['day', 86_400],
+   ['hour', 3_600],
+   ['minute', 60],
+];
+
+/** ISO date → "3 hours ago", "yesterday", "now". */
+export function formatRelativeTime(iso: string): string {
+   const seconds = (new Date(iso).getTime() - Date.now()) / 1000;
+   const step = RELATIVE_STEPS.find(([, size]) => Math.abs(seconds) >= size);
+   return step
+      ? relativeFormatter.format(Math.round(seconds / step[1]), step[0])
+      : relativeFormatter.format(0, 'second');
+}
+
 /** 1 → "01" (unit number badge). */
 export const padNumber = (value: number) => String(value).padStart(2, '0');

@@ -42,6 +42,12 @@ export async function getLessons(filters: LessonFilters): Promise<Paginated<Less
    return toPaginated({ ...page, items: page.items.map(toListItem) });
 }
 
+/** Up to MAX_PAGE_SIZE lessons and the overall total (dashboard). */
+export async function getLessonSample(): Promise<{ items: LessonListItem[]; total: number }> {
+   const page = await fetchPage({ page: 1, limit: MAX_PAGE_SIZE });
+   return { items: page.items.map(toListItem), total: page.total };
+}
+
 /** A unit's lessons in unlock order. */
 export async function getUnitLessons(unitId: string): Promise<LessonListItem[]> {
    // ponytail: one page of MAX_PAGE_SIZE; page through if a unit ever passes 100 lessons.

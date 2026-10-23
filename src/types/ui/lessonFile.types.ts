@@ -1,4 +1,4 @@
-import type { LessonFileAudience, LessonFileGroup } from '@/types/api/lessonFile.types';
+import type { LessonFileAudience, LessonFileCaptions, LessonFileGroup } from '@/types/api/lessonFile.types';
 
 /** How one lesson file group is shown and what it accepts (constants/lessonFile.ts). */
 export interface LessonFileGroupConfig {
@@ -17,6 +17,8 @@ export interface LessonFileGroupConfig {
 export interface PendingUpload {
    id: string;
    file: File;
+   /** Absent when the file was rejected before captions were asked for (wrong type or size). */
+   captions?: LessonFileCaptions;
    /** 0..1 */
    progress: number;
    error?: string;

@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { BookOpenIcon, DownloadIcon, PresentationIcon, type LucideIcon } from 'lucide-react';
 import { FileDropzone } from '@/components/common/FileDropzone';
 import { IconTile } from '@/components/common/IconTile';
@@ -10,6 +11,7 @@ import { formatFileSize } from '@/lib/format';
 import type { LessonFile, LessonFileGroup } from '@/types/api/lessonFile.types';
 import type { LessonFileGroupConfig } from '@/types/ui/lessonFile.types';
 import { LessonFileList } from './LessonFileList';
+import { LessonFileUploadDialog } from './LessonFileUploadDialog';
 import { LessonFileUploadRow } from './LessonFileUploadRow';
 
 const GROUP_ICONS: Record<LessonFileGroup, LucideIcon> = {
@@ -29,7 +31,9 @@ interface LessonFileGroupPanelProps {
 
 // One file group of a lesson: its files, uploads in progress, and a dropzone for more (FR-FILE-001..003).
 export function LessonFileGroupPanel({ lessonId, config, files, onEditCaption }: LessonFileGroupPanelProps) {
-   const { uploads, start, retry, dismiss } = useLessonFileUploads(lessonId, config);
+   const { uploads, screen, start, retry, dismiss } = useLessonFileUploads(lessonId, config);
+   // Valid picked files wait here until the admin has captioned them.
+   const [picked, setPicked] = useState<File[]>([]);
    const hasRows = files.length > 0 || uploads.length > 0;
 
    return (
@@ -73,9 +77,18 @@ export function LessonFileGroupPanel({ lessonId, config, files, onEditCaption }:
          <FileDropzone
             accept={config.accept}
             hint={`${config.formats} · Max ${formatFileSize(LESSON_FILE_MAX_BYTES)} each`}
-            onFilesSelect={start}
+            onFilesSelect={(files) => setPicked(screen(files))}
             compact={hasRows}
             multiple
+         />
+         <LessonFileUploadDialog
+            files={picked}
+            groupTitle={config.title}
+            onUpload={(items) => {
+               start(items);
+               setPicked([]);
+            }}
+            onCancel={() => setPicked([])}
          />
       </section>
    );
