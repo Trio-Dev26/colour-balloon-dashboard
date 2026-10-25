@@ -13,6 +13,8 @@ const TONE_CLASSES: Record<Tone, string> = {
 const SIZE_CLASSES = {
    sm: 'size-8 rounded-lg [&_svg]:size-4',
    md: 'size-10 rounded-xl [&_svg]:size-5',
+   /** Round, for empty states. */
+   lg: 'size-20 rounded-full [&_svg]:size-9',
 };
 
 interface IconTileProps {

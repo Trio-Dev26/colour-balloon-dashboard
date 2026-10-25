@@ -5,7 +5,6 @@ import { RowActions } from '@/components/common/RowActions';
 import { TableLink } from '@/components/common/TableLink';
 import { ToneBadge } from '@/components/common/ToneBadge';
 import { EMPTY_VALUE } from '@/constants/common';
-import { unitDeleteBlockedReason } from '@/constants/module';
 import { ROUTES } from '@/constants/routes';
 import { formatDateTime } from '@/lib/format';
 import type { UnitListItem } from '@/types/api/unit.types';
@@ -63,7 +62,6 @@ export function getModuleUnitColumns({ onEdit, onDelete }: ModuleUnitRowHandlers
                viewHref={ROUTES.unitDetail(unit.id)}
                edit={() => onEdit(unit)}
                onDelete={() => onDelete(unit)}
-               deleteDisabledReason={unitDeleteBlockedReason(unit.moduleStatus)}
             />
          ),
       },

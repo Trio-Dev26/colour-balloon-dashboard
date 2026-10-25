@@ -3,7 +3,6 @@ import type { DataTableColumn } from '@/components/common/DataTable';
 import { OrderBadge } from '@/components/common/OrderBadge';
 import { RowActions } from '@/components/common/RowActions';
 import { fileCountLabel } from '@/constants/lessonFile';
-import { lessonDeleteBlockedReason } from '@/constants/module';
 import { ROUTES } from '@/constants/routes';
 import { formatDateTime } from '@/lib/format';
 import type { LessonListItem } from '@/types/api/lesson.types';
@@ -59,7 +58,6 @@ export function getLessonColumns({ onEdit, onDelete }: UnitLessonRowHandlers): D
                viewHref={ROUTES.lessonDetail(lesson.id)}
                edit={() => onEdit(lesson)}
                onDelete={() => onDelete(lesson)}
-               deleteDisabledReason={lessonDeleteBlockedReason(lesson.moduleStatus)}
             />
          ),
       },

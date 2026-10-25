@@ -1,5 +1,7 @@
 import type { LessonFilters } from '@/types/api/lesson.types';
 import type { ModuleFilters } from '@/types/api/module.types';
+import type { QuestionFilters } from '@/types/api/question.types';
+import type { QuizFilters } from '@/types/api/quiz.types';
 import type { UnitFilters } from '@/types/api/unit.types';
 
 // All React Query keys live here so hooks can invalidate each other without circular imports.
@@ -33,6 +35,19 @@ export const lessonFileKeys = {
    byLesson: (lessonId: string) => [...lessonFileKeys.all, 'lesson', lessonId] as const,
 };
 
+export const questionKeys = {
+   all: ['questions'] as const,
+   list: (filters: QuestionFilters, limit?: number) => [...questionKeys.all, 'list', filters, limit] as const,
+   detail: (id: string) => [...questionKeys.all, 'detail', id] as const,
+};
+
+export const quizKeys = {
+   all: ['quizzes'] as const,
+   list: (filters: QuizFilters) => [...quizKeys.all, 'list', filters] as const,
+   chapterEndTest: (moduleId: string) => [...quizKeys.all, 'chapterEndTest', moduleId] as const,
+   detail: (id: string) => [...quizKeys.all, 'detail', id] as const,
+};
+
 export const catalogKeys = {
    all: ['catalog'] as const,
    levels: () => [...catalogKeys.all, 'levels'] as const,
@@ -49,5 +64,15 @@ export const dashboardKeys = {
    curriculum: () => [...dashboardKeys.all, 'curriculum'] as const,
 };
 
-/** Modules, units, lessons and the dashboard show each other's counts, so a change in one refreshes them all. */
-export const CURRICULUM_KEYS = [moduleKeys.all, unitKeys.all, lessonKeys.all, dashboardKeys.all];
+/**
+ * Curriculum screens show each other's counts (quiz totals come from question points, a deleted unit drops its
+ * questions from quizzes), so a change in one refreshes them all.
+ */
+export const CURRICULUM_KEYS = [
+   moduleKeys.all,
+   unitKeys.all,
+   lessonKeys.all,
+   questionKeys.all,
+   quizKeys.all,
+   dashboardKeys.all,
+];
