@@ -14,10 +14,15 @@ import { useDeleteLesson, useLessons } from '@/hooks/useLessons';
 import { useUrlFilters } from '@/hooks/useUrlFilters';
 import type { LessonFilters as LessonFilterValues } from '@/types/api/lesson.types';
 import { LessonEmptyState } from './LessonEmptyState';
-import { LessonFilters } from './LessonFilters';
+import { ModuleUnitFilters } from '@/components/units/ModuleUnitFilters';
 import { getLessonListColumns } from './lessonListColumns';
 
 const createLessonButton = <CreateButton label="Create lesson" href={ROUTES.newLesson} />;
+const filterProps = {
+   filterKeys: LESSON_FILTER_KEYS,
+   searchPlaceholder: 'Search lesson',
+   searchLabel: 'Search lessons',
+};
 
 export function LessonListView() {
    const { get, page, setPage } = useUrlFilters();
@@ -59,7 +64,7 @@ export function LessonListView() {
    if (!isPending && total === 0 && !hasActiveFilters) {
       return (
          <>
-            <LessonFilters />
+            <ModuleUnitFilters {...filterProps} />
             <LessonEmptyState action={createLessonButton} />
          </>
       );
@@ -67,7 +72,7 @@ export function LessonListView() {
 
    return (
       <>
-         <LessonFilters action={createLessonButton} />
+         <ModuleUnitFilters {...filterProps} action={createLessonButton} />
          <div className="overflow-hidden rounded-lg border">
             <DataTable
                columns={columns}

@@ -29,7 +29,8 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
          <body className="min-h-full flex flex-col" suppressHydrationWarning>
             <ReactQueryProvider>
                <TooltipProvider>{children}</TooltipProvider>
-               <Toaster richColors position="top-right" />
+               {/* Light like the rest of the dashboard (no dark mode yet), whatever the OS theme is. */}
+               <Toaster theme="light" richColors position="top-right" />
             </ReactQueryProvider>
          </body>
       </html>

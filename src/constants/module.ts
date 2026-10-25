@@ -15,11 +15,9 @@ export const MODULE_RULE_HINTS = {
    // D28: units move between, and are reordered in, Draft modules only.
    unitMoveLocked: 'This unit’s module has been published, so the unit can’t move to another module.',
    reorderLocked: 'This module has been published, so its unit order is locked. New units are added at the end.',
-   unitDeletePublished: 'This unit’s module has been published, so the unit can’t be deleted.',
    lessonMoveLocked: 'This lesson’s module has been published, so the lesson can’t move to another unit.',
    lessonReorderLocked:
       'This lesson’s module has been published, so the lesson order is locked. New lessons are added at the end.',
-   lessonDeletePublished: 'This lesson’s module has been published, so the lesson can’t be deleted.',
 } as const;
 
 /** Delete popup for a Draft module: everything in it is hidden too (D18). Deleted records are hidden, not erased (FR-CUR-012). */
@@ -51,11 +49,3 @@ export const MODULE_IMAGE = {
    dropzoneHint: 'Supported formats: JPG, PNG (Max 20 MB)',
    previewHint: 'JPG, PNG | Max 20 MB',
 } as const;
-
-/** D18: a unit in a published module can't be deleted. TODO(D18): allow it once progress shows no student started it. */
-export const unitDeleteBlockedReason = (moduleStatus: ModuleStatus) =>
-   moduleStatus === 'DRAFT' ? undefined : MODULE_RULE_HINTS.unitDeletePublished;
-
-/** D18, same rule as units. TODO(D18): allow it once progress shows no student started the lesson. */
-export const lessonDeleteBlockedReason = (moduleStatus: ModuleStatus) =>
-   moduleStatus === 'DRAFT' ? undefined : MODULE_RULE_HINTS.lessonDeletePublished;

@@ -6,7 +6,8 @@ import { htmlToText } from './form';
 
 /** Content extensions of the rich-text editor; the HTML ⇄ JSON conversion must use the same ones. */
 export const RICH_TEXT_EXTENSIONS: Extensions = [
-   StarterKit.configure({ link: false }),
+   // No horizontal rule: its "___ " shortcut would swallow fill-in-the-blank markers (D23); the toolbar never offers it.
+   StarterKit.configure({ link: false, horizontalRule: false }),
    TextAlign.configure({ types: ['heading', 'paragraph'] }),
    TextStyleKit,
 ];

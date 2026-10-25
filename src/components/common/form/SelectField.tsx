@@ -45,7 +45,7 @@ export function SelectField<T extends FieldValues>({
                   </SelectTrigger>
                   <SelectContent>
                      {options.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
+                        <SelectItem key={option.value} value={option.value} disabled={option.disabled}>
                            {option.label}
                         </SelectItem>
                      ))}

@@ -36,6 +36,18 @@ export const LESSON_FILE_PATHS = {
    detail: (lessonId: string, fileId: string) => `/admin/lessons/${lessonId}/files/${fileId}`,
 } as const;
 
+export const QUESTION_PATHS = {
+   list: '/admin/questions',
+   detail: (id: string) => `/admin/questions/${id}`,
+   media: '/admin/questions/media',
+} as const;
+
+export const QUIZ_PATHS = {
+   list: '/admin/quizzes',
+   detail: (id: string) => `/admin/quizzes/${id}`,
+   questions: (id: string) => `/admin/quizzes/${id}/questions`,
+} as const;
+
 /** No timeout for the direct-to-storage PUT: a 200 MB upload outlives API_TIMEOUT_MS. */
 export const UPLOAD_TIMEOUT_MS = 0;
 

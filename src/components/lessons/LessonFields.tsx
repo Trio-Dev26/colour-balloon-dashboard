@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect } from 'react';
 import { InfoIcon } from 'lucide-react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { BilingualFields } from '@/components/common/form/BilingualFields';
@@ -8,6 +7,7 @@ import { RichTextField } from '@/components/common/form/RichTextField';
 import { SelectField } from '@/components/common/form/SelectField';
 import { TextField } from '@/components/common/form/TextField';
 import { MODULE_RULE_HINTS } from '@/constants/module';
+import { useClearOnChange } from '@/hooks/useClearOnChange';
 import { useModuleOptions, useModuleSelectOptions } from '@/hooks/useModules';
 import { useUnitSelectOptions } from '@/hooks/useUnits';
 import type { LessonFormValues } from '@/schemas/lesson.schema';
@@ -26,7 +26,7 @@ interface LessonFieldsProps {
 }
 
 export function LessonFields({ isEditing, isUnitLocked }: LessonFieldsProps) {
-   const { control, watch, setValue, formState } = useFormContext<LessonFormValues>();
+   const { control, formState } = useFormContext<LessonFormValues>();
    const moduleId = useWatch({ control, name: 'moduleId' });
    const { data: modules = [] } = useModuleOptions();
    const savedModule = modules.find((module) => module.id === formState.defaultValues?.moduleId);
@@ -38,13 +38,8 @@ export function LessonFields({ isEditing, isUnitLocked }: LessonFieldsProps) {
    const moduleOptions = useModuleSelectOptions(isEditing && !isMoveLocked ? isDraft : undefined);
    const unitOptions = useUnitSelectOptions(moduleId);
 
-   // A unit belongs to one module, so picking another module clears the unit (user changes only).
-   useEffect(() => {
-      const subscription = watch((_, { name }) => {
-         if (name === 'moduleId') setValue('unitId', '');
-      });
-      return () => subscription.unsubscribe();
-   }, [watch, setValue]);
+   // A unit belongs to one module, so picking another module clears the unit.
+   useClearOnChange<LessonFormValues>('moduleId', 'unitId', '');
 
    return (
       <>
