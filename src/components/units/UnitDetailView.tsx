@@ -24,7 +24,12 @@ export function UnitDetailView({ unitId }: { unitId: string }) {
             moduleCode={unit.module.code}
             unitCode={unit.code}
          />
-         <EntitySummary titleEn={unit.titleEn} titleMy={unit.titleMy} description={unit.descriptionEn} />
+         <EntitySummary
+            titleEn={unit.titleEn}
+            titleMy={unit.titleMy}
+            descriptionEn={unit.descriptionEn}
+            descriptionMy={unit.descriptionMy}
+         />
          <UnitLessonsSection unit={unit} lessons={lessons} />
       </>
    );

@@ -61,9 +61,14 @@ export function LessonFileList({ lessonId, group, files, onEditCaption }: Lesson
       <>
          <ul className="divide-y">
             {files.map((file) => (
-               <li key={file.id} className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-sidebar">
+               // flex-wrap + ml-auto: on narrow screens the actions drop to their own line, right-aligned.
+               <li
+                  key={file.id}
+                  className="flex flex-wrap items-center gap-3 px-4 py-3 transition-colors hover:bg-sidebar"
+               >
                   <LessonFileSummary file={file} order={file.sequence} />
                   <RowActions
+                     className="ml-auto"
                      entityName="file"
                      viewHref={file.url}
                      viewInNewTab

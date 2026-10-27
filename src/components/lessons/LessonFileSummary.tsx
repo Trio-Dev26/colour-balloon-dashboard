@@ -20,7 +20,7 @@ export function LessonFileSummary({ file, order }: LessonFileSummaryProps) {
    const hasCaptions = Boolean(file.captionEn && file.captionMy);
 
    return (
-      <div className="flex min-w-0 flex-1 items-center gap-3">
+      <div className="flex min-w-48 flex-1 items-center gap-3">
          <OrderBadge order={order} />
          <LessonFileTypeTile contentType={file.contentType} />
          <div className="flex min-w-0 flex-col gap-1">
@@ -40,7 +40,7 @@ export function LessonFileSummary({ file, order }: LessonFileSummaryProps) {
                   <span className="font-myanmar">{file.captionMy}</span>
                </p>
             ) : (
-               <ToneBadge tone="warning" className="gap-1 self-start">
+               <ToneBadge tone="warning" className="h-auto gap-1 self-start whitespace-normal">
                   <TriangleAlertIcon className="size-3" aria-hidden />
                   Caption missing: add English and Myanmar captions
                </ToneBadge>
