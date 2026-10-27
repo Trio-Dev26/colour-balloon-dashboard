@@ -1,14 +1,16 @@
 import { ImageIcon } from 'lucide-react';
 import { EntitySummary } from '@/components/common/EntitySummary';
 import type { ModuleDetail } from '@/types/api/module.types';
+import { ModuleIntroduction } from './ModuleIntroduction';
 
-// Title (EN + MY), description and cover image.
+// Per-language title, description, goal and outcome, plus the cover image.
 export function ModuleSummary({ module }: { module: ModuleDetail }) {
    return (
       <EntitySummary
          titleEn={module.titleEn}
          titleMy={module.titleMy}
-         description={module.descriptionEn}
+         descriptionEn={module.descriptionEn}
+         descriptionMy={module.descriptionMy}
          aside={
             <div className="flex size-32.5 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-muted shadow-[0_4px_4px_0_color-mix(in_oklch,var(--primary)_25%,transparent)]">
                {module.thumbnailUrl ? (
@@ -20,6 +22,8 @@ export function ModuleSummary({ module }: { module: ModuleDetail }) {
                )}
             </div>
          }
-      />
+      >
+         {(language) => <ModuleIntroduction module={module} language={language} />}
+      </EntitySummary>
    );
 }

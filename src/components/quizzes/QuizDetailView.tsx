@@ -30,7 +30,12 @@ export function QuizDetailView({ quizId }: { quizId: string }) {
                { label: 'Status', value: requiredLabel(quiz.required), tone: 'neutral' },
             ]}
          />
-         <EntitySummary titleEn={quiz.titleEn} titleMy={quiz.titleMy} description={quiz.descriptionEn} />
+         <EntitySummary
+            titleEn={quiz.titleEn}
+            titleMy={quiz.titleMy}
+            descriptionEn={quiz.descriptionEn}
+            descriptionMy={quiz.descriptionMy}
+         />
          <QuizQuestionsSection quiz={quiz} />
       </>
    );

@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { EyeIcon, PencilIcon, Trash2Icon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import { ConfirmDialog } from './ConfirmDialog';
 import { HintTooltip } from './HintTooltip';
 
@@ -20,6 +21,7 @@ interface RowActionsProps {
    deleteDescription?: string;
    /** When set, the delete button is disabled and this explains why on hover. */
    deleteDisabledReason?: string;
+   className?: string;
 }
 
 // Edit / delete / view icon buttons at the end of a table row (Figma order).
@@ -31,6 +33,7 @@ export function RowActions({
    onDelete,
    deleteDescription = `The ${entityName} will be hidden from admins and learners. This can’t be undone from the dashboard.`,
    deleteDisabledReason,
+   className,
 }: RowActionsProps) {
    const deleteButton = (
       <Button variant="ghost" size="icon" aria-label={`Delete ${entityName}`} disabled={Boolean(deleteDisabledReason)}>
@@ -39,7 +42,7 @@ export function RowActions({
    );
 
    return (
-      <div className="flex items-center justify-end gap-2">
+      <div className={cn('flex shrink-0 items-center justify-end gap-2', className)}>
          {typeof edit === 'string' ? (
             <Button
                variant="ghost"

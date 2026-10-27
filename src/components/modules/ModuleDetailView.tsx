@@ -3,7 +3,6 @@
 import { ContentSkeleton } from '@/components/common/ContentSkeleton';
 import { useModule } from '@/hooks/useModules';
 import { useModuleUnits } from '@/hooks/useUnits';
-import { ModuleIntroduction } from './ModuleIntroduction';
 import { ModuleMetaBar } from './ModuleMetaBar';
 import { NotFoundState } from '@/components/common/NotFoundState';
 import { ROUTES } from '@/constants/routes';
@@ -21,7 +20,6 @@ export function ModuleDetailView({ moduleId }: { moduleId: string }) {
       <>
          <ModuleMetaBar module={moduleDetail} />
          <ModuleSummary module={moduleDetail} />
-         <ModuleIntroduction module={moduleDetail} />
          <ModuleUnitsSection moduleId={moduleId} moduleStatus={moduleDetail.status} units={units} />
       </>
    );

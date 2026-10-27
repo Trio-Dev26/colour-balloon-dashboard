@@ -23,7 +23,12 @@ export function LessonDetailView({ lessonId }: { lessonId: string }) {
             moduleCode={lesson.moduleCode}
             unitCode={lesson.unitCode}
          />
-         <EntitySummary titleEn={lesson.titleEn} titleMy={lesson.titleMy} description={lesson.descriptionEn} />
+         <EntitySummary
+            titleEn={lesson.titleEn}
+            titleMy={lesson.titleMy}
+            descriptionEn={lesson.descriptionEn}
+            descriptionMy={lesson.descriptionMy}
+         />
          <LessonFilesSection lessonId={lesson.id} />
       </>
    );
