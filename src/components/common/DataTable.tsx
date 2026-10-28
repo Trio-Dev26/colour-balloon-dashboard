@@ -1,4 +1,7 @@
-import type { ReactNode } from 'react';
+'use client';
+
+import type { KeyboardEvent, MouseEvent, ReactNode } from 'react';
+import { useRouter } from 'next/navigation';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { cn } from '@/lib/utils';
@@ -19,12 +22,43 @@ interface DataTableProps<TRow> {
    emptyMessage: string;
    /** Shows placeholder rows on the first load. */
    isLoading?: boolean;
+   /** Makes the whole row open this page (e.g. the detail page); controls inside the row keep their own clicks. */
+   getRowHref?: (row: TRow) => string;
 }
 
 const LOADING_ROW_COUNT = 5;
 
+/** Clicks on these (row actions, switches, links, HintTooltip wrappers of disabled buttons) don't open the row. */
+const ROW_CLICK_IGNORE = 'a, button, input, select, textarea, label, [role="switch"], [data-no-row-click]';
+
 // ponytail: plain mapped table; switch to @tanstack/react-table when client-side sorting/selection is needed.
-export function DataTable<TRow>({ columns, rows, getRowId, emptyMessage, isLoading }: DataTableProps<TRow>) {
+export function DataTable<TRow>({
+   columns,
+   rows,
+   getRowId,
+   emptyMessage,
+   isLoading,
+   getRowHref,
+}: DataTableProps<TRow>) {
+   const router = useRouter();
+
+   const openRow = (event: MouseEvent<HTMLTableRowElement>, href: string) => {
+      const row = event.currentTarget;
+      const target = event.target as Element;
+      // React bubbles clicks out of portals (e.g. a delete dialog opened from this row): ignore those.
+      if (!row.contains(target)) return;
+      const control = target.closest(ROW_CLICK_IGNORE);
+      if (control && control !== row && row.contains(control)) return;
+      // Don't navigate when the user was selecting text.
+      if (window.getSelection()?.toString()) return;
+      if (event.metaKey || event.ctrlKey) window.open(href, '_blank', 'noopener');
+      else router.push(href);
+   };
+
+   const openRowWithKeyboard = (event: KeyboardEvent<HTMLTableRowElement>, href: string) => {
+      if (event.key === 'Enter' && event.target === event.currentTarget) router.push(href);
+   };
+
    return (
       <Table className="table-fixed">
          <TableHeader>
@@ -60,23 +94,37 @@ export function DataTable<TRow>({ columns, rows, getRowId, emptyMessage, isLoadi
                   </TableCell>
                </TableRow>
             ) : (
-               rows.map((row, index) => (
-                  <TableRow key={getRowId(row)}>
-                     {columns.map((column) => {
-                        const content = column.cell(row, index);
-                        return (
-                           <TableCell key={column.id} className={cn('h-15 px-3 text-sm', column.className)}>
-                              {/* Plain text cells get "…" plus a tooltip when they don't fit the column. */}
-                              {typeof content === 'string' || typeof content === 'number' ? (
-                                 <TruncatedText text={String(content)} />
-                              ) : (
-                                 content
-                              )}
-                           </TableCell>
-                        );
-                     })}
-                  </TableRow>
-               ))
+               rows.map((row, index) => {
+                  const href = getRowHref?.(row);
+                  return (
+                     <TableRow
+                        key={getRowId(row)}
+                        {...(href
+                           ? {
+                                tabIndex: 0,
+                                className: 'cursor-pointer focus-visible:bg-muted/50 focus-visible:outline-none',
+                                onClick: (event: MouseEvent<HTMLTableRowElement>) => openRow(event, href),
+                                onKeyDown: (event: KeyboardEvent<HTMLTableRowElement>) =>
+                                   openRowWithKeyboard(event, href),
+                             }
+                           : {})}
+                     >
+                        {columns.map((column) => {
+                           const content = column.cell(row, index);
+                           return (
+                              <TableCell key={column.id} className={cn('h-15 px-3 text-sm', column.className)}>
+                                 {/* Plain text cells get "…" plus a tooltip when they don't fit the column. */}
+                                 {typeof content === 'string' || typeof content === 'number' ? (
+                                    <TruncatedText text={String(content)} />
+                                 ) : (
+                                    content
+                                 )}
+                              </TableCell>
+                           );
+                        })}
+                     </TableRow>
+                  );
+               })
             )}
          </TableBody>
       </Table>

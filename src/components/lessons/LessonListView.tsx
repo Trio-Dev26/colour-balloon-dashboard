@@ -78,6 +78,7 @@ export function LessonListView() {
                columns={columns}
                rows={data?.data ?? []}
                getRowId={(lesson) => lesson.id}
+               getRowHref={(lesson) => ROUTES.lessonDetail(lesson.id)}
                emptyMessage="No lessons match these filters."
                isLoading={isPending}
             />

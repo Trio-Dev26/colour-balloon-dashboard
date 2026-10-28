@@ -61,11 +61,10 @@ export function getModuleColumns({
       {
          id: 'actions',
          header: 'Actions',
-         className: 'w-[128px]',
+         className: 'w-[96px]',
          cell: (module) => (
             <RowActions
                entityName="module"
-               viewHref={ROUTES.moduleDetail(module.id)}
                edit={ROUTES.editModule(module.id)}
                onDelete={() => onDelete(module)}
                deleteDescription={moduleDeleteDescription(module.unitCount, module.lessonCount)}

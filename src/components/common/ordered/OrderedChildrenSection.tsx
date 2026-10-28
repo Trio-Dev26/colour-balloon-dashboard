@@ -19,6 +19,8 @@ interface OrderedChildrenSectionProps<T> {
    items: T[];
    columns: DataTableColumn<T>[];
    getId: (item: T) => string;
+   /** Makes each row open this page (e.g. the child's detail page). */
+   getRowHref?: (item: T) => string;
    emptyState: ReactNode;
    arrange: Pick<ArrangeListProps<T>, 'renderItem' | 'getHandleLabel' | 'hint' | 'isSaving'> & {
       buttonLabel: string;
@@ -39,6 +41,7 @@ export function OrderedChildrenSection<T>({
    items,
    columns,
    getId,
+   getRowHref,
    emptyState,
    arrange,
 }: OrderedChildrenSectionProps<T>) {
@@ -79,7 +82,13 @@ export function OrderedChildrenSection<T>({
                      />
                   ) : (
                      <>
-                        <DataTable columns={columns} rows={items} getRowId={getId} emptyMessage="" />
+                        <DataTable
+                           columns={columns}
+                           rows={items}
+                           getRowId={getId}
+                           getRowHref={getRowHref}
+                           emptyMessage=""
+                        />
                         <div className="flex justify-end border-t p-3">
                            <HintTooltip hint={arrange.disabledReason}>
                               <Button

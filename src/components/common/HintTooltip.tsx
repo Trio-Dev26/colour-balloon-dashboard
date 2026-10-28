@@ -10,7 +10,10 @@ export function HintTooltip({ hint, children }: { hint?: string; children: React
 
    return (
       <Tooltip>
-         <TooltipTrigger render={<span className="inline-flex" tabIndex={0} />}>{children}</TooltipTrigger>
+         {/* data-no-row-click: clicking a disabled control in a clickable table row must not open the row. */}
+         <TooltipTrigger render={<span className="inline-flex" tabIndex={0} data-no-row-click />}>
+            {children}
+         </TooltipTrigger>
          <TooltipContent className="max-w-64">{hint}</TooltipContent>
       </Tooltip>
    );

@@ -55,15 +55,8 @@ export function getModuleUnitColumns({ onEdit, onDelete }: ModuleUnitRowHandlers
       {
          id: 'actions',
          header: 'Actions',
-         className: 'w-[158px]',
-         cell: (unit) => (
-            <RowActions
-               entityName="unit"
-               viewHref={ROUTES.unitDetail(unit.id)}
-               edit={() => onEdit(unit)}
-               onDelete={() => onDelete(unit)}
-            />
-         ),
+         className: 'w-[96px]',
+         cell: (unit) => <RowActions entityName="unit" edit={() => onEdit(unit)} onDelete={() => onDelete(unit)} />,
       },
    ];
 }

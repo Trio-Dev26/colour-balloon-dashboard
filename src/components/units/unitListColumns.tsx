@@ -38,14 +38,9 @@ export function getUnitListColumns(onDelete: (unit: UnitListItem) => void): Data
       {
          id: 'actions',
          header: 'Actions',
-         className: 'w-[128px]',
+         className: 'w-[96px]',
          cell: (unit) => (
-            <RowActions
-               entityName="unit"
-               viewHref={ROUTES.unitDetail(unit.id)}
-               edit={ROUTES.editUnit(unit.id)}
-               onDelete={() => onDelete(unit)}
-            />
+            <RowActions entityName="unit" edit={ROUTES.editUnit(unit.id)} onDelete={() => onDelete(unit)} />
          ),
       },
    ];

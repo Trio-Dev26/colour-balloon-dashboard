@@ -3,7 +3,6 @@ import type { DataTableColumn } from '@/components/common/DataTable';
 import { OrderBadge } from '@/components/common/OrderBadge';
 import { RowActions } from '@/components/common/RowActions';
 import { fileCountLabel } from '@/constants/lessonFile';
-import { ROUTES } from '@/constants/routes';
 import { formatDateTime } from '@/lib/format';
 import type { LessonListItem } from '@/types/api/lesson.types';
 
@@ -51,14 +50,9 @@ export function getLessonColumns({ onEdit, onDelete }: UnitLessonRowHandlers): D
       {
          id: 'actions',
          header: 'Actions',
-         className: 'w-[136px]',
+         className: 'w-[96px]',
          cell: (lesson) => (
-            <RowActions
-               entityName="lesson"
-               viewHref={ROUTES.lessonDetail(lesson.id)}
-               edit={() => onEdit(lesson)}
-               onDelete={() => onDelete(lesson)}
-            />
+            <RowActions entityName="lesson" edit={() => onEdit(lesson)} onDelete={() => onDelete(lesson)} />
          ),
       },
    ];
