@@ -3,7 +3,7 @@
 import { ContentSkeleton } from '@/components/common/ContentSkeleton';
 import { EntitySummary } from '@/components/common/EntitySummary';
 import { NotFoundState } from '@/components/common/NotFoundState';
-import { UnitMetaBar } from '@/components/units/UnitMetaBar';
+import { LevelCategoryBar } from '@/components/modules/LevelCategoryBar';
 import { ROUTES } from '@/constants/routes';
 import { useLesson } from '@/hooks/useLessons';
 import { LessonFilesSection } from './LessonFilesSection';
@@ -17,12 +17,7 @@ export function LessonDetailView({ lessonId }: { lessonId: string }) {
 
    return (
       <>
-         <UnitMetaBar
-            level={lesson.level}
-            category={lesson.category}
-            moduleCode={lesson.moduleCode}
-            unitCode={lesson.unitCode}
-         />
+         <LevelCategoryBar level={lesson.level} category={lesson.category} />
          <EntitySummary
             titleEn={lesson.titleEn}
             titleMy={lesson.titleMy}

@@ -3,7 +3,7 @@
 import { ContentSkeleton } from '@/components/common/ContentSkeleton';
 import { useModule } from '@/hooks/useModules';
 import { useModuleUnits } from '@/hooks/useUnits';
-import { ModuleMetaBar } from './ModuleMetaBar';
+import { LevelCategoryBar } from './LevelCategoryBar';
 import { NotFoundState } from '@/components/common/NotFoundState';
 import { ROUTES } from '@/constants/routes';
 import { ModuleSummary } from './ModuleSummary';
@@ -18,7 +18,7 @@ export function ModuleDetailView({ moduleId }: { moduleId: string }) {
 
    return (
       <>
-         <ModuleMetaBar module={moduleDetail} />
+         <LevelCategoryBar level={moduleDetail.level} category={moduleDetail.category} />
          <ModuleSummary module={moduleDetail} />
          <ModuleUnitsSection moduleId={moduleId} moduleStatus={moduleDetail.status} units={units} />
       </>

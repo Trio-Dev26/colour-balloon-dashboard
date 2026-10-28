@@ -62,6 +62,9 @@ export interface LessonListItem {
 export interface LessonDetail extends LessonListItem {
    descriptionEn: string;
    descriptionMy: string;
+   /** Parent titles for the breadcrumb. */
+   unitTitleEn: string;
+   moduleTitleEn: string;
    level: Taxonomy;
    category: Taxonomy;
 }

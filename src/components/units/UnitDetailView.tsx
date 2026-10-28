@@ -5,7 +5,7 @@ import { EntitySummary } from '@/components/common/EntitySummary';
 import { useUnitLessons } from '@/hooks/useLessons';
 import { useUnit } from '@/hooks/useUnits';
 import { UnitLessonsSection } from './UnitLessonsSection';
-import { UnitMetaBar } from './UnitMetaBar';
+import { LevelCategoryBar } from '@/components/modules/LevelCategoryBar';
 import { NotFoundState } from '@/components/common/NotFoundState';
 import { ROUTES } from '@/constants/routes';
 
@@ -18,12 +18,7 @@ export function UnitDetailView({ unitId }: { unitId: string }) {
 
    return (
       <>
-         <UnitMetaBar
-            level={unit.module.level}
-            category={unit.module.category}
-            moduleCode={unit.module.code}
-            unitCode={unit.code}
-         />
+         <LevelCategoryBar level={unit.module.level} category={unit.module.category} />
          <EntitySummary
             titleEn={unit.titleEn}
             titleMy={unit.titleMy}
