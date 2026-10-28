@@ -1,8 +1,6 @@
 'use client';
 
-import Link from 'next/link';
-import { PencilIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { EditPageButton } from '@/components/common/EditPageButton';
 import { ROUTES } from '@/constants/routes';
 import { useModule } from '@/hooks/useModules';
 
@@ -13,15 +11,5 @@ export function ModuleDetailActions({ moduleId }: { moduleId: string }) {
    const { data: moduleDetail } = useModule(moduleId);
    if (!moduleDetail) return null;
 
-   return (
-      <Button
-         size="lg"
-         className="font-semibold"
-         nativeButton={false}
-         render={<Link href={ROUTES.editModule(moduleId)} />}
-      >
-         <PencilIcon />
-         Edit module info
-      </Button>
-   );
+   return <EditPageButton href={ROUTES.editModule(moduleId)} label="Edit module info" />;
 }
