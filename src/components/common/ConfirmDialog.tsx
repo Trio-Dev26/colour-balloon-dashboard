@@ -23,7 +23,7 @@ interface ConfirmDialogProps {
    destructive?: boolean;
 }
 
-// FR-CUR-012: every delete asks for confirmation first.
+// FR-CUR-012: every delete asks for confirmation first; so does publishing / unpublishing a module.
 export function ConfirmDialog({
    trigger,
    title,
