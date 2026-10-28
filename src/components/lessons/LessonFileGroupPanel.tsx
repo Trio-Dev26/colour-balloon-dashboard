@@ -5,7 +5,7 @@ import { BookOpenIcon, DownloadIcon, PresentationIcon, type LucideIcon } from 'l
 import { FileDropzone } from '@/components/common/FileDropzone';
 import { IconTile } from '@/components/common/IconTile';
 import { ToneBadge } from '@/components/common/ToneBadge';
-import { LESSON_FILE_MAX_BYTES } from '@/constants/lessonFile';
+import { LESSON_FILE_AUDIENCE_LABELS, LESSON_FILE_MAX_BYTES } from '@/constants/lessonFile';
 import { useLessonFileUploads } from '@/hooks/useLessonFileUploads';
 import { formatFileSize } from '@/lib/format';
 import type { LessonFile, LessonFileGroup } from '@/types/api/lessonFile.types';
@@ -83,7 +83,8 @@ export function LessonFileGroupPanel({ lessonId, config, files, onEditCaption }:
          />
          <LessonFileUploadDialog
             files={picked}
-            groupTitle={config.title}
+            // Both sides have a "Lesson materials" group, so name the side too.
+            groupTitle={`${LESSON_FILE_AUDIENCE_LABELS[config.audience]} · ${config.title}`}
             onUpload={(items) => {
                start(items);
                setPicked([]);

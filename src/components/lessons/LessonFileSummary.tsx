@@ -3,6 +3,7 @@ import { OrderBadge } from '@/components/common/OrderBadge';
 import { ToneBadge } from '@/components/common/ToneBadge';
 import { formatFileSize } from '@/lib/format';
 import type { LessonFile } from '@/types/api/lessonFile.types';
+import { LessonFileCaptions } from './LessonFileCaptions';
 import { LessonFileTypeTile } from './LessonFileTypeTile';
 
 /** "worksheet.final.pdf" → "PDF" */
@@ -34,11 +35,7 @@ export function LessonFileSummary({ file, order }: LessonFileSummaryProps) {
                </span>
             </p>
             {hasCaptions ? (
-               <p className="truncate text-xs text-muted-foreground">
-                  {file.captionEn}
-                  <span className="mx-1.5 text-placeholder">·</span>
-                  <span className="font-myanmar">{file.captionMy}</span>
-               </p>
+               <LessonFileCaptions captions={{ en: file.captionEn ?? '', my: file.captionMy ?? '' }} />
             ) : (
                <ToneBadge tone="warning" className="h-auto gap-1 self-start whitespace-normal">
                   <TriangleAlertIcon className="size-3" aria-hidden />

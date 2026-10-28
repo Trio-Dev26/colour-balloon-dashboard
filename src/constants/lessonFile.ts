@@ -33,7 +33,7 @@ export const LESSON_FILE_GROUPS: LessonFileGroupConfig[] = [
    {
       group: 'STUDENT_DOWNLOAD',
       audience: 'STUDENT',
-      title: 'Downloadable worksheets',
+      title: 'Downloadable files',
       description: 'Students can download these. They are optional for finishing the lesson.',
       accept: DOWNLOAD_ACCEPT,
       allowedType: DOWNLOADABLE,
@@ -42,7 +42,7 @@ export const LESSON_FILE_GROUPS: LessonFileGroupConfig[] = [
    {
       group: 'TEACHER_VIEW',
       audience: 'TEACHER',
-      title: 'Teacher materials',
+      title: 'Lesson materials',
       description: 'Guides, lesson plans and answer keys. Only teachers see these.',
       accept: VIEW_ACCEPT,
       allowedType: VIEWABLE,
@@ -51,7 +51,7 @@ export const LESSON_FILE_GROUPS: LessonFileGroupConfig[] = [
    {
       group: 'TEACHER_DOWNLOAD',
       audience: 'TEACHER',
-      title: 'Downloadable resources',
+      title: 'Downloadable files',
       description: 'Teachers can download these.',
       accept: DOWNLOAD_ACCEPT,
       allowedType: DOWNLOADABLE,
@@ -63,7 +63,13 @@ export const LESSON_FILE_GROUPS: LessonFileGroupConfig[] = [
 export const fileCountLabel = (count: number, suffix = '') =>
    count === 0 ? EMPTY_VALUE : `${count} ${count === 1 ? 'file' : 'files'}${suffix}`;
 
+/** Tab names on the lesson page and file column headers in lesson tables. */
+export const LESSON_FILE_AUDIENCE_LABELS: Record<LessonFileAudience, string> = {
+   STUDENT: 'Learner side',
+   TEACHER: 'Teacher side',
+};
+
 export const LESSON_FILE_AUDIENCES: { value: LessonFileAudience; label: string }[] = [
-   { value: 'STUDENT', label: 'Student materials' },
-   { value: 'TEACHER', label: 'Teacher guide' },
+   { value: 'STUDENT', label: LESSON_FILE_AUDIENCE_LABELS.STUDENT },
+   { value: 'TEACHER', label: LESSON_FILE_AUDIENCE_LABELS.TEACHER },
 ];
