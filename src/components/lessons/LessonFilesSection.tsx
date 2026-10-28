@@ -12,7 +12,7 @@ import type { LessonFile, LessonFileAudience } from '@/types/api/lessonFile.type
 import { LessonFileCaptionDialog } from './LessonFileCaptionDialog';
 import { LessonFileGroupPanel } from './LessonFileGroupPanel';
 
-// "Lesson Files" on the lesson detail page: Student materials / Teacher guide tabs, two file groups each
+// "Lesson Files" on the lesson detail page: Learner side / Teacher side tabs, two file groups each
 // (FR-FILE-001). Files can be changed in any module status (D28: editing files is always allowed).
 export function LessonFilesSection({ lessonId }: { lessonId: string }) {
    const { data: files = [], isPending, isError, refetch } = useLessonFiles(lessonId);

@@ -2,7 +2,7 @@ import { BilingualText } from '@/components/common/BilingualText';
 import type { DataTableColumn } from '@/components/common/DataTable';
 import { RowActions } from '@/components/common/RowActions';
 import { TableLink } from '@/components/common/TableLink';
-import { fileCountLabel } from '@/constants/lessonFile';
+import { fileCountLabel, LESSON_FILE_AUDIENCE_LABELS } from '@/constants/lessonFile';
 import { ROUTES } from '@/constants/routes';
 import { formatDateTime } from '@/lib/format';
 import type { LessonListItem } from '@/types/api/lesson.types';
@@ -18,13 +18,13 @@ export function getLessonListColumns(onDelete: (lesson: LessonListItem) => void)
       },
       {
          id: 'student',
-         header: 'Student materials',
+         header: LESSON_FILE_AUDIENCE_LABELS.STUDENT,
          className: 'w-[148px]',
          cell: (lesson) => fileCountLabel(lesson.fileCounts.student),
       },
       {
          id: 'teacher',
-         header: 'Teacher guide',
+         header: LESSON_FILE_AUDIENCE_LABELS.TEACHER,
          className: 'w-[117px]',
          cell: (lesson) => fileCountLabel(lesson.fileCounts.teacher),
       },
