@@ -10,6 +10,7 @@ import { OrderBadge } from '@/components/common/OrderBadge';
 import { OrderedChildrenSection } from '@/components/common/ordered/OrderedChildrenSection';
 import { ToneBadge } from '@/components/common/ToneBadge';
 import { MODULE_RULE_HINTS } from '@/constants/module';
+import { ROUTES } from '@/constants/routes';
 import { useDeleteUnit, useReorderModuleUnits } from '@/hooks/useUnits';
 import type { ModuleStatus } from '@/types/api/module.types';
 import type { UnitListItem } from '@/types/api/unit.types';
@@ -58,6 +59,7 @@ export function ModuleUnitsSection({ moduleId, moduleStatus, units }: ModuleUnit
             items={units}
             columns={columns}
             getId={(unit) => unit.id}
+            getRowHref={(unit) => ROUTES.unitDetail(unit.id)}
             emptyState={<UnitEmptyState title="No units yet!" action={createButton} />}
             arrange={{
                buttonLabel: 'Arrange units',

@@ -7,6 +7,7 @@ import { ListFooter } from '@/components/common/ListFooter';
 import { TablePagination } from '@/components/common/TablePagination';
 import { Button } from '@/components/ui/button';
 import { MODULE_FILTER_KEYS } from '@/constants/module';
+import { ROUTES } from '@/constants/routes';
 import { useDeleteModule, useModules, useUpdateModuleStatus } from '@/hooks/useModules';
 import { useUrlFilters } from '@/hooks/useUrlFilters';
 import { apiErrorMessage } from '@/lib/form';
@@ -82,6 +83,7 @@ export function ModuleListView() {
                columns={columns}
                rows={data?.data ?? []}
                getRowId={(module) => module.id}
+               getRowHref={(module) => ROUTES.moduleDetail(module.id)}
                emptyMessage="No modules match these filters."
                isLoading={isPending}
             />

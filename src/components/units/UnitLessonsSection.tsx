@@ -9,6 +9,7 @@ import { OrderedChildrenSection } from '@/components/common/ordered/OrderedChild
 import { LessonFormDialog } from '@/components/lessons/LessonFormDialog';
 import { LessonEmptyState } from '@/components/lessons/LessonEmptyState';
 import { MODULE_RULE_HINTS } from '@/constants/module';
+import { ROUTES } from '@/constants/routes';
 import { useDeleteLesson, useReorderUnitLessons } from '@/hooks/useLessons';
 import { apiErrorMessage } from '@/lib/form';
 import type { LessonListItem } from '@/types/api/lesson.types';
@@ -49,6 +50,7 @@ export function UnitLessonsSection({ unit, lessons }: UnitLessonsSectionProps) {
             items={lessons}
             columns={columns}
             getId={(lesson) => lesson.id}
+            getRowHref={(lesson) => ROUTES.lessonDetail(lesson.id)}
             emptyState={<LessonEmptyState action={createButton} />}
             arrange={{
                buttonLabel: 'Arrange lessons',

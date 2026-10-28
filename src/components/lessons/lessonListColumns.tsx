@@ -49,14 +49,9 @@ export function getLessonListColumns(onDelete: (lesson: LessonListItem) => void)
       {
          id: 'actions',
          header: 'Actions',
-         className: 'w-[136px]',
+         className: 'w-[96px]',
          cell: (lesson) => (
-            <RowActions
-               entityName="lesson"
-               viewHref={ROUTES.lessonDetail(lesson.id)}
-               edit={ROUTES.editLesson(lesson.id)}
-               onDelete={() => onDelete(lesson)}
-            />
+            <RowActions entityName="lesson" edit={ROUTES.editLesson(lesson.id)} onDelete={() => onDelete(lesson)} />
          ),
       },
    ];

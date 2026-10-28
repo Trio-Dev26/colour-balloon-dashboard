@@ -74,6 +74,7 @@ export function UnitListView() {
                columns={columns}
                rows={data?.data ?? []}
                getRowId={(unit) => unit.id}
+               getRowHref={(unit) => ROUTES.unitDetail(unit.id)}
                emptyMessage="No units match these filters."
                isLoading={isPending}
             />
