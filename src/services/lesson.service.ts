@@ -64,6 +64,8 @@ export async function getLesson(id: string): Promise<LessonDetail | null> {
          ...toListItem(lesson),
          descriptionEn: docToHtml(lesson.descriptionEn),
          descriptionMy: docToHtml(lesson.descriptionMy),
+         unitTitleEn: lesson.unit.titleEn,
+         moduleTitleEn: lesson.unit.module.titleEn,
          level,
          category,
       };

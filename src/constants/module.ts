@@ -7,6 +7,13 @@ export const MODULE_STATUS: Record<ModuleStatus, { label: string; tone: Tone }> 
    UNPUBLISHED: { label: 'Unpublished', tone: 'warning' },
 };
 
+/** Colour of each curriculum code pill in breadcrumbs (M001, U001, L001). */
+export const CURRICULUM_CODE_TONES = {
+   module: 'warning',
+   unit: 'primary',
+   lesson: 'primary',
+} as const satisfies Record<string, Tone>;
+
 // Decision Log D17 (publishing), D18 (deleting) and D28 (moving, reordering); the API enforces the same rules.
 export const MODULE_RULE_HINTS = {
    publishNeedsUnit: 'Add at least one unit before publishing this module.',
