@@ -1,5 +1,5 @@
 import type { SelectOption, Tone } from '@/types/ui/common.types';
-import type { ModuleStatus } from '@/types/api/module.types';
+import type { ModuleListItem, ModuleStatus } from '@/types/api/module.types';
 
 export const MODULE_STATUS: Record<ModuleStatus, { label: string; tone: Tone }> = {
    DRAFT: { label: 'Draft', tone: 'neutral' },
@@ -28,8 +28,24 @@ export const MODULE_RULE_HINTS = {
 } as const;
 
 /** Delete popup for a Draft module: everything in it is hidden too (D18). Deleted records are hidden, not erased (FR-CUR-012). */
+const count = (n: number, noun: string) => `${n} ${n === 1 ? noun : `${noun}s`}`;
+
+type ModuleCounts = Pick<ModuleListItem, 'status' | 'unitCount' | 'lessonCount'>;
+
+/** D17: publishing needs at least one unit with at least one lesson; undefined when publishing is allowed. */
+export const modulePublishBlockedReason = (module: ModuleCounts) => {
+   if (module.status === 'PUBLISHED') return undefined;
+   if (module.unitCount === 0) return MODULE_RULE_HINTS.publishNeedsUnit;
+   return module.lessonCount === 0 ? MODULE_RULE_HINTS.publishNeedsLesson : undefined;
+};
+
+/** Publish / unpublish confirmation text (D17). */
+export const modulePublishDescription = (module: ModuleCounts) =>
+   module.status === 'PUBLISHED'
+      ? 'New students won’t be able to start this module. Students already in it keep their progress, and everything comes back when you publish it again.'
+      : `Students and teachers will see this module with its ${count(module.unitCount, 'unit')} and ${count(module.lessonCount, 'lesson')}. A published module can’t go back to Draft or be deleted; you can unpublish it later.`;
+
 export const moduleDeleteDescription = (unitCount: number, lessonCount: number) => {
-   const count = (n: number, noun: string) => `${n} ${n === 1 ? noun : `${noun}s`}`;
    const what = unitCount
       ? `The module and its ${count(unitCount, 'unit')} and ${count(lessonCount, 'lesson')}`
       : 'The module';

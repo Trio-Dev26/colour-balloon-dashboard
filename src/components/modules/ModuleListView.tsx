@@ -8,7 +8,7 @@ import { TablePagination } from '@/components/common/TablePagination';
 import { Button } from '@/components/ui/button';
 import { MODULE_FILTER_KEYS } from '@/constants/module';
 import { ROUTES } from '@/constants/routes';
-import { useDeleteModule, useModules, useUpdateModuleStatus } from '@/hooks/useModules';
+import { useDeleteModule, useModules } from '@/hooks/useModules';
 import { useUrlFilters } from '@/hooks/useUrlFilters';
 import { apiErrorMessage } from '@/lib/form';
 import type { ModuleFilters as ModuleFilterValues } from '@/types/api/module.types';
@@ -26,21 +26,11 @@ export function ModuleListView() {
    const hasActiveFilters = MODULE_FILTER_KEYS.some((key) => get(key));
 
    const { data, isPending, isError, refetch } = useModules(filters);
-   const { mutate: updateStatus } = useUpdateModuleStatus();
    const { mutate: deleteModule } = useDeleteModule();
 
    const columns = useMemo(
       () =>
          getModuleColumns({
-            onTogglePublished: (module, published) =>
-               updateStatus(
-                  { id: module.id, status: published ? 'PUBLISHED' : 'UNPUBLISHED' },
-                  {
-                     onSuccess: () => toast.success(`${module.titleEn} ${published ? 'published' : 'unpublished'}`),
-                     onError: (error) =>
-                        toast.error(apiErrorMessage(error, `Couldn’t change the status of ${module.titleEn}.`)),
-                  }
-               ),
             onDelete: (module) =>
                deleteModule(module.id, {
                   onSuccess: () => toast.success(`${module.titleEn} deleted`),
@@ -48,7 +38,7 @@ export function ModuleListView() {
                   onError: (error) => toast.error(apiErrorMessage(error, `Couldn’t delete ${module.titleEn}.`)),
                }),
          }),
-      [updateStatus, deleteModule]
+      [deleteModule]
    );
 
    const total = data?.meta.total ?? 0;
