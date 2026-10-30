@@ -63,6 +63,9 @@ export async function getQuiz(id: string): Promise<QuizDetail | null> {
       const quiz = (await axiosApi.get<QuizResponse>(QUIZ_PATHS.detail(id))).data;
       return {
          ...toListItem(quiz),
+         moduleTitleEn: quiz.module.titleEn,
+         unitTitleEn: quiz.unit?.titleEn ?? null,
+         moduleStatus: quiz.module.status,
          descriptionEn: quiz.descriptionEn ? docToHtml(quiz.descriptionEn) : '',
          descriptionMy: quiz.descriptionMy ? docToHtml(quiz.descriptionMy) : '',
          questions: quiz.questions,

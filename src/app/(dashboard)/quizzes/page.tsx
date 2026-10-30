@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: 'Quizzes' };
 export default function QuizzesPage() {
    return (
       <>
-         <PageHeader title="Quiz" description="Build unit quizzes and Chapter End Tests from the question bank." />
+         <PageHeader title="Quiz" description="Create new quiz and assign to a unit." />
          <PageBody>
             {/* Suspense: the list reads its filters from the URL (useSearchParams). */}
             <Suspense>

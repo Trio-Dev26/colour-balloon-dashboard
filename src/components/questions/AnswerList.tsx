@@ -26,8 +26,8 @@ export function AnswerList({ title, hint, count, addLabel, onAdd, error, childre
          {error && <p className="text-sm text-destructive">{error}</p>}
          <Button
             type="button"
-            variant="outline"
-            className="self-start"
+            variant="ghost"
+            className="self-start bg-accent text-accent-foreground hover:bg-accent/80 hover:text-accent-foreground"
             disabled={count >= QUESTION_LIMITS.maxItems}
             onClick={onAdd}
          >

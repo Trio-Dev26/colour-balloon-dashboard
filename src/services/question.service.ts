@@ -31,6 +31,8 @@ const toListItem = (question: QuestionResponse): QuestionListItem => ({
 
 const toDetail = (question: QuestionResponse): QuestionDetail => ({
    ...toListItem(question),
+   moduleTitleEn: question.unit.module.titleEn,
+   unitTitleEn: question.unit.titleEn,
    prompt: docToHtml(question.prompt),
    promptMediaIds: question.promptMediaIds,
    answers: question.answers,

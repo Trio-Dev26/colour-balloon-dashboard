@@ -7,11 +7,13 @@ export const MODULE_STATUS: Record<ModuleStatus, { label: string; tone: Tone }> 
    UNPUBLISHED: { label: 'Unpublished', tone: 'warning' },
 };
 
-/** Colour of each curriculum code pill in breadcrumbs (M001, U001, L001). */
+/** Colour of each curriculum code pill in breadcrumbs (M001, U001, L001, quiz and question codes). */
 export const CURRICULUM_CODE_TONES = {
    module: 'warning',
    unit: 'primary',
    lesson: 'primary',
+   quiz: 'primary',
+   question: 'primary',
 } as const satisfies Record<string, Tone>;
 
 // Decision Log D17 (publishing), D18 (deleting) and D28 (moving, reordering); the API enforces the same rules.
@@ -44,6 +46,10 @@ export const modulePublishDescription = (module: ModuleCounts) =>
    module.status === 'PUBLISHED'
       ? 'New students won’t be able to start this module. Students already in it keep their progress, and everything comes back when you publish it again.'
       : `Students and teachers will see this module with its ${count(module.unitCount, 'unit')} and ${count(module.lessonCount, 'lesson')}. A published module can’t go back to Draft or be deleted; you can unpublish it later.`;
+
+/** D18: only a module that was never published can be deleted; undefined when deleting is allowed. */
+export const moduleDeleteBlockedReason = (status: ModuleStatus) =>
+   status === 'DRAFT' ? undefined : MODULE_RULE_HINTS.deletePublished;
 
 export const moduleDeleteDescription = (unitCount: number, lessonCount: number) => {
    const what = unitCount

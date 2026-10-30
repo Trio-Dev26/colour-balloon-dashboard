@@ -11,10 +11,10 @@ export default function CreateQuestionPage() {
       <>
          <PageHeader
             title="Question Bank"
-            breadcrumbs={[{ label: 'Question Bank', href: ROUTES.questions }, { label: 'Create Question' }]}
+            breadcrumbs={[{ label: 'Question Bank', href: ROUTES.questions }, { label: 'Create' }]}
          />
          <PageBody>
-            <QuestionForm title="Create New Question" />
+            <QuestionForm title="Create question" />
          </PageBody>
       </>
    );

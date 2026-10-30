@@ -3,7 +3,7 @@ import type { DataTableColumn } from '@/components/common/DataTable';
 import { RowActions } from '@/components/common/RowActions';
 import { EMPTY_VALUE } from '@/constants/common';
 import { ToneBadge } from '@/components/common/ToneBadge';
-import { MODULE_RULE_HINTS, MODULE_STATUS, moduleDeleteDescription } from '@/constants/module';
+import { MODULE_STATUS, moduleDeleteBlockedReason, moduleDeleteDescription } from '@/constants/module';
 import { ROUTES } from '@/constants/routes';
 import { formatDateTime } from '@/lib/format';
 import type { ModuleListItem } from '@/types/api/module.types';
@@ -11,10 +11,6 @@ import type { ModuleListItem } from '@/types/api/module.types';
 export interface ModuleRowHandlers {
    onDelete: (module: ModuleListItem) => void;
 }
-
-// D18: only a module that was never published can be deleted.
-const deleteBlockedReason = (module: ModuleListItem) =>
-   module.status === 'DRAFT' ? undefined : MODULE_RULE_HINTS.deletePublished;
 
 // Column order follows the Figma module table; widths are trimmed slightly so the total fits the 1152px content area.
 export function getModuleColumns({ onDelete }: ModuleRowHandlers): DataTableColumn<ModuleListItem>[] {
@@ -56,7 +52,7 @@ export function getModuleColumns({ onDelete }: ModuleRowHandlers): DataTableColu
                edit={ROUTES.editModule(module.id)}
                onDelete={() => onDelete(module)}
                deleteDescription={moduleDeleteDescription(module.unitCount, module.lessonCount)}
-               deleteDisabledReason={deleteBlockedReason(module)}
+               deleteDisabledReason={moduleDeleteBlockedReason(module.status)}
             />
          ),
       },

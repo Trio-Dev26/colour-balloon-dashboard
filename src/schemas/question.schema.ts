@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { ACCEPTED_ANSWER_SEPARATOR, BLANK_MARKER, QUESTION_LIMITS, QUESTION_TYPE_LABELS } from '@/constants/question';
 import { htmlToText } from '@/lib/form';
 import type { AnswerItem, QuestionDetail, QuestionPayload, QuestionType } from '@/types/api/question.types';
+import type { QuestionPreviewData } from '@/types/ui/question.types';
 
 const required = (message: string) => z.string().trim().min(1, message);
 const ITEM_EMPTY = 'Add text or an image';
@@ -15,7 +16,8 @@ export type AnswerItemValues = z.infer<typeof itemSchema>;
 /** Blanks in a fill-in-the-blank prompt (D23). */
 export const countBlanks = (promptHtml: string) => (htmlToText(promptHtml).match(BLANK_MARKER) ?? []).length;
 
-const splitAccepted = (value: string) =>
+/** Accepted answers of one blank, from the comma-separated form value (D23). */
+export const splitAccepted = (value: string) =>
    value
       .split(ACCEPTED_ANSWER_SEPARATOR)
       .map((answer) => answer.trim())
@@ -164,6 +166,32 @@ const toAnswers = (values: QuestionFormValues): QuestionPayload['answers'] => {
          return { steps: values.steps.map(toAnswerItem) };
    }
 };
+
+/** Id the live preview uses for its radio group; the form has no question id yet on create. */
+const PREVIEW_ID = 'live-preview';
+
+/**
+ * The learner preview of the form as it is right now (it may still be incomplete or invalid).
+ * Images come from the form's uploads; a fill-in-the-blank gets one answer box per `___` already typed.
+ */
+export function toQuestionPreview(values: QuestionFormValues): QuestionPreviewData {
+   const items = [...values.options, ...values.steps, ...values.pairs.flatMap((pair) => [pair.left, pair.right])];
+   const images = [...values.promptImages, ...items.flatMap((item) => (item.image ? [item.image] : []))];
+   const answers: QuestionPayload['answers'] =
+      values.type === 'FILL_BLANK'
+         ? { blanks: Array.from({ length: countBlanks(values.prompt) }, () => ({ accepted: [] })) }
+         : toAnswers(values);
+
+   return {
+      id: PREVIEW_ID,
+      type: values.type,
+      prompt: values.prompt,
+      promptMediaIds: values.promptImages.map((image) => image.id),
+      answers,
+      points: Number(values.points) || 0,
+      mediaUrls: Object.fromEntries(images.map((image) => [image.id, image.url])),
+   };
+}
 
 /** The API body: the chosen type's answers, points as a number, an empty explanation left out. */
 export const toQuestionPayload = (values: QuestionFormValues): QuestionPayload => ({

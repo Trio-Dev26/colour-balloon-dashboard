@@ -1,7 +1,7 @@
 import type { DataTableColumn } from '@/components/common/DataTable';
 import { RowActions } from '@/components/common/RowActions';
 import { TableLink } from '@/components/common/TableLink';
-import { QUESTION_TYPE_LABELS, questionInUseReason } from '@/constants/question';
+import { pointsLabel, QUESTION_TYPE_LABELS, questionInUseReason } from '@/constants/question';
 import { ROUTES } from '@/constants/routes';
 import { formatDateTime } from '@/lib/format';
 import type { QuestionListItem } from '@/types/api/question.types';
@@ -19,7 +19,7 @@ export function getQuestionListColumns(
          className: 'w-[140px]',
          cell: (question) => QUESTION_TYPE_LABELS[question.type],
       },
-      { id: 'points', header: 'Points', className: 'w-[80px]', cell: (question) => question.points },
+      { id: 'points', header: 'Points', className: 'w-[80px]', cell: (question) => pointsLabel(question.points) },
       {
          id: 'unit',
          header: 'Unit code',
@@ -41,11 +41,10 @@ export function getQuestionListColumns(
       {
          id: 'actions',
          header: 'Actions',
-         className: 'w-[136px]',
+         className: 'w-[96px]',
          cell: (question) => (
             <RowActions
                entityName="question"
-               viewHref={ROUTES.questionPreview(question.id)}
                edit={ROUTES.editQuestion(question.id)}
                onDelete={() => onDelete(question)}
                // D18: a question in a quiz can't be deleted.

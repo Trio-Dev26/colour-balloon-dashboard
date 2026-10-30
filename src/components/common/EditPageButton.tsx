@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { PencilIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-// Primary "Edit … info" link in a detail page header (module, unit, lesson).
+// Primary "Edit … info" link in a detail page header (module, unit, lesson, quiz).
 export function EditPageButton({ href, label }: { href: string; label: string }) {
    return (
       <Button size="lg" className="font-semibold" nativeButton={false} render={<Link href={href} />}>

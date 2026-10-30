@@ -20,7 +20,7 @@ import { getQuizListColumns } from './quizListColumns';
 const createQuizButton = <CreateButton label="Create quiz" href={ROUTES.newQuiz} />;
 const filterProps = {
    filterKeys: QUIZ_FILTER_KEYS,
-   searchPlaceholder: 'Search quiz title, code',
+   searchPlaceholder: 'Search quiz',
    searchLabel: 'Search quizzes',
    typeOptions: QUIZ_TYPE_OPTIONS,
 };
@@ -79,6 +79,7 @@ export function QuizListView() {
                columns={columns}
                rows={data?.data ?? []}
                getRowId={(quiz) => quiz.id}
+               getRowHref={(quiz) => ROUTES.quizDetail(quiz.id)}
                emptyMessage="No quizzes match these filters."
                isLoading={isPending}
             />

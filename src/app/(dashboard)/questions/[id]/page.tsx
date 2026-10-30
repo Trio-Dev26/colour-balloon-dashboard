@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import { PageBody } from '@/components/layout/PageBody';
 import { PageHeader } from '@/components/layout/PageHeader';
+import { QuestionBreadcrumb } from '@/components/questions/QuestionBreadcrumb';
 import { QuestionPreviewActions } from '@/components/questions/QuestionPreviewActions';
 import { QuestionPreviewView } from '@/components/questions/QuestionPreviewView';
-import { ROUTES } from '@/constants/routes';
 
 export const metadata: Metadata = { title: 'Question preview' };
 
@@ -14,7 +14,7 @@ export default async function QuestionPreviewPage({ params }: PageProps<'/questi
       <>
          <PageHeader
             title="Question Bank"
-            breadcrumbs={[{ label: 'Question Bank', href: ROUTES.questions }, { label: 'Preview Question' }]}
+            breadcrumb={<QuestionBreadcrumb questionId={id} />}
             actions={<QuestionPreviewActions questionId={id} />}
          />
          <PageBody>

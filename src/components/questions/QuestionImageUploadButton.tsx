@@ -12,10 +12,16 @@ import type { QuestionMedia } from '@/types/api/question.types';
 interface QuestionImageUploadButtonProps {
    onUploaded: (media: QuestionMedia) => void;
    label?: string;
+   /** Square icon button; `label` becomes its accessible name and tooltip. */
+   iconOnly?: boolean;
 }
 
 // Picks a JPG/PNG and uploads it straight away (POST /admin/questions/media); the form keeps its id.
-export function QuestionImageUploadButton({ onUploaded, label = 'Add image' }: QuestionImageUploadButtonProps) {
+export function QuestionImageUploadButton({
+   onUploaded,
+   label = 'Add image',
+   iconOnly,
+}: QuestionImageUploadButtonProps) {
    const inputRef = useRef<HTMLInputElement>(null);
    const upload = useUploadQuestionMedia();
 
@@ -39,12 +45,14 @@ export function QuestionImageUploadButton({ onUploaded, label = 'Add image' }: Q
          <LoadingButton
             type="button"
             variant="outline"
-            size="sm"
+            size={iconOnly ? 'icon' : 'sm'}
+            aria-label={iconOnly ? label : undefined}
+            title={iconOnly ? label : undefined}
             loading={upload.isPending}
             onClick={() => inputRef.current?.click()}
          >
             {!upload.isPending && <ImagePlusIcon />}
-            {label}
+            {!iconOnly && label}
          </LoadingButton>
          <input
             ref={inputRef}

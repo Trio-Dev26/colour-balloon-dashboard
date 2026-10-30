@@ -1,5 +1,6 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import type { Editor } from '@tiptap/react';
 import { ArrowUpDownIcon, BaselineIcon, ListIcon } from 'lucide-react';
 import { EDITOR_HIGHLIGHT_COLORS, EDITOR_LINE_HEIGHTS, EDITOR_TEXT_COLORS } from '@/constants/editor';
@@ -23,7 +24,7 @@ function ActionButtons({ editor, actions }: { editor: Editor; actions: ToolbarAc
    ));
 }
 
-export function RichTextToolbar({ editor }: { editor: Editor }) {
+export function RichTextToolbar({ editor, extra }: { editor: Editor; extra?: ReactNode }) {
    const chain = () => editor.chain().focus();
 
    return (
@@ -79,6 +80,7 @@ export function RichTextToolbar({ editor }: { editor: Editor }) {
                <ActionButtons editor={editor} actions={INDENT_ACTIONS} />
             </div>
          </div>
+         {extra}
       </div>
    );
 }

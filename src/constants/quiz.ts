@@ -29,8 +29,24 @@ export const QUESTION_PICKER_PAGE_SIZE = 8;
 export const QUIZ_HINTS = {
    cetExists: 'This module already has a Chapter End Test.',
    lockedOnEdit: 'A quiz’s type, module and unit can’t change. To move it, delete it and create it again.',
-   cetAlwaysRequired: 'The Chapter End Test is always required.',
+   cetAlwaysRequired: 'The Chapter End Test is always required. Learners must pass it to complete the module.',
+   requiredUnitQuiz: 'Learners must pass this quiz to complete the unit.',
+   cetNoUnit: 'Not needed for a Chapter End Test',
    attempts: 'Leave empty for unlimited. After the last attempt the quiz locks for 24 hours.',
 } as const;
 
 export const requiredLabel = (required: boolean) => (required ? 'Required' : 'Optional');
+
+/** Warning on a quiz with no questions. A Required one blocks its unit (D5); the Chapter End Test blocks the module (D7). */
+export const emptyQuizWarning = (required: boolean, type: QuizType) => {
+   const base = 'This quiz has no questions yet, so learners can’t take it.';
+   if (!required) return base;
+   return `${base} Learners can’t finish the ${type === 'CHAPTER_END_TEST' ? 'module' : 'unit'} until you add some.`;
+};
+
+/** "70% · 7 of 10 points". Scores can be partial (D22), so the points needed keep one decimal. */
+export const passMarkLabel = (passPercent: number, totalPoints: number) => {
+   if (totalPoints === 0) return `${passPercent}%`;
+   const needed = Math.round((totalPoints * passPercent * 10) / 100) / 10;
+   return `${passPercent}% · ${needed} of ${totalPoints} point${totalPoints === 1 ? '' : 's'}`;
+};

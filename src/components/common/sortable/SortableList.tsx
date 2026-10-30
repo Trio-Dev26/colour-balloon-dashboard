@@ -28,7 +28,11 @@ const POINTER_ACTIVATION_DISTANCE = 4;
 interface SortableListProps<T> {
    items: T[];
    getId: (item: T) => string;
-   onReorder: (items: T[]) => void;
+   onReorder?: (items: T[]) => void;
+   /** Same move as two positions (for react-hook-form's `move`, which keeps typed values). */
+   onMove?: (from: number, to: number) => void;
+   /** Extra classes for every row, e.g. `h-auto` when rows hold form fields. */
+   itemClassName?: string;
    renderItem: (item: T, index: number) => ReactNode;
    /** Accessible name for each drag handle, e.g. "Drag Unit 1". */
    getHandleLabel: (item: T, index: number) => string;
@@ -36,7 +40,15 @@ interface SortableListProps<T> {
 
 // Vertical drag-and-drop list (mouse, touch and keyboard: focus a handle, Space, arrows, Space).
 // Used for the unlock order of units now, and lessons / modules later (FR-CUR-006, FR-CUR-010).
-export function SortableList<T>({ items, getId, onReorder, renderItem, getHandleLabel }: SortableListProps<T>) {
+export function SortableList<T>({
+   items,
+   getId,
+   onReorder,
+   onMove,
+   renderItem,
+   getHandleLabel,
+   itemClassName,
+}: SortableListProps<T>) {
    const sensors = useSensors(
       useSensor(PointerSensor, { activationConstraint: { distance: POINTER_ACTIVATION_DISTANCE } }),
       useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
@@ -46,7 +58,8 @@ export function SortableList<T>({ items, getId, onReorder, renderItem, getHandle
       if (!over || active.id === over.id) return;
       const from = items.findIndex((item) => getId(item) === active.id);
       const to = items.findIndex((item) => getId(item) === over.id);
-      onReorder(arrayMove(items, from, to));
+      onReorder?.(arrayMove(items, from, to));
+      onMove?.(from, to);
    };
 
    return (
@@ -59,7 +72,12 @@ export function SortableList<T>({ items, getId, onReorder, renderItem, getHandle
          <SortableContext items={items.map(getId)} strategy={verticalListSortingStrategy}>
             <ul className="flex flex-col">
                {items.map((item, index) => (
-                  <SortableItem key={getId(item)} id={getId(item)} handleLabel={getHandleLabel(item, index)}>
+                  <SortableItem
+                     key={getId(item)}
+                     id={getId(item)}
+                     handleLabel={getHandleLabel(item, index)}
+                     className={itemClassName}
+                  >
                      {renderItem(item, index)}
                   </SortableItem>
                ))}
