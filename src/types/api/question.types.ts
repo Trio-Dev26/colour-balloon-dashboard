@@ -71,6 +71,9 @@ export interface QuestionListItem {
 }
 
 export interface QuestionDetail extends QuestionListItem {
+   /** Parent titles for the breadcrumb. */
+   moduleTitleEn: string;
+   unitTitleEn: string;
    /** HTML. */
    prompt: string;
    promptMediaIds: string[];

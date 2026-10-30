@@ -15,6 +15,8 @@ export interface QuizQuestion {
    points: number;
    /** Position in the quiz, starting at 1. */
    sequence: number;
+   /** Shown in the Chapter End Test, which mixes the module's units. */
+   unit: { id: string; code: string };
 }
 
 /** A quiz as the API sends it: descriptions are TipTap JSON documents or null. */
@@ -63,6 +65,11 @@ export interface QuizListItem {
 }
 
 export interface QuizDetail extends QuizListItem {
+   /** Parent titles for the breadcrumb; no unit for the Chapter End Test. */
+   moduleTitleEn: string;
+   unitTitleEn: string | null;
+   /** Whether learners can see the quiz (D17). */
+   moduleStatus: ModuleStatus;
    /** HTML; '' when there is none. */
    descriptionEn: string;
    descriptionMy: string;

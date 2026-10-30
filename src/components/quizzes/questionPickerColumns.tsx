@@ -1,5 +1,5 @@
 import type { DataTableColumn } from '@/components/common/DataTable';
-import { QUESTION_TYPE_LABELS } from '@/constants/question';
+import { pointsLabel, QUESTION_TYPE_LABELS } from '@/constants/question';
 import type { QuestionListItem } from '@/types/api/question.types';
 
 interface PickerState {
@@ -39,7 +39,7 @@ export function getQuestionPickerColumns({
          className: 'w-[130px]',
          cell: (question) => QUESTION_TYPE_LABELS[question.type],
       },
-      { id: 'points', header: 'Points', className: 'w-[70px]', cell: (question) => question.points },
+      { id: 'points', header: 'Points', className: 'w-[70px]', cell: (question) => pointsLabel(question.points) },
       { id: 'unit', header: 'Unit', className: 'w-[80px]', cell: (question) => question.unitCode },
    ];
 }

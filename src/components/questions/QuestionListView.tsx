@@ -79,6 +79,7 @@ export function QuestionListView() {
                columns={columns}
                rows={data?.data ?? []}
                getRowId={(question) => question.id}
+               getRowHref={(question) => ROUTES.questionPreview(question.id)}
                emptyMessage="No questions match these filters."
                isLoading={isPending}
             />

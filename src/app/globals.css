@@ -186,4 +186,16 @@
     @apply pointer-events-none float-left h-0 text-placeholder;
     content: attr(data-placeholder);
   }
+  /* Fill-in-the-blank: each ___ (lib/blankChips.ts) shows as a numbered chip; the underscores stay as text. */
+  .tiptap-content {
+    counter-reset: blank;
+  }
+  .tiptap-content .blank-chip {
+    @apply relative mx-0.5 rounded-sm border-b-2 border-primary bg-accent px-4 text-transparent;
+    counter-increment: blank;
+  }
+  .tiptap-content .blank-chip::after {
+    @apply absolute inset-0 flex items-center justify-center text-xs font-semibold text-accent-foreground;
+    content: counter(blank);
+  }
 }

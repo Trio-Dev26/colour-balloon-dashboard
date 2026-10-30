@@ -1,5 +1,8 @@
 import { Input } from '@/components/ui/input';
-import type { QuestionAnswersByType, QuestionDetail } from '@/types/api/question.types';
+import { CHOICE_LETTERS, TRUE_FALSE_CHOICES } from '@/constants/question';
+import { ChoiceLetter } from './ChoiceLetter';
+import type { QuestionAnswersByType } from '@/types/api/question.types';
+import type { QuestionPreviewData } from '@/types/ui/question.types';
 import { MatchingPreview } from './MatchingPreview';
 import { PreviewChoice } from './PreviewChoice';
 import { PreviewItem } from './PreviewItem';
@@ -7,7 +10,7 @@ import { SequencePreview } from './SequencePreview';
 
 // The answer area for each question type as the learner sees it (FR-QB-008): no correct answers,
 // matching right sides and sequence steps shuffled. Picks aren't saved or marked.
-export function AnswersPreview({ question }: { question: QuestionDetail }) {
+export function AnswersPreview({ question }: { question: QuestionPreviewData }) {
    const { answers, mediaUrls, id } = question;
 
    switch (question.type) {
@@ -16,6 +19,7 @@ export function AnswersPreview({ question }: { question: QuestionDetail }) {
             <div className="flex flex-col gap-3">
                {(answers as QuestionAnswersByType['MULTIPLE_CHOICE']).options.map((option, index) => (
                   <PreviewChoice key={option.id ?? index} name={id}>
+                     <ChoiceLetter letter={CHOICE_LETTERS[index]} />
                      <PreviewItem item={option} mediaUrls={mediaUrls} />
                   </PreviewChoice>
                ))}
@@ -24,8 +28,12 @@ export function AnswersPreview({ question }: { question: QuestionDetail }) {
       case 'TRUE_FALSE':
          return (
             <div className="grid grid-cols-2 gap-3">
-               <PreviewChoice name={id}>True</PreviewChoice>
-               <PreviewChoice name={id}>False</PreviewChoice>
+               {TRUE_FALSE_CHOICES.map((choice) => (
+                  <PreviewChoice key={choice.value} name={id}>
+                     <ChoiceLetter letter={choice.letter} />
+                     {choice.label}
+                  </PreviewChoice>
+               ))}
             </div>
          );
       case 'FILL_BLANK':

@@ -9,11 +9,12 @@ import { cn } from '@/lib/utils';
 interface SortableItemProps {
    id: string;
    handleLabel: string;
+   className?: string;
    children: ReactNode;
 }
 
 // One draggable row: grip handle on the left, row content on the right.
-export function SortableItem({ id, handleLabel, children }: SortableItemProps) {
+export function SortableItem({ id, handleLabel, className, children }: SortableItemProps) {
    const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } = useSortable({
       id,
    });
@@ -24,7 +25,8 @@ export function SortableItem({ id, handleLabel, children }: SortableItemProps) {
          style={{ transform: CSS.Transform.toString(transform), transition }}
          className={cn(
             'relative flex h-15 items-center gap-3 border-b bg-background px-3 last:border-b-0',
-            isDragging && 'z-10 rounded-lg border shadow-md'
+            isDragging && 'z-10 rounded-lg border shadow-md',
+            className
          )}
       >
          <button

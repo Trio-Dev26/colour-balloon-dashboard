@@ -15,6 +15,7 @@ import {
    type QuestionFormValues,
 } from '@/schemas/question.schema';
 import { QuestionFields } from './QuestionFields';
+import { QuestionLivePreview } from './QuestionLivePreview';
 
 interface QuestionFormProps {
    title: string;
@@ -47,7 +48,15 @@ export function QuestionForm({ title, questionId, defaultValues = EMPTY_QUESTION
       <FormProvider {...form}>
          <form onSubmit={onSubmit} noValidate className="flex flex-col gap-6">
             <h2 className="text-2xl leading-7.5 font-bold tracking-[-0.5px]">{title}</h2>
-            <QuestionFields isEditing={Boolean(questionId)} />
+            {/* From xl the preview sits on the right and stays in view; below that it follows the fields. */}
+            <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,24rem)] xl:items-start">
+               <div className="flex min-w-0 flex-col gap-6">
+                  <QuestionFields isEditing={Boolean(questionId)} />
+               </div>
+               <aside className="min-w-0 xl:sticky xl:top-6" aria-label="Learner preview">
+                  <QuestionLivePreview />
+               </aside>
+            </div>
             <FormActions
                cancelHref={ROUTES.questions}
                submitLabel="Save question"

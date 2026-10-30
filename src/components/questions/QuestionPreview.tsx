@@ -1,6 +1,7 @@
 import { RichTextView } from '@/components/common/rich-text/RichTextView';
 import { BLANK_MARKER } from '@/constants/question';
-import type { QuestionDetail } from '@/types/api/question.types';
+import { htmlToText } from '@/lib/form';
+import type { QuestionPreviewData } from '@/types/ui/question.types';
 import { AnswersPreview } from './AnswersPreview';
 
 /** Fill-in-the-blank: each ___ becomes a numbered gap matching the answer boxes below (D23). */
@@ -11,7 +12,7 @@ const withNumberedBlanks = (html: string) => {
 
 // The question as a learner sees it (FR-QB-008): prompt, prompt images, then the answer area.
 // No correct answers and no explanation.
-export function QuestionPreview({ question }: { question: QuestionDetail }) {
+export function QuestionPreview({ question }: { question: QuestionPreviewData }) {
    const prompt = question.type === 'FILL_BLANK' ? withNumberedBlanks(question.prompt) : question.prompt;
 
    return (
@@ -22,7 +23,11 @@ export function QuestionPreview({ question }: { question: QuestionDetail }) {
                {question.points} point{question.points === 1 ? '' : 's'}
             </span>
          </div>
-         <RichTextView html={prompt} className="text-base" />
+         {htmlToText(prompt) ? (
+            <RichTextView html={prompt} className="text-base" />
+         ) : (
+            <p className="text-base text-muted-foreground italic">Your question will appear here.</p>
+         )}
          {question.promptMediaIds.length > 0 && (
             <div className="flex flex-wrap gap-3">
                {question.promptMediaIds.map((id) => (

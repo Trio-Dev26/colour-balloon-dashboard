@@ -7,6 +7,7 @@ import { EmptyIllustration } from '@/components/common/EmptyIllustration';
 import { EmptyState } from '@/components/common/EmptyState';
 import { OrderBadge } from '@/components/common/OrderBadge';
 import { OrderedChildrenSection } from '@/components/common/ordered/OrderedChildrenSection';
+import { ROUTES } from '@/constants/routes';
 import { useSetQuizQuestions } from '@/hooks/useQuizzes';
 import { apiErrorMessage } from '@/lib/form';
 import type { QuizDetail } from '@/types/api/quiz.types';
@@ -31,16 +32,18 @@ export function QuizQuestionsSection({ quiz }: { quiz: QuizDetail }) {
 
    const columns = useMemo(
       () =>
-         getQuizQuestionColumns((question) =>
-            setQuestions.mutate(
-               quiz.questions.filter((other) => other.id !== question.id).map((other) => other.id),
-               {
-                  onSuccess: () => toast.success(`${question.code} removed from the quiz`),
-                  onError: (error) => toast.error(apiErrorMessage(error, `Couldn’t remove ${question.code}.`)),
-               }
-            )
+         getQuizQuestionColumns(
+            (question) =>
+               setQuestions.mutate(
+                  quiz.questions.filter((other) => other.id !== question.id).map((other) => other.id),
+                  {
+                     onSuccess: () => toast.success(`${question.code} removed from the quiz`),
+                     onError: (error) => toast.error(apiErrorMessage(error, `Couldn’t remove ${question.code}.`)),
+                  }
+               ),
+            quiz.type === 'CHAPTER_END_TEST'
          ),
-      [quiz.questions, setQuestions]
+      [quiz.questions, quiz.type, setQuestions]
    );
    const addButton = <CreateButton label="Add questions" onClick={() => setIsAdding(true)} />;
 
@@ -53,11 +56,12 @@ export function QuizQuestionsSection({ quiz }: { quiz: QuizDetail }) {
             items={quiz.questions}
             columns={columns}
             getId={(question) => question.id}
+            getRowHref={(question) => ROUTES.questionPreview(question.id)}
             emptyState={
                <EmptyState
                   icon={<EmptyIllustration />}
-                  title="No questions yet!"
-                  description="Add questions from the question bank to build this quiz."
+                  title="No question yet!"
+                  description="It looks like you haven’t added any questions. Let’s add created questions for your students."
                   action={addButton}
                />
             }

@@ -9,9 +9,9 @@ export const metadata: Metadata = { title: 'Create quiz' };
 export default function CreateQuizPage() {
    return (
       <>
-         <PageHeader title="Quiz" breadcrumbs={[{ label: 'Quiz', href: ROUTES.quizzes }, { label: 'Create Quiz' }]} />
+         <PageHeader title="Quiz" breadcrumbs={[{ label: 'Quiz', href: ROUTES.quizzes }, { label: 'Create' }]} />
          <PageBody>
-            <QuizForm title="Create New Quiz" />
+            <QuizForm title="Create quiz" />
          </PageBody>
       </>
    );
