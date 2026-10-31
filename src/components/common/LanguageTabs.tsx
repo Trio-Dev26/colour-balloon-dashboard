@@ -1,12 +1,13 @@
 'use client';
 
 import type { ReactNode } from 'react';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { LANGUAGES } from '@/constants/common';
 import type { LanguageCode } from '@/types/ui/common.types';
-import { UnderlineTabs } from './UnderlineTabs';
+import { LanguageTabsList } from './LanguageTabsList';
 
 interface LanguageTabsProps {
-   /** Renders the panel content for one language. */
+   /** Renders the panel content for one language. Panels stay mounted, so form fields keep their state. */
    children: (language: LanguageCode) => ReactNode;
    /** Languages whose fields have validation errors get a red dot. */
    invalidLanguages?: LanguageCode[];
@@ -15,24 +16,22 @@ interface LanguageTabsProps {
    onValueChange?: (language: LanguageCode) => void;
 }
 
-// English / မြန်မာ underline tabs used for every bilingual form and detail section.
-export function LanguageTabs({ children, invalidLanguages = [], value, onValueChange }: LanguageTabsProps) {
-   const tabs = LANGUAGES.map((language) => ({
-      value: language.value,
-      className: language.className,
-      label: (
-         <>
-            {language.label}
-            {invalidLanguages.includes(language.value) && (
-               <span className="size-1.5 rounded-full bg-destructive" aria-label="has errors" />
-            )}
-         </>
-      ),
-   }));
-
+// English / မြန်မာ segmented switch above the fields, without a card (Create / Edit Unit and Lesson dialogs).
+// LanguageCard is the same switch inside a card heading.
+export function LanguageTabs({ children, invalidLanguages, value, onValueChange }: LanguageTabsProps) {
    return (
-      <UnderlineTabs tabs={tabs} value={value} onValueChange={onValueChange}>
-         {children}
-      </UnderlineTabs>
+      <Tabs
+         defaultValue={LANGUAGES[0].value}
+         value={value}
+         onValueChange={(next: LanguageCode) => onValueChange?.(next)}
+         className="gap-4"
+      >
+         <LanguageTabsList invalidLanguages={invalidLanguages} />
+         {LANGUAGES.map((language) => (
+            <TabsContent key={language.value} value={language.value} keepMounted className="data-hidden:hidden">
+               {children(language.value)}
+            </TabsContent>
+         ))}
+      </Tabs>
    );
 }

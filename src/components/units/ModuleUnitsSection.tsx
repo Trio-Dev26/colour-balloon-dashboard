@@ -49,7 +49,6 @@ export function ModuleUnitsSection({ moduleId, moduleStatus, units }: ModuleUnit
       <>
          <OrderedChildrenSection
             title="Units"
-            description="The first unit is automatically available. Each following unit unlocks when the learner completes the previous unit."
             createAction={createButton}
             alert={
                <InfoAlert>

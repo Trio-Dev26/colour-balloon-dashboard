@@ -14,7 +14,7 @@ function IntroBlock({ title, children }: { title: string; children: ReactNode })
    );
 }
 
-// Learning goal and outcome in one language (read-only); the language tabs live in EntitySummary.
+// Learning goal and outcome in one language (read-only); the language switch lives in ContentCard.
 export function ModuleIntroduction({ module, language }: { module: ModuleDetail; language: LanguageCode }) {
    const goal = language === 'en' ? module.learningGoalEn : module.learningGoalMy;
    const outcome = language === 'en' ? module.learningOutcomeEn : module.learningOutcomeMy;

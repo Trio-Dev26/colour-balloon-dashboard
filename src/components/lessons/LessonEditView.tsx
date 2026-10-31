@@ -14,5 +14,12 @@ export function LessonEditView({ lessonId }: { lessonId: string }) {
    if (isPending) return <ContentSkeleton />;
    if (!lesson) return <NotFoundState entityName="lesson" backHref={ROUTES.lessons} />;
 
-   return <LessonForm title="Edit Lesson" lessonId={lessonId} defaultValues={lessonToFormValues(lesson)} />;
+   return (
+      <LessonForm
+         title="Edit Lesson"
+         lessonId={lessonId}
+         defaultValues={lessonToFormValues(lesson)}
+         isLive={lesson.moduleStatus === 'PUBLISHED'}
+      />
+   );
 }

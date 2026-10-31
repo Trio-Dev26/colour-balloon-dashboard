@@ -1,7 +1,6 @@
+import { countLabel } from '@/lib/format';
 import { CHOICE_LETTERS, TRUE_FALSE_CHOICES } from '@/constants/question';
 import type { QuestionAnswersByType, QuestionDetail } from '@/types/api/question.types';
-
-const plural = (count: number, word: string) => `${count} ${word}${count === 1 ? '' : 's'}`;
 
 /** How many answer parts a question has (blanks, pairs, steps…); used for D22 partial points. */
 export function answerPartCount(question: Pick<QuestionDetail, 'type' | 'answers'>): number {
@@ -27,10 +26,10 @@ export function correctAnswerSummary(question: Pick<QuestionDetail, 'type' | 'an
          return `${choice.letter} · ${choice.label}`;
       }
       case 'FILL_BLANK':
-         return plural(answerPartCount(question), 'blank');
+         return countLabel(answerPartCount(question), 'blank');
       case 'MATCHING':
-         return plural(answerPartCount(question), 'pair');
+         return countLabel(answerPartCount(question), 'pair');
       case 'SEQUENCE':
-         return `${plural(answerPartCount(question), 'step')} in order`;
+         return `${countLabel(answerPartCount(question), 'step')} in order`;
    }
 }

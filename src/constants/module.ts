@@ -29,6 +29,13 @@ export const MODULE_RULE_HINTS = {
       'This lesson’s module has been published, so the lesson order is locked. New lessons are added at the end.',
 } as const;
 
+/** Shown on the edit pages of published content: there is no draft copy, so a save is live at once. */
+export const LIVE_EDIT_NOTES = {
+   module: 'This module is published. Saved changes show to learners straight away.',
+   unit: 'This unit’s module is published. Saved changes show to learners straight away.',
+   lesson: 'This lesson’s module is published. Saved changes show to learners straight away.',
+} as const;
+
 /** Delete popup for a Draft module: everything in it is hidden too (D18). Deleted records are hidden, not erased (FR-CUR-012). */
 const count = (n: number, noun: string) => `${n} ${n === 1 ? noun : `${noun}s`}`;
 

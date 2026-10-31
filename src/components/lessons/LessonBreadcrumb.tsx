@@ -6,8 +6,9 @@ import { ROUTES } from '@/constants/routes';
 import { useLesson } from '@/hooks/useLessons';
 import type { BreadcrumbEntry } from '@/types/ui/navigation.types';
 
-// Lesson › M001 Module title › U001 Unit title › L001 Lesson title. Shares the page's lesson query.
-export function LessonBreadcrumb({ lessonId }: { lessonId: string }) {
+// Lesson › M001 Module title › U001 Unit title › L001 Lesson title (› current, e.g. "Edit").
+// Shares the page's lesson query.
+export function LessonBreadcrumb({ lessonId, current }: { lessonId: string; current?: string }) {
    const { data: lesson } = useLesson(lessonId);
 
    const items: BreadcrumbEntry[] = [{ label: 'Lesson', href: ROUTES.lessons }];
@@ -25,9 +26,15 @@ export function LessonBreadcrumb({ lessonId }: { lessonId: string }) {
             label: lesson.unitTitleEn,
             href: ROUTES.unitDetail(lesson.unitId),
          },
-         { code: lesson.code, codeTone: CURRICULUM_CODE_TONES.lesson, label: lesson.titleEn }
+         {
+            code: lesson.code,
+            codeTone: CURRICULUM_CODE_TONES.lesson,
+            label: lesson.titleEn,
+            href: current ? ROUTES.lessonDetail(lessonId) : undefined,
+         }
       );
    }
+   if (current) items.push({ label: current });
 
    return <PageBreadcrumb items={items} />;
 }

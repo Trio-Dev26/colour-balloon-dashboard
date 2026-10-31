@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import { TEXT_LIMITS } from '@/constants/common';
+import { requiredText } from '@/lib/form';
 import type { LessonDetail, LessonPayload } from '@/types/api/lesson.types';
 
 const required = (message: string) => z.string().trim().min(1, message);
@@ -8,8 +10,8 @@ const required = (message: string) => z.string().trim().min(1, message);
 export const lessonFormSchema = z.object({
    moduleId: required('Choose a module'),
    unitId: required('Choose a unit'),
-   titleEn: required('English title is required'),
-   titleMy: required('Myanmar title is required'),
+   titleEn: requiredText('English title', TEXT_LIMITS.title),
+   titleMy: requiredText('Myanmar title', TEXT_LIMITS.title),
    descriptionEn: z.string(),
    descriptionMy: z.string(),
 }) satisfies z.ZodType<LessonPayload & { moduleId: string }>;

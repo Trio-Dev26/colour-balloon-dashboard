@@ -19,7 +19,7 @@ export function ImagePreviewCard({ src, name, sizeLabel, hint, onReplace, onRemo
    const meta = [dimensions, sizeLabel].filter(Boolean).join(' • ');
 
    return (
-      <div className="flex items-center gap-5">
+      <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-5">
          {/* Plain <img>: object URLs and short-lived signed URLs can't go through next/image. */}
          {/* eslint-disable-next-line @next/next/no-img-element */}
          <img
@@ -30,10 +30,10 @@ export function ImagePreviewCard({ src, name, sizeLabel, hint, onReplace, onRemo
                setDimensions(`${event.currentTarget.naturalWidth} x ${event.currentTarget.naturalHeight}`)
             }
          />
-         <div className="flex min-w-0 flex-col gap-3">
+         <div className="flex w-full min-w-0 flex-col gap-3">
             <p className="truncate text-sm font-semibold">{name}</p>
             {meta && <p className="text-xs text-muted-foreground">{meta}</p>}
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
                <Button
                   type="button"
                   variant="outline"

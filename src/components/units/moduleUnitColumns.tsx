@@ -4,9 +4,8 @@ import { OrderBadge } from '@/components/common/OrderBadge';
 import { RowActions } from '@/components/common/RowActions';
 import { TableLink } from '@/components/common/TableLink';
 import { ToneBadge } from '@/components/common/ToneBadge';
-import { EMPTY_VALUE } from '@/constants/common';
 import { ROUTES } from '@/constants/routes';
-import { formatDateTime } from '@/lib/format';
+import { countLabel, formatDateTime } from '@/lib/format';
 import type { UnitListItem } from '@/types/api/unit.types';
 
 interface ModuleUnitRowHandlers {
@@ -26,7 +25,7 @@ export function getModuleUnitColumns({ onEdit, onDelete }: ModuleUnitRowHandlers
       {
          id: 'title',
          header: 'Unit title',
-         className: 'w-[501px]',
+         className: 'w-[240px]',
          cell: (unit, index) => (
             <div className="flex items-center gap-3">
                <BilingualText en={unit.titleEn} my={unit.titleMy} />
@@ -37,19 +36,19 @@ export function getModuleUnitColumns({ onEdit, onDelete }: ModuleUnitRowHandlers
       {
          id: 'code',
          header: 'Unit code',
-         className: 'w-[120px]',
+         className: 'w-[100px]',
          cell: (unit) => <TableLink href={ROUTES.unitDetail(unit.id)}>{unit.code}</TableLink>,
       },
       {
          id: 'lessons',
          header: 'No of lessons',
-         className: 'w-[150px] text-muted-foreground',
-         cell: (unit) => (unit.lessonCount ? `${unit.lessonCount} lessons` : EMPTY_VALUE),
+         className: 'w-[120px] text-muted-foreground',
+         cell: (unit) => countLabel(unit.lessonCount, 'lesson'),
       },
       {
          id: 'updatedAt',
          header: 'Last updated',
-         className: 'w-[150px] text-xs text-muted-foreground',
+         className: 'w-[170px] text-xs text-muted-foreground',
          cell: (unit) => formatDateTime(unit.updatedAt),
       },
       {

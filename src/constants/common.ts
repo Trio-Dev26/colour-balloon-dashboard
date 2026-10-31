@@ -1,5 +1,12 @@
 import type { LanguageCode } from '@/types/ui/common.types';
 
+/** Text lengths the API accepts (after trimming); the forms check them first and show a counter. */
+export const TEXT_LIMITS = {
+   /** Module, unit, lesson and quiz titles. */
+   title: 200,
+   learningGoal: 1000,
+} as const;
+
 /** Shown wherever a value is missing. */
 export const EMPTY_VALUE = '—';
 

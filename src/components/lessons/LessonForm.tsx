@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { FormActions } from '@/components/common/form/FormActions';
+import { InfoAlert } from '@/components/common/InfoAlert';
+import { LIVE_EDIT_NOTES } from '@/constants/module';
 import { ROUTES } from '@/constants/routes';
 import { useCreateLesson, useUpdateLesson } from '@/hooks/useLessons';
 import { apiErrorMessage, toastInvalidLanguages } from '@/lib/form';
@@ -16,10 +18,12 @@ interface LessonFormProps {
    /** Edit mode when set. */
    lessonId?: string;
    defaultValues?: LessonFormValues;
+   /** Edit mode: the lesson's module is published, so a save reaches learners at once. */
+   isLive?: boolean;
 }
 
 // Full-page Create / Edit lesson form (Figma "Create New Lesson").
-export function LessonForm({ title, lessonId, defaultValues = EMPTY_LESSON_FORM }: LessonFormProps) {
+export function LessonForm({ title, lessonId, defaultValues = EMPTY_LESSON_FORM, isLive }: LessonFormProps) {
    const router = useRouter();
    const form = useForm<LessonFormValues>({ resolver: zodResolver(lessonFormSchema), defaultValues });
    const createLesson = useCreateLesson();
@@ -49,8 +53,10 @@ export function LessonForm({ title, lessonId, defaultValues = EMPTY_LESSON_FORM 
       <FormProvider {...form}>
          <form onSubmit={onSubmit} noValidate className="flex flex-col gap-6">
             <h2 className="text-2xl leading-7.5 font-bold tracking-[-0.5px]">{title}</h2>
-            <LessonFields isEditing={Boolean(lessonId)} />
+            {isLive && <InfoAlert tone="warning">{LIVE_EDIT_NOTES.lesson}</InfoAlert>}
+            <LessonFields cards isEditing={Boolean(lessonId)} />
             <FormActions
+               sticky
                cancelHref={backHref}
                submitLabel="Save lesson"
                isSubmitting={createLesson.isPending || updateLesson.isPending}
