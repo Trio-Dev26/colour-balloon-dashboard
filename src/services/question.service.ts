@@ -19,7 +19,8 @@ const toListItem = (question: QuestionResponse): QuestionListItem => ({
    id: question.id,
    code: question.code,
    type: question.type,
-   promptText: question.promptText,
+   // Lists show the Myanmar prompt: it's the required one (Q24).
+   promptText: question.promptTextMy,
    points: question.points,
    unitId: question.unitId,
    unitCode: question.unit.code,
@@ -33,20 +34,35 @@ const toDetail = (question: QuestionResponse): QuestionDetail => ({
    ...toListItem(question),
    moduleTitleEn: question.unit.module.titleEn,
    unitTitleEn: question.unit.titleEn,
-   prompt: docToHtml(question.prompt),
+   promptMy: docToHtml(question.promptMy),
+   promptEn: question.promptEn ? docToHtml(question.promptEn) : '',
    promptMediaIds: question.promptMediaIds,
    answers: question.answers,
-   explanation: question.explanation ? docToHtml(question.explanation) : '',
+   explanationMy: question.explanationMy ? docToHtml(question.explanationMy) : '',
+   explanationEn: question.explanationEn ? docToHtml(question.explanationEn) : '',
    mediaUrls: Object.fromEntries((question.media ?? []).map((media) => [media.id, media.url])),
+   quizzes: question.quizzes,
 });
 
 /** Everything but the unit, which only create sends (D28: it never changes). */
-const toBody = ({ type, prompt, promptMediaIds, answers, explanation, points }: QuestionPayload) => ({
+const toBody = ({
    type,
-   prompt: htmlToDoc(prompt),
+   promptMy,
+   promptEn,
    promptMediaIds,
    answers,
-   explanation: explanation ? htmlToDoc(explanation) : null,
+   explanationMy,
+   explanationEn,
+   points,
+}: QuestionPayload) => ({
+   type,
+   promptMy: htmlToDoc(promptMy),
+   // null clears the English translation; learners then see the Myanmar prompt (Q24).
+   promptEn: promptEn ? htmlToDoc(promptEn) : null,
+   promptMediaIds,
+   answers,
+   explanationMy: explanationMy ? htmlToDoc(explanationMy) : null,
+   explanationEn: explanationEn ? htmlToDoc(explanationEn) : null,
    points,
 });
 

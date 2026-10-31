@@ -27,17 +27,23 @@ export interface QuestionMedia {
    url: string;
 }
 
-/** A question as the API sends it: prompt and explanation are TipTap JSON documents. */
+/**
+ * A question as the API sends it; prompts and explanations are TipTap JSON documents. Myanmar-first (Q24): the Myanmar
+ * prompt is required, English is an optional translation (none for FILL_BLANK). Answers are shared by both.
+ */
 export interface QuestionResponse {
    id: string;
    code: string;
    type: QuestionType;
-   prompt: JSONContent;
-   /** The prompt as plain text, for lists and search. */
-   promptText: string;
+   promptMy: JSONContent;
+   /** Plain text of the prompts, for lists and search. */
+   promptTextMy: string;
+   promptEn: JSONContent | null;
+   promptTextEn: string | null;
    promptMediaIds: string[];
    answers: QuestionAnswers;
-   explanation: JSONContent | null;
+   explanationMy: JSONContent | null;
+   explanationEn: JSONContent | null;
    points: number;
    unitId: string;
    unit: {
@@ -74,24 +80,30 @@ export interface QuestionDetail extends QuestionListItem {
    /** Parent titles for the breadcrumb. */
    moduleTitleEn: string;
    unitTitleEn: string;
-   /** HTML. */
-   prompt: string;
+   /** HTML; the Myanmar prompt is always set, the others are '' when missing (learners then see Myanmar). */
+   promptMy: string;
+   promptEn: string;
    promptMediaIds: string[];
    answers: QuestionAnswers;
-   /** HTML; '' when there is none. */
-   explanation: string;
+   explanationMy: string;
+   explanationEn: string;
    /** Signed URL per media id, for the previews. */
    mediaUrls: Record<string, string>;
+   /** Quizzes using it (D18), for the "Used in quizzes" card. */
+   quizzes: { id: string; code: string }[];
 }
 
 /** Create / edit body (HTML rich text); the service converts it to the API body. */
 export interface QuestionPayload {
    unitId: string;
    type: QuestionType;
-   prompt: string;
+   promptMy: string;
+   /** '' = no English translation (sent as null, which clears it). */
+   promptEn: string;
    promptMediaIds: string[];
    answers: QuestionAnswers;
-   explanation: string;
+   explanationMy: string;
+   explanationEn: string;
    points: number;
 }
 

@@ -1,9 +1,7 @@
 'use client';
 
-import Link from 'next/link';
-import { PencilIcon } from 'lucide-react';
 import { DeleteEntityButton } from '@/components/common/DeleteEntityButton';
-import { Button } from '@/components/ui/button';
+import { EditPageButton } from '@/components/common/EditPageButton';
 import { questionInUseReason } from '@/constants/question';
 import { ROUTES } from '@/constants/routes';
 import { useDeleteQuestion, useQuestion } from '@/hooks/useQuestions';
@@ -24,15 +22,7 @@ export function QuestionPreviewActions({ questionId }: { questionId: string }) {
             onDelete={() => deleteQuestion(questionId)}
             redirectTo={ROUTES.questions}
          />
-         <Button
-            size="lg"
-            className="font-semibold"
-            nativeButton={false}
-            render={<Link href={ROUTES.editQuestion(questionId)} />}
-         >
-            <PencilIcon />
-            Edit question
-         </Button>
+         <EditPageButton href={ROUTES.editQuestion(questionId)} label="Edit question" />
       </>
    );
 }

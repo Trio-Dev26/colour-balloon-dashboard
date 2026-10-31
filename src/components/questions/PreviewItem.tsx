@@ -15,7 +15,8 @@ export function PreviewItem({ item, mediaUrls, stacked }: PreviewItemProps) {
    const imageUrl = item.mediaId ? mediaUrls[item.mediaId] : undefined;
 
    return (
-      <span className={cn('flex min-w-0', stacked ? 'flex-col gap-2' : 'items-center gap-3')}>
+      // Inline wraps: on a narrow card the text drops under the picture instead of squeezing beside it.
+      <span className={cn('flex min-w-0', stacked ? 'flex-col gap-2' : 'flex-wrap items-center gap-x-3 gap-y-1.5')}>
          {imageUrl && (
             // Plain <img>: signed URLs are short-lived and can't go through next/image.
             // eslint-disable-next-line @next/next/no-img-element
@@ -30,7 +31,11 @@ export function PreviewItem({ item, mediaUrls, stacked }: PreviewItemProps) {
                )}
             />
          )}
-         {item.text && <span className="min-w-0 text-sm break-words">{item.text}</span>}
+         {item.text && (
+            <span className={cn('min-w-0 text-sm break-words', imageUrl && !stacked && 'min-w-24 flex-1')}>
+               {item.text}
+            </span>
+         )}
       </span>
    );
 }

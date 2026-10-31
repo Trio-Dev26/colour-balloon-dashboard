@@ -1,7 +1,14 @@
 import { z } from 'zod';
-import { ACCEPTED_ANSWER_SEPARATOR, BLANK_MARKER, QUESTION_LIMITS, QUESTION_TYPE_LABELS } from '@/constants/question';
+import {
+   ACCEPTED_ANSWER_SEPARATOR,
+   BLANK_MARKER,
+   hasEnglishVersion,
+   QUESTION_LIMITS,
+   QUESTION_TYPE_LABELS,
+} from '@/constants/question';
 import { htmlToText } from '@/lib/form';
 import type { AnswerItem, QuestionDetail, QuestionPayload, QuestionType } from '@/types/api/question.types';
+import type { LanguageCode } from '@/types/ui/common.types';
 import type { QuestionPreviewData } from '@/types/ui/question.types';
 
 const required = (message: string) => z.string().trim().min(1, message);
@@ -30,13 +37,17 @@ export const questionFormSchema = z
       moduleId: required('Choose a module'),
       unitId: required('Choose a unit'),
       type: z.enum(QUESTION_TYPES, 'Choose a question type'),
-      prompt: z.string().refine((html) => htmlToText(html), 'Type the question'),
+      // Q24: Myanmar-first. The Myanmar question is required; English is an optional translation (none for
+      // fill in the blank) and learners without it see Myanmar. Images and answers are shared by both.
+      promptMy: z.string().refine((html) => htmlToText(html), 'Type the question in Myanmar'),
+      promptEn: z.string(),
       promptImages: z.array(mediaSchema),
       points: z.string().refine((value) => {
          const points = Number(value);
          return Number.isInteger(points) && points >= QUESTION_LIMITS.minPoints && points <= QUESTION_LIMITS.maxPoints;
       }, `Points must be a whole number from ${QUESTION_LIMITS.minPoints} to ${QUESTION_LIMITS.maxPoints}`),
-      explanation: z.string(),
+      explanationMy: z.string(),
+      explanationEn: z.string(),
       options: z.array(itemSchema.extend({ correct: z.boolean() })),
       trueFalse: z.enum(['true', 'false']).or(z.literal('')),
       blanks: z.array(z.object({ accepted: z.string() })),
@@ -58,8 +69,8 @@ export const questionFormSchema = z
             if (!values.trueFalse) issue(['trueFalse'], 'Choose the correct answer');
             break;
          case 'FILL_BLANK': {
-            const count = countBlanks(values.prompt);
-            if (count === 0) issue(['prompt'], 'Type ___ (three underscores) where each blank goes');
+            const count = countBlanks(values.promptMy);
+            if (count === 0) issue(['promptMy'], 'Type ___ (three underscores) where each blank goes');
             values.blanks.slice(0, count).forEach((blank, i) => {
                if (splitAccepted(blank.accepted).length === 0)
                   issue(['blanks', i, 'accepted'], 'Add an accepted answer');
@@ -91,10 +102,12 @@ export const EMPTY_QUESTION_FORM: QuestionFormValues = {
    moduleId: '',
    unitId: '',
    type: 'MULTIPLE_CHOICE',
-   prompt: '',
+   promptMy: '',
+   promptEn: '',
    promptImages: [],
    points: '1',
-   explanation: '',
+   explanationMy: '',
+   explanationEn: '',
    options: minItems(emptyOption),
    trueFalse: '',
    blanks: [],
@@ -115,10 +128,12 @@ export function questionToFormValues(question: QuestionDetail): QuestionFormValu
       moduleId: question.moduleId,
       unitId: question.unitId,
       type: question.type,
-      prompt: question.prompt,
+      promptMy: question.promptMy,
+      promptEn: question.promptEn,
       promptImages: question.promptMediaIds.map((id) => ({ id, url: question.mediaUrls[id] ?? '' })),
       points: String(question.points),
-      explanation: question.explanation,
+      explanationMy: question.explanationMy,
+      explanationEn: question.explanationEn,
    };
    const { answers } = question;
    if ('options' in answers)
@@ -151,7 +166,7 @@ const toAnswers = (values: QuestionFormValues): QuestionPayload['answers'] => {
       case 'FILL_BLANK':
          return {
             blanks: values.blanks
-               .slice(0, countBlanks(values.prompt))
+               .slice(0, countBlanks(values.promptMy))
                .map((blank) => ({ accepted: splitAccepted(blank.accepted) })),
          };
       case 'MATCHING':
@@ -174,18 +189,19 @@ const PREVIEW_ID = 'live-preview';
  * The learner preview of the form as it is right now (it may still be incomplete or invalid).
  * Images come from the form's uploads; a fill-in-the-blank gets one answer box per `___` already typed.
  */
-export function toQuestionPreview(values: QuestionFormValues): QuestionPreviewData {
+export function toQuestionPreview(values: QuestionFormValues, language: LanguageCode = 'my'): QuestionPreviewData {
    const items = [...values.options, ...values.steps, ...values.pairs.flatMap((pair) => [pair.left, pair.right])];
    const images = [...values.promptImages, ...items.flatMap((item) => (item.image ? [item.image] : []))];
    const answers: QuestionPayload['answers'] =
       values.type === 'FILL_BLANK'
-         ? { blanks: Array.from({ length: countBlanks(values.prompt) }, () => ({ accepted: [] })) }
+         ? { blanks: Array.from({ length: countBlanks(values.promptMy) }, () => ({ accepted: [] })) }
          : toAnswers(values);
 
    return {
       id: PREVIEW_ID,
       type: values.type,
-      prompt: values.prompt,
+      // English falls back to Myanmar when it has no text, as learners would see it.
+      prompt: language === 'en' && englishOf(values, 'promptEn') ? values.promptEn : values.promptMy,
       promptMediaIds: values.promptImages.map((image) => image.id),
       answers,
       points: Number(values.points) || 0,
@@ -193,13 +209,19 @@ export function toQuestionPreview(values: QuestionFormValues): QuestionPreviewDa
    };
 }
 
-/** The API body: the chosen type's answers, points as a number, an empty explanation left out. */
+/** An English field's HTML, or '' when it has no text or the type has no English version (Q24). */
+const englishOf = (values: QuestionFormValues, field: 'promptEn' | 'explanationEn') =>
+   hasEnglishVersion(values.type) && htmlToText(values[field]) ? values[field] : '';
+
+/** The API body: the chosen type's answers, points as a number, empty optional texts left out. */
 export const toQuestionPayload = (values: QuestionFormValues): QuestionPayload => ({
    unitId: values.unitId,
    type: values.type,
-   prompt: values.prompt,
+   promptMy: values.promptMy,
+   promptEn: englishOf(values, 'promptEn'),
    promptMediaIds: values.promptImages.map((image) => image.id),
    answers: toAnswers(values),
-   explanation: htmlToText(values.explanation) ? values.explanation : '',
+   explanationMy: htmlToText(values.explanationMy) ? values.explanationMy : '',
+   explanationEn: englishOf(values, 'explanationEn'),
    points: Number(values.points),
 });
