@@ -4,6 +4,7 @@ import { CardSection } from '@/components/common/CardSection';
 import { BilingualFields } from '@/components/common/form/BilingualFields';
 import { RichTextField } from '@/components/common/form/RichTextField';
 import { TextField } from '@/components/common/form/TextField';
+import { TEXT_LIMITS } from '@/constants/common';
 import type { QuizFormValues } from '@/schemas/quiz.schema';
 import { QuizSettingsFields } from './QuizSettingsFields';
 
@@ -21,6 +22,7 @@ export function QuizFields({ isEditing }: { isEditing?: boolean }) {
                      name={`title${suffix}`}
                      label="Title"
                      placeholder={`Quiz title in ${languageName}`}
+                     maxLength={TEXT_LIMITS.title}
                   />
                   <RichTextField<QuizFormValues>
                      name={`description${suffix}`}

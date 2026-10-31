@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import { PageBody } from '@/components/layout/PageBody';
 import { PageHeader } from '@/components/layout/PageHeader';
+import { UnitBreadcrumb } from '@/components/units/UnitBreadcrumb';
 import { UnitEditView } from '@/components/units/UnitEditView';
-import { ROUTES } from '@/constants/routes';
 
 export const metadata: Metadata = { title: 'Edit unit' };
 
@@ -11,7 +11,7 @@ export default async function EditUnitPage({ params }: PageProps<'/units/[id]/ed
 
    return (
       <>
-         <PageHeader title="Unit" breadcrumbs={[{ label: 'Unit', href: ROUTES.units }, { label: 'Edit Unit' }]} />
+         <PageHeader title="Unit" breadcrumb={<UnitBreadcrumb unitId={id} current="Edit" />} />
          <PageBody>
             <UnitEditView unitId={id} />
          </PageBody>

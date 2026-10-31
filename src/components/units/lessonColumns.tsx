@@ -26,19 +26,19 @@ export function getLessonColumns({ onEdit, onDelete }: UnitLessonRowHandlers): D
       {
          id: 'title',
          header: 'Lesson title',
-         className: 'w-[366px]',
+         className: 'w-[220px]',
          cell: (lesson) => <BilingualText en={lesson.titleEn} my={lesson.titleMy} />,
       },
       {
          id: 'student',
          header: LESSON_FILE_AUDIENCE_LABELS.STUDENT,
-         className: 'w-[130px]',
+         className: 'w-[120px]',
          cell: (lesson) => fileCountLabel(lesson.fileCounts.student, UPLOADED),
       },
       {
          id: 'teacher',
          header: LESSON_FILE_AUDIENCE_LABELS.TEACHER,
-         className: 'w-[130px]',
+         className: 'w-[120px]',
          cell: (lesson) => fileCountLabel(lesson.fileCounts.teacher, UPLOADED),
       },
       {

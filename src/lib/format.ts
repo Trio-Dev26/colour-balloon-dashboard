@@ -16,6 +16,9 @@ const dateFormatter = new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 
 const timeFormatter = new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
 
 /** ISO date → "12 AUG 2027 12:22PM" (Figma table format). */
+/** "1 lesson", "0 lessons". */
+export const countLabel = (count: number, word: string) => `${count} ${word}${count === 1 ? '' : 's'}`;
+
 export function formatDateTime(iso: string): string {
    const date = new Date(iso);
    const time = timeFormatter.format(date).replace(' ', '');

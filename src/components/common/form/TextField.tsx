@@ -2,7 +2,7 @@
 
 import { useState, type HTMLInputTypeAttribute, type ReactNode } from 'react';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
-import { useFormContext, type FieldValues, type Path } from 'react-hook-form';
+import { useFormContext, useWatch, type FieldValues, type Path } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { getFieldError } from '@/lib/form';
@@ -27,6 +27,8 @@ interface TextFieldProps<T extends FieldValues> {
    hideLabel?: boolean;
    /** Shown inside the input on the right, e.g. a "Correct" badge. Hidden on phones, where it would cover the text. */
    endAdornment?: ReactNode;
+   /** Most characters the API accepts; shows a "12/200" counter. Not enforced natively, so a long paste stays visible and the schema explains it. */
+   maxLength?: number;
 }
 
 export function TextField<T extends FieldValues>({
@@ -41,6 +43,7 @@ export function TextField<T extends FieldValues>({
    max,
    hideLabel,
    endAdornment,
+   maxLength,
 }: TextFieldProps<T>) {
    const { register, formState } = useFormContext<T>();
    const error = getFieldError(formState.errors, name);
@@ -71,6 +74,7 @@ export function TextField<T extends FieldValues>({
                className={cn(inputClassName ?? 'h-9', isPassword && 'pr-9', endAdornment && 'sm:pr-24')}
                {...register(name)}
             />
+            {maxLength !== undefined && <CharacterCount<T> name={name} max={maxLength} />}
             {endAdornment && (
                <span className="pointer-events-none absolute inset-y-0 right-3 hidden items-center sm:flex">
                   {endAdornment}
@@ -92,5 +96,20 @@ export function TextField<T extends FieldValues>({
             )}
          </div>
       </FormField>
+   );
+}
+
+// "12/200" under a text field, red once over the limit. Counts the trimmed text, as the API does.
+function CharacterCount<T extends FieldValues>({ name, max }: { name: Path<T>; max: number }) {
+   const value: unknown = useWatch<T>({ name });
+   const count = typeof value === 'string' ? value.trim().length : 0;
+
+   return (
+      <p
+         className={cn('mt-1 text-right text-xs text-muted-foreground tabular-nums', count > max && 'text-destructive')}
+         aria-live="polite"
+      >
+         {count}/{max}
+      </p>
    );
 }

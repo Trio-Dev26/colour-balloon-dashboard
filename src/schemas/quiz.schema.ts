@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import { TEXT_LIMITS } from '@/constants/common';
+import { requiredText } from '@/lib/form';
 import { ATTEMPTS_LIMITS, PASS_PERCENT_LIMITS, QUIZ_TYPE } from '@/constants/quiz';
 import type { QuizDetail, QuizPayload, QuizType } from '@/types/api/quiz.types';
 
@@ -31,8 +33,8 @@ export const quizFormSchema = z
             (value) => !value || isWholeNumberIn(value, ATTEMPTS_LIMITS),
             `Attempts must be a whole number from ${ATTEMPTS_LIMITS.min} to ${ATTEMPTS_LIMITS.max}, or empty for unlimited`
          ),
-      titleEn: required('English title is required'),
-      titleMy: required('Myanmar title is required'),
+      titleEn: requiredText('English title', TEXT_LIMITS.title),
+      titleMy: requiredText('Myanmar title', TEXT_LIMITS.title),
       descriptionEn: z.string(),
       descriptionMy: z.string(),
    })

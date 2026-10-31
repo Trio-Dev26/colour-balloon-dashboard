@@ -2,6 +2,7 @@
 
 import { InfoIcon } from 'lucide-react';
 import { useFormContext, useWatch } from 'react-hook-form';
+import { CardSection } from '@/components/common/CardSection';
 import { BilingualFields } from '@/components/common/form/BilingualFields';
 import { RichTextField } from '@/components/common/form/RichTextField';
 import { SelectField } from '@/components/common/form/SelectField';
@@ -10,6 +11,7 @@ import { MODULE_RULE_HINTS } from '@/constants/module';
 import { useClearOnChange } from '@/hooks/useClearOnChange';
 import { useModuleOptions, useModuleSelectOptions } from '@/hooks/useModules';
 import { useUnitSelectOptions } from '@/hooks/useUnits';
+import { TEXT_LIMITS } from '@/constants/common';
 import type { LessonFormValues } from '@/schemas/lesson.schema';
 import type { ModuleOption } from '@/types/api/module.types';
 
@@ -23,9 +25,11 @@ interface LessonFieldsProps {
    isEditing?: boolean;
    /** Locks both pickers (Create / Edit Lesson dialog on a unit's page). */
    isUnitLocked?: boolean;
+   /** Full-page form: the pickers in a SETTINGS card and the texts in a CONTENT card (dialogs stay flat). */
+   cards?: boolean;
 }
 
-export function LessonFields({ isEditing, isUnitLocked }: LessonFieldsProps) {
+export function LessonFields({ isEditing, isUnitLocked, cards }: LessonFieldsProps) {
    const { control, formState } = useFormContext<LessonFormValues>();
    const moduleId = useWatch({ control, name: 'moduleId' });
    const { data: modules = [] } = useModuleOptions();
@@ -41,45 +45,50 @@ export function LessonFields({ isEditing, isUnitLocked }: LessonFieldsProps) {
    // A unit belongs to one module, so picking another module clears the unit.
    useClearOnChange<LessonFormValues>('moduleId', 'unitId', '');
 
+   const settings = (
+      <div className="flex flex-col gap-1.5">
+         <div className="flex flex-wrap gap-6">
+            <SelectField<LessonFormValues>
+               name="moduleId"
+               label="Module"
+               placeholder="Choose module"
+               options={moduleOptions}
+               className="min-w-60 flex-1"
+               disabled={isUnitLocked || isMoveLocked}
+            />
+            <SelectField<LessonFormValues>
+               name="unitId"
+               label="Unit"
+               placeholder="Choose unit"
+               options={unitOptions}
+               className="min-w-60 flex-1"
+               disabled={!moduleId || isUnitLocked || isMoveLocked}
+            />
+         </div>
+         {moveLockedReason && (
+            <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+               <InfoIcon className="size-3.5 shrink-0" aria-hidden />
+               {moveLockedReason}
+            </p>
+         )}
+      </div>
+   );
+
    return (
       <>
-         <div className="flex flex-col gap-1.5">
-            <div className="flex flex-wrap gap-6">
-               <SelectField<LessonFormValues>
-                  name="moduleId"
-                  label="Module"
-                  placeholder="Choose module"
-                  options={moduleOptions}
-                  className="min-w-60 flex-1"
-                  disabled={isUnitLocked || isMoveLocked}
-               />
-               <SelectField<LessonFormValues>
-                  name="unitId"
-                  label="Unit"
-                  placeholder="Choose unit"
-                  options={unitOptions}
-                  className="min-w-60 flex-1"
-                  disabled={!moduleId || isUnitLocked || isMoveLocked}
-               />
-            </div>
-            {moveLockedReason && (
-               <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <InfoIcon className="size-3.5 shrink-0" aria-hidden />
-                  {moveLockedReason}
-               </p>
-            )}
-         </div>
-         <BilingualFields>
+         {cards ? <CardSection title="Settings">{settings}</CardSection> : settings}
+         <BilingualFields cardTitle={cards ? 'Content' : undefined}>
             {(suffix, languageName) => (
                <>
                   <TextField<LessonFormValues>
                      name={`title${suffix}`}
                      label="Title"
                      placeholder={`Lesson title in ${languageName}`}
+                     maxLength={TEXT_LIMITS.title}
                   />
                   <RichTextField<LessonFormValues>
                      name={`description${suffix}`}
-                     label="Description (Optional)"
+                     label="Description (optional)"
                      placeholder="Type your description here..."
                   />
                </>

@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
+import { LessonBreadcrumb } from '@/components/lessons/LessonBreadcrumb';
 import { LessonEditView } from '@/components/lessons/LessonEditView';
 import { PageBody } from '@/components/layout/PageBody';
 import { PageHeader } from '@/components/layout/PageHeader';
-import { ROUTES } from '@/constants/routes';
 
 export const metadata: Metadata = { title: 'Edit lesson' };
 
@@ -11,10 +11,7 @@ export default async function EditLessonPage({ params }: PageProps<'/lessons/[id
 
    return (
       <>
-         <PageHeader
-            title="Lesson"
-            breadcrumbs={[{ label: 'Lesson', href: ROUTES.lessons }, { label: 'Edit Lesson' }]}
-         />
+         <PageHeader title="Lesson" breadcrumb={<LessonBreadcrumb lessonId={id} current="Edit" />} />
          <PageBody>
             <LessonEditView lessonId={id} />
          </PageBody>

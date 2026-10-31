@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { MODULE_IMAGE } from '@/constants/module';
-import { htmlToText } from '@/lib/form';
+import { TEXT_LIMITS } from '@/constants/common';
+import { htmlToText, requiredText } from '@/lib/form';
 import type { ModuleDetail } from '@/types/api/module.types';
 
 const required = (message: string) => z.string().trim().min(1, message);
@@ -22,12 +23,12 @@ export const moduleFormSchema = z.object({
    levelId: required('Choose a module level'),
    categoryId: required('Choose a category'),
    image: imageSchema,
-   titleEn: required('English title is required'),
-   titleMy: required('Myanmar title is required'),
+   titleEn: requiredText('English title', TEXT_LIMITS.title),
+   titleMy: requiredText('Myanmar title', TEXT_LIMITS.title),
    descriptionEn: z.string(),
    descriptionMy: z.string(),
-   learningGoalEn: required('English learning goal is required'),
-   learningGoalMy: required('Myanmar learning goal is required'),
+   learningGoalEn: requiredText('English learning goal', TEXT_LIMITS.learningGoal),
+   learningGoalMy: requiredText('Myanmar learning goal', TEXT_LIMITS.learningGoal),
    learningOutcomeEn: requiredRichText('English learning outcome is required'),
    learningOutcomeMy: requiredRichText('Myanmar learning outcome is required'),
 });

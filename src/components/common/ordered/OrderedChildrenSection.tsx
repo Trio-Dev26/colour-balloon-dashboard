@@ -11,7 +11,8 @@ const MIN_ITEMS_TO_ARRANGE = 2;
 
 interface OrderedChildrenSectionProps<T> {
    title: string;
-   description: string;
+   /** Short note under the title; leave it out when the alert already explains the order. */
+   description?: string;
    /** Header button (e.g. "+ Create unit"); shown only when there are items — the empty state has its own. */
    createAction: ReactNode;
    /** Optional note between the header and the table. */
@@ -53,7 +54,7 @@ export function OrderedChildrenSection<T>({
          <div className="flex items-center gap-3">
             <div className="flex flex-1 flex-col gap-3">
                <h3 className="text-base leading-5 font-medium tracking-[-1px]">{title}</h3>
-               <p className="max-w-111.5 text-xs text-muted-foreground">{description}</p>
+               {description && <p className="max-w-111.5 text-xs text-muted-foreground">{description}</p>}
             </div>
             {hasItems && !isArranging && createAction}
          </div>

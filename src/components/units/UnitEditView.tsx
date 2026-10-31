@@ -14,5 +14,12 @@ export function UnitEditView({ unitId }: { unitId: string }) {
    if (isPending) return <ContentSkeleton />;
    if (!unit) return <NotFoundState entityName="unit" backHref={ROUTES.units} />;
 
-   return <UnitForm title="Edit Unit" unitId={unitId} defaultValues={unitToFormValues(unit)} />;
+   return (
+      <UnitForm
+         title="Edit Unit"
+         unitId={unitId}
+         defaultValues={unitToFormValues(unit)}
+         isLive={unit.moduleStatus === 'PUBLISHED'}
+      />
+   );
 }

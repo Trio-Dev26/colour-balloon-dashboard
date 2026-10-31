@@ -12,7 +12,7 @@ export function ModuleImageField() {
    const error = getFieldError(formState.errors, 'image');
 
    return (
-      <FormField id="image" label="Module Thumbnail Image" error={error}>
+      <FormField id="image" label="Cover image (optional)" error={error}>
          <Controller
             control={control}
             name="image"

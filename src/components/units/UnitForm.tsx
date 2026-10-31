@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { FormActions } from '@/components/common/form/FormActions';
+import { InfoAlert } from '@/components/common/InfoAlert';
+import { LIVE_EDIT_NOTES } from '@/constants/module';
 import { ROUTES } from '@/constants/routes';
 import { useCreateUnit, useUpdateUnit } from '@/hooks/useUnits';
 import { apiErrorMessage, toastInvalidLanguages } from '@/lib/form';
@@ -16,10 +18,12 @@ interface UnitFormProps {
    /** Edit mode when set. */
    unitId?: string;
    defaultValues?: UnitFormValues;
+   /** Edit mode: the unit's module is published, so a save reaches learners at once. */
+   isLive?: boolean;
 }
 
 // Full-page Create / Edit unit form (Figma "Create New Unit").
-export function UnitForm({ title, unitId, defaultValues = EMPTY_UNIT_FORM }: UnitFormProps) {
+export function UnitForm({ title, unitId, defaultValues = EMPTY_UNIT_FORM, isLive }: UnitFormProps) {
    const router = useRouter();
    const form = useForm<UnitFormValues>({ resolver: zodResolver(unitFormSchema), defaultValues });
    const createUnit = useCreateUnit();
@@ -43,8 +47,10 @@ export function UnitForm({ title, unitId, defaultValues = EMPTY_UNIT_FORM }: Uni
          <form onSubmit={onSubmit} noValidate className="flex flex-col gap-6">
             <h2 className="text-2xl leading-7.5 font-bold tracking-[-0.5px]">{title}</h2>
             {/* Picking another module on edit moves the unit to the end of that module (Draft modules only, D28). */}
-            <UnitFields moduleFieldClassName="max-w-110" isEditing={Boolean(unitId)} />
+            {isLive && <InfoAlert tone="warning">{LIVE_EDIT_NOTES.unit}</InfoAlert>}
+            <UnitFields cards moduleFieldClassName="sm:max-w-110" isEditing={Boolean(unitId)} />
             <FormActions
+               sticky
                cancelHref={backHref}
                submitLabel="Save unit"
                isSubmitting={createUnit.isPending || updateUnit.isPending}

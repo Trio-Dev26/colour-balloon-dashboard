@@ -1,8 +1,13 @@
 import { HttpStatusCode, isAxiosError } from 'axios';
 import { get, type FieldError, type FieldErrors, type FieldValues } from 'react-hook-form';
 import { toast } from 'sonner';
+import { z } from 'zod';
 import { LANGUAGE_FIELD_SUFFIX, LANGUAGES } from '@/constants/common';
 import type { LanguageCode } from '@/types/ui/common.types';
+
+/** Required text of at most `max` characters after trimming, as the API checks it; `label` is e.g. "English title". */
+export const requiredText = (label: string, max: number) =>
+   z.string().trim().min(1, `${label} is required`).max(max, `${label} can be at most ${max} characters`);
 
 /** Languages with at least one invalid bilingual field (fields are named <field>En / <field>My). */
 export function getInvalidLanguages(errors: FieldErrors): LanguageCode[] {
