@@ -6,6 +6,7 @@ import { FilterSelect } from '@/components/common/FilterSelect';
 import { DialogForm } from '@/components/common/form/DialogForm';
 import { SearchInput } from '@/components/common/SearchInput';
 import { TablePagination } from '@/components/common/TablePagination';
+import { ToneBadge } from '@/components/common/ToneBadge';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { DEFAULT_PAGE } from '@/constants/common';
 import { QUESTION_TYPE_OPTIONS } from '@/constants/question';
@@ -54,15 +55,27 @@ function PickerBody({ quiz, isSaving, onAdd, onClose }: PickerBodyProps) {
    );
    const pageCount = data ? Math.ceil(data.meta.total / data.meta.limit) : 0;
 
+   const rows = data?.data;
+   const addedIds = useMemo(() => new Set(quiz.questions.map((question) => question.id)), [quiz.questions]);
+   const addedCount = addedIds.size;
    const columns = useMemo(() => {
       const selectedIds = new Set(selected);
+      const pageIds = (rows ?? []).map((question) => question.id).filter((id) => !addedIds.has(id));
+      const allPicked = pageIds.length > 0 && pageIds.every((id) => selectedIds.has(id));
       return getQuestionPickerColumns({
-         addedIds: new Set(quiz.questions.map((question) => question.id)),
+         addedIds,
          selectedIds,
+         pageIds,
          onToggle: (id) =>
             setSelected((ids) => (selectedIds.has(id) ? ids.filter((other) => other !== id) : [...ids, id])),
+         onToggleAll: () =>
+            setSelected((ids) =>
+               allPicked
+                  ? ids.filter((id) => !pageIds.includes(id))
+                  : [...ids, ...pageIds.filter((id) => !selectedIds.has(id))]
+            ),
       });
-   }, [quiz.questions, selected]);
+   }, [addedIds, selected, rows]);
 
    // Any filter change goes back to page 1.
    const filterBy =
@@ -85,6 +98,12 @@ function PickerBody({ quiz, isSaving, onAdd, onClose }: PickerBodyProps) {
          }}
          onCancel={onClose}
       >
+         {addedCount > 0 && (
+            <p className="text-sm text-muted-foreground">
+               {addedCount} question{addedCount > 1 ? 's are' : ' is'} already in this quiz, marked{' '}
+               <ToneBadge tone="success">Added</ToneBadge> below.
+            </p>
+         )}
          <div className="flex flex-wrap items-center gap-3">
             <SearchInput
                placeholder="Search question, code"
@@ -111,8 +130,11 @@ function PickerBody({ quiz, isSaving, onAdd, onClose }: PickerBodyProps) {
          <div className="overflow-hidden rounded-lg border">
             <DataTable
                columns={columns}
-               rows={data?.data ?? []}
+               rows={rows ?? []}
                getRowId={(question) => question.id}
+               getRowClassName={(question) =>
+                  addedIds.has(question.id) ? 'bg-muted/50 text-muted-foreground' : undefined
+               }
                emptyMessage="No questions match. Create them in the Question Bank first."
                isLoading={isPending}
             />

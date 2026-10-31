@@ -5,7 +5,9 @@ import { useRouter } from 'next/navigation';
 import { Trash2Icon } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import { ICON_ON_PHONE } from '@/constants/layout';
 import { apiErrorMessage } from '@/lib/form';
+import { cn } from '@/lib/utils';
 import { ConfirmDialog } from './ConfirmDialog';
 import { HintTooltip } from './HintTooltip';
 
@@ -37,9 +39,16 @@ export function DeleteEntityButton({
    const [isDeleting, setIsDeleting] = useState(false);
 
    const button = (
-      <Button variant="secondary" size="lg" className="font-semibold" disabled={Boolean(disabledReason) || isDeleting}>
+      <Button
+         variant="secondary"
+         size="lg"
+         className={cn('font-semibold', ICON_ON_PHONE.button)}
+         title={disabledReason ? undefined : `Delete ${entityName}`}
+         disabled={Boolean(disabledReason) || isDeleting}
+      >
          <Trash2Icon />
-         Delete {entityName}
+         {/* A bin icon only on phones; the text stays for screen readers. */}
+         <span className={ICON_ON_PHONE.label}>Delete {entityName}</span>
       </Button>
    );
 

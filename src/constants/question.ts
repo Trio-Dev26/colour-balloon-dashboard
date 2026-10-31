@@ -1,5 +1,6 @@
 import type { SelectOption } from '@/types/ui/common.types';
 import type { QuestionType } from '@/types/api/question.types';
+import { LANGUAGES } from './common';
 import { MODULE_IMAGE } from './module';
 
 /** URL query keys the question list filters by (besides page); same names as the API query params. */
@@ -67,3 +68,16 @@ export const sequenceSlotWord = (index: number, count: number) => {
    if (index === 0) return 'First';
    return index === count - 1 ? 'Last' : 'Next';
 };
+
+/**
+ * D22: matching, sequence and multi-blank questions give partial points (each correct pair, position or blank
+ * earns its share); multiple choice, True / False and single-blank are all or nothing.
+ */
+export const hasPartialPoints = (type: QuestionType, blankCount: number) =>
+   type === 'MATCHING' || type === 'SEQUENCE' || (type === 'FILL_BLANK' && blankCount > 1);
+
+/** Q24: questions are Myanmar-first; fill in the blank is Myanmar only (its blanks are Myanmar words). */
+export const hasEnglishVersion = (type: QuestionType) => type !== 'FILL_BLANK';
+
+/** Question language switches put the required Myanmar first. */
+export const QUESTION_LANGUAGES = [...LANGUAGES].reverse();

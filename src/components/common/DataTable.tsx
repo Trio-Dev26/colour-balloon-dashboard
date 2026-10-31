@@ -9,7 +9,8 @@ import { TruncatedText } from './TruncatedText';
 
 export interface DataTableColumn<TRow> {
    id: string;
-   header: string;
+   /** Usually a label; a control such as a select-all checkbox also works. */
+   header: ReactNode;
    cell: (row: TRow, index: number) => ReactNode;
    /** Width and alignment classes applied to both header and cells, e.g. 'w-[300px]'. */
    className?: string;
@@ -24,6 +25,8 @@ interface DataTableProps<TRow> {
    isLoading?: boolean;
    /** Makes the whole row open this page (e.g. the detail page); controls inside the row keep their own clicks. */
    getRowHref?: (row: TRow) => string;
+   /** Extra classes per row, e.g. to mute rows that can't be picked. */
+   getRowClassName?: (row: TRow) => string | undefined;
 }
 
 const LOADING_ROW_COUNT = 5;
@@ -39,6 +42,7 @@ export function DataTable<TRow>({
    emptyMessage,
    isLoading,
    getRowHref,
+   getRowClassName,
 }: DataTableProps<TRow>) {
    const router = useRouter();
 
@@ -99,10 +103,13 @@ export function DataTable<TRow>({
                   return (
                      <TableRow
                         key={getRowId(row)}
+                        className={cn(
+                           href && 'cursor-pointer focus-visible:bg-muted/50 focus-visible:outline-none',
+                           getRowClassName?.(row)
+                        )}
                         {...(href
                            ? {
                                 tabIndex: 0,
-                                className: 'cursor-pointer focus-visible:bg-muted/50 focus-visible:outline-none',
                                 onClick: (event: MouseEvent<HTMLTableRowElement>) => openRow(event, href),
                                 onKeyDown: (event: KeyboardEvent<HTMLTableRowElement>) =>
                                    openRowWithKeyboard(event, href),

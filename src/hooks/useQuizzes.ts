@@ -1,4 +1,4 @@
-import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useMutation, useQueries, useQuery } from '@tanstack/react-query';
 import {
    createQuiz,
    deleteQuiz,
@@ -31,6 +31,11 @@ export function useModuleChapterEndTest(moduleId: string) {
 
 export function useQuiz(id: string) {
    return useQuery({ queryKey: quizKeys.detail(id), queryFn: () => getQuiz(id) });
+}
+
+/** Several quizzes by id, sharing each quiz's detail cache (e.g. the quizzes a question is used in). */
+export function useQuizzesByIds(ids: string[]) {
+   return useQueries({ queries: ids.map((id) => ({ queryKey: quizKeys.detail(id), queryFn: () => getQuiz(id) })) });
 }
 
 export function useCreateQuiz() {

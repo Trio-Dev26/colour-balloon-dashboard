@@ -15,7 +15,7 @@ const joinAccepted = (answers: string[]) => answers.join(`${ACCEPTED_ANSWER_SEPA
 // each blank accepts several answers, added as chips.
 export function FillBlankAnswers() {
    const { control, formState, getValues, setValue } = useFormContext<QuestionFormValues>();
-   const prompt = useWatch({ control, name: 'prompt' });
+   const prompt = useWatch({ control, name: 'promptMy' });
    const count = countBlanks(prompt);
 
    // Grow the list as blanks are typed; extra entries are kept (and ignored) so deleting a ___ by mistake loses nothing.
